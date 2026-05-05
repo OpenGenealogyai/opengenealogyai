@@ -1,0 +1,29 @@
+{
+  "person": {
+    "person_id": "b1000000-0005-4000-8000-000000000005",
+    "name_assertions": [{"name_as_written": "Thomas Lincoln", "confidence": 0.9, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-haiku-001", "asserted_at": "2026-05-01T12:00:00Z"}],
+    "asserted_by": "extractor-haiku-001",
+    "asserted_at": "2026-05-01T12:00:00Z"
+  },
+  "assertion": {
+    "year_min": 1778,
+    "year_max": 1778,
+    "date_type": "exact",
+    "place_as_written": "Virginia Colony",
+    "confidence": 0.88,
+    "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+    "asserted_by": "extractor-haiku-001",
+    "asserted_at": "2026-05-01T12:00:00Z"
+  },
+  "assertion_type": "birth_assertion",
+  "source_records": {
+    "a1b2c3d4-0001-4000-8000-000000000001": {
+      "record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "record_type": "birth_certificate",
+      "redistribution_license": "public-domain",
+      "is_living_flag": false,
+      "source_url": "https://archive.org/details/virginia-births-1778",
+      "extraction_confidence": 0.92
+    }
+  }
+}

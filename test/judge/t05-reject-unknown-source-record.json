@@ -1,0 +1,11 @@
+{
+  "person": {"person_id": "b1000000-0005-4000-8000-000000000005", "name_assertions": [], "asserted_by": "x", "asserted_at": "2026-05-01T00:00:00Z"},
+  "assertion": {
+    "confidence": 0.7,
+    "source_record_id": "aaaaaaaa-0000-4000-8000-000000000000",
+    "asserted_by": "extractor-haiku-001",
+    "asserted_at": "2026-05-01T12:00:00Z"
+  },
+  "assertion_type": "name_assertion",
+  "source_records": {}
+}

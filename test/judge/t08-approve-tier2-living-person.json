@@ -1,0 +1,17 @@
+{
+  "person": {"person_id": "b1000000-0004-4000-8000-000000000004", "name_assertions": [], "asserted_by": "x", "asserted_at": "2026-05-01T00:00:00Z"},
+  "assertion": {
+    "confidence": 0.99,
+    "source_record_id": "a1b2c3d4-0017-4000-8000-000000000017",
+    "asserted_by": "extractor-haiku-001",
+    "asserted_at": "2026-05-03T13:00:00Z"
+  },
+  "assertion_type": "name_assertion",
+  "source_records": {
+    "a1b2c3d4-0017-4000-8000-000000000017": {
+      "redistribution_license": "tier2-private",
+      "is_living_flag": true,
+      "source_url": "https://archive.org/details/private"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "a1b2c3d4-0001-4000-8000-000000000001": {
+    "record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+    "record_type": "birth_certificate",
+    "redistribution_license": "public-domain",
+    "is_living_flag": false,
+    "source_url": "https://archive.org/details/virginia-births-1778",
+    "extraction_confidence": 0.92
+  },
+  "a1b2c3d4-0017-4000-8000-000000000017": {
+    "record_id": "a1b2c3d4-0017-4000-8000-000000000017",
+    "record_type": "court_record",
+    "redistribution_license": "tier2-private",
+    "is_living_flag": true,
+    "source_url": "https://archive.org/details/cook-county-court-2015",
+    "extraction_confidence": 0.99
+  },
+  "a1b2c3d4-0019-4000-8000-000000000019": {
+    "record_id": "a1b2c3d4-0019-4000-8000-000000000019",
+    "record_type": "naturalization_record",
+    "redistribution_license": "public-domain",
+    "is_living_flag": false,
+    "source_url": "https://www.familysearch.org/records/ohio-1854",
+    "extraction_confidence": 0.77
+  }
+}

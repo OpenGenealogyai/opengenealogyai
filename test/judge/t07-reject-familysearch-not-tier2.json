@@ -1,0 +1,17 @@
+{
+  "person": {"person_id": "b1000000-0005-4000-8000-000000000005", "name_assertions": [], "asserted_by": "x", "asserted_at": "2026-05-01T00:00:00Z"},
+  "assertion": {
+    "confidence": 0.85,
+    "source_record_id": "a1b2c3d4-0019-4000-8000-000000000019",
+    "asserted_by": "extractor-haiku-004",
+    "asserted_at": "2026-05-03T15:00:00Z"
+  },
+  "assertion_type": "name_assertion",
+  "source_records": {
+    "a1b2c3d4-0019-4000-8000-000000000019": {
+      "redistribution_license": "public-domain",
+      "is_living_flag": false,
+      "source_url": "https://www.familysearch.org/records/ohio-1854"
+    }
+  }
+}
