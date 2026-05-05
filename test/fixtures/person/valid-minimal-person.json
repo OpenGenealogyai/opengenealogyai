@@ -1,0 +1,14 @@
+{
+  "person_id": "b1000000-0099-4000-8000-000000000099",
+  "name_assertions": [
+    {
+      "name_as_written": "Unknown Person",
+      "confidence": 0.1,
+      "source_record_id": "a1b2c3d4-0015-4000-8000-000000000015",
+      "asserted_by": "extractor-agent-haiku-001",
+      "asserted_at": "2026-05-01T00:00:00Z"
+    }
+  ],
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-01T00:00:00Z"
+}

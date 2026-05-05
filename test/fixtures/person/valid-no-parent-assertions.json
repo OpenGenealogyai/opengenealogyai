@@ -1,0 +1,18 @@
+{
+  "person_id": "b1000000-0015-4000-8000-000000000015",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.91,
+  "name_assertions": [
+    {"name_as_written": "Samuel Lincoln", "given_name": "Samuel", "surname": "Lincoln", "name_type": "birth", "confidence": 0.91, "source_record_id": "a1b2c3d4-0008-4000-8000-000000000008", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T12:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1619, "year_max": 1620, "date_type": "estimated", "place_as_written": "Hingham, Norfolk, England", "country_code": "GB", "confidence": 0.80, "source_record_id": "a1b2c3d4-0008-4000-8000-000000000008", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T12:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0008-4000-8000-000000000008"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-02T12:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-04T10:00:00Z"
+}

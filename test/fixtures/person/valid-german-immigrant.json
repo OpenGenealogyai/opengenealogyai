@@ -1,0 +1,18 @@
+{
+  "person_id": "b1000000-0014-4000-8000-000000000014",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.77,
+  "name_assertions": [
+    {"name_as_written": "Johann Heinrich Schlink", "given_name": "Johann Heinrich", "surname": "Schlink", "name_type": "birth", "confidence": 0.77, "source_record_id": "a1b2c3d4-0019-4000-8000-000000000019", "asserted_by": "extractor-agent-haiku-004", "asserted_at": "2026-05-03T15:00:00Z"},
+    {"name_as_written": "John Henry Slink", "given_name": "John Henry", "surname": "Slink", "name_type": "alias", "confidence": 0.60, "source_record_id": "a1b2c3d4-0019-4000-8000-000000000019", "asserted_by": "extractor-agent-haiku-004", "asserted_at": "2026-05-03T15:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1820, "year_max": 1824, "date_type": "calculated", "place_as_written": "Wuertemberg, Germany", "country_code": "DE", "confidence": 0.70, "source_record_id": "a1b2c3d4-0019-4000-8000-000000000019", "asserted_by": "extractor-agent-haiku-004", "asserted_at": "2026-05-03T15:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0019-4000-8000-000000000019"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-004",
+  "asserted_at": "2026-05-03T15:00:00Z",
+  "judge_approved": false
+}

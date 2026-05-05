@@ -1,0 +1,26 @@
+{
+  "person_id": "b1000000-0005-4000-8000-000000000005",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.88,
+  "name_assertions": [
+    {"name_as_written": "Thomas Lincoln", "given_name": "Thomas", "surname": "Lincoln", "name_type": "birth", "confidence": 0.90, "source_record_id": "a1b2c3d4-0011-4000-8000-000000000011", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T15:00:00Z"},
+    {"name_as_written": "Thos. Lincoln", "given_name": "Thomas", "surname": "Lincoln", "name_type": "variant_spelling", "confidence": 0.80, "source_record_id": "a1b2c3d4-0010-4000-8000-000000000010", "asserted_by": "extractor-agent-haiku-002", "asserted_at": "2026-05-02T14:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1778, "year_max": 1778, "month": 1, "day": 6, "date_type": "exact", "place_as_written": "Virginia Colony", "country_code": "US", "state_province": "Virginia", "confidence": 0.88, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z"}
+  ],
+  "death_assertions": [
+    {"year_min": 1851, "year_max": 1851, "month": 1, "day": 17, "date_type": "exact", "place_as_written": "Coles County, Illinois", "country_code": "US", "confidence": 0.93, "source_record_id": "a1b2c3d4-0011-4000-8000-000000000011", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T15:00:00Z"}
+  ],
+  "parent_assertions": [
+    {"parent_person_id": "b1000000-0001-4000-8000-000000000001", "relationship_type": "biological", "parent_role": "father", "confidence": 0.88, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z", "conflict_flag": false},
+    {"parent_person_id": "b1000000-0002-4000-8000-000000000002", "relationship_type": "biological", "parent_role": "mother", "confidence": 0.88, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z", "conflict_flag": false}
+  ],
+  "source_record_ids": ["a1b2c3d4-0001-4000-8000-000000000001", "a1b2c3d4-0010-4000-8000-000000000010", "a1b2c3d4-0011-4000-8000-000000000011"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "orchestrator-agent-sonnet-001",
+  "asserted_at": "2026-05-01T12:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-03T11:00:00Z"
+}

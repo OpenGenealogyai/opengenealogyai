@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengenealogyai.org/schemas/v0.1/person.schema.json",
+  "title": "Person",
+  "description": "A probabilistic identity synthesized from one or more RawRecords. No fact is ever overwritten; new evidence creates new assertions.",
+  "type": "object",
+  "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
+  "properties": {
+    "person_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this person entity."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "is_living": {
+      "type": "boolean",
+      "description": "True if this person may be alive. Enforces 404 on all open endpoints.",
+      "default": false
+    },
+    "composite_confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Aggregate confidence that all assertions in this record refer to the same real individual."
+    },
+    "name_assertions": {
+      "type": "array",
+      "description": "All known names for this person with individual confidence scores. Multiple names handle maiden names, aliases, spelling variants.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name_as_written", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "name_as_written": { "type": "string" },
+          "given_name": { "type": "string" },
+          "surname": { "type": "string" },
+          "name_type": {
+            "type": "string",
+            "enum": ["birth", "married", "alias", "nickname", "variant_spelling", "unknown"]
+          },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "birth_assertions": {
+      "type": "array",
+      "description": "All birth event claims with individual confidence scores.",
+      "items": {
+        "type": "object",
+        "required": ["confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+          "date_type": {
+            "type": "string",
+            "enum": ["exact", "estimated", "calculated", "range"]
+          },
+          "place_as_written": { "type": "string" },
+          "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "state_province": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "death_assertions": {
+      "type": "array",
+      "description": "All death event claims with individual confidence scores.",
+      "items": {
+        "type": "object",
+        "required": ["confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+          "date_type": {
+            "type": "string",
+            "enum": ["exact", "estimated", "calculated", "range"]
+          },
+          "place_as_written": { "type": "string" },
+          "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "cause_as_written": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "parent_assertions": {
+      "type": "array",
+      "description": "All claimed parent relationships. Multiple entries are normal — confidence scores express certainty, never forcing a single correct answer.",
+      "items": {
+        "type": "object",
+        "required": ["parent_person_id", "relationship_type", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "parent_person_id": { "type": "string", "format": "uuid" },
+          "relationship_type": {
+            "type": "string",
+            "enum": ["biological", "adoptive", "step", "foster", "unknown"]
+          },
+          "parent_role": {
+            "type": "string",
+            "enum": ["father", "mother", "unknown"]
+          },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" },
+          "conflict_flag": {
+            "type": "boolean",
+            "description": "True if this assertion conflicts with another assertion for the same parent role.",
+            "default": false
+          }
+        }
+      }
+    },
+    "spouse_assertions": {
+      "type": "array",
+      "description": "All claimed spouse relationships.",
+      "items": {
+        "type": "object",
+        "required": ["spouse_person_id", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "spouse_person_id": { "type": "string", "format": "uuid" },
+          "marriage_year_min": { "type": "integer" },
+          "marriage_year_max": { "type": "integer" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "gender_assertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gender_as_written", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "gender_as_written": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "source_record_ids": {
+      "type": "array",
+      "description": "All RawRecord UUIDs that contributed evidence to this Person entity.",
+      "items": { "type": "string", "format": "uuid" }
+    },
+    "redistribution_license": {
+      "type": "string",
+      "enum": ["CC0", "CC-BY", "CC-BY-SA", "public-domain", "tier2-private"],
+      "description": "Most restrictive license among all contributing source records."
+    },
+    "asserted_by": {
+      "type": "string",
+      "description": "Agent ID or contributor that created this Person entity."
+    },
+    "asserted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of initial entity creation."
+    },
+    "last_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "judge_approved": {
+      "type": "boolean",
+      "description": "True if the judge-agent has validated this entity's assertions.",
+      "default": false
+    },
+    "judge_approved_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

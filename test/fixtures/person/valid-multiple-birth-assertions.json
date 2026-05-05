@@ -1,0 +1,21 @@
+{
+  "person_id": "b1000000-0017-4000-8000-000000000017",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.72,
+  "name_assertions": [
+    {"name_as_written": "Josiah Lincoln", "given_name": "Josiah", "surname": "Lincoln", "name_type": "birth", "confidence": 0.72, "source_record_id": "a1b2c3d4-0006-4000-8000-000000000006", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T10:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1773, "year_max": 1773, "date_type": "exact", "country_code": "US", "confidence": 0.55, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z"},
+    {"year_min": 1771, "year_max": 1775, "date_type": "estimated", "country_code": "US", "confidence": 0.40, "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012", "asserted_by": "extractor-agent-haiku-004", "asserted_at": "2026-05-03T09:00:00Z"}
+  ],
+  "parent_assertions": [
+    {"parent_person_id": "b1000000-0001-4000-8000-000000000001", "relationship_type": "biological", "parent_role": "father", "confidence": 0.72, "source_record_id": "a1b2c3d4-0006-4000-8000-000000000006", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T10:00:00Z", "conflict_flag": false}
+  ],
+  "source_record_ids": ["a1b2c3d4-0001-4000-8000-000000000001", "a1b2c3d4-0006-4000-8000-000000000006", "a1b2c3d4-0012-4000-8000-000000000012"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "orchestrator-agent-sonnet-001",
+  "asserted_at": "2026-05-02T10:00:00Z",
+  "judge_approved": false
+}

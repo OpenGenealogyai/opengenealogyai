@@ -1,0 +1,23 @@
+{
+  "task_id": "c1000000-0005-4000-8000-000000000005",
+  "schema_version": "0.1",
+  "task_type": "build_tree",
+  "status": "pending",
+  "priority": 7,
+  "payload": {
+    "seed_name": "Abraham Lincoln Sr.",
+    "seed_birth_year": 1744,
+    "seed_country": "US",
+    "max_generations": 3,
+    "tier": "tier1"
+  },
+  "cost_cap_usd": 5.00,
+  "retry_count": 0,
+  "max_retries": 2,
+  "created_at": "2026-05-04T08:00:00Z",
+  "created_by": "orchestrator-agent-sonnet-001",
+  "depends_on": [
+    "c1000000-0001-4000-8000-000000000001",
+    "c1000000-0003-4000-8000-000000000003"
+  ]
+}

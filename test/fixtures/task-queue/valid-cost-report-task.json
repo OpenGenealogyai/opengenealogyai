@@ -1,0 +1,18 @@
+{
+  "task_id": "c1000000-0010-4000-8000-000000000010",
+  "schema_version": "0.1",
+  "task_type": "cost_report",
+  "status": "done",
+  "priority": 3,
+  "payload": {"report_date": "2026-05-01", "post_to_slack": true},
+  "result": {"total_usd": 12.43, "haiku_usd": 6.20, "sonnet_usd": 4.80, "opus_usd": 1.43, "slack_posted": true},
+  "assigned_to": "orchestrator-agent-sonnet-001",
+  "cost_usd": 0.05,
+  "cost_cap_usd": 0.50,
+  "retry_count": 0,
+  "max_retries": 1,
+  "created_at": "2026-05-01T23:59:00Z",
+  "created_by": "orchestrator-agent-sonnet-001",
+  "started_at": "2026-05-02T00:00:00Z",
+  "completed_at": "2026-05-02T00:01:00Z"
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "c1000000-0017-4000-8000-000000000017",
+  "schema_version": "0.1",
+  "task_type": "cost_report",
+  "status": "pending",
+  "priority": 1,
+  "payload": {"report_date": "2026-05-05", "post_to_slack": false},
+  "cost_cap_usd": 0.10,
+  "retry_count": 0,
+  "max_retries": 1,
+  "created_at": "2026-05-05T23:59:00Z",
+  "created_by": "orchestrator-agent-sonnet-001"
+}

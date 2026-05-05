@@ -1,0 +1,15 @@
+{
+  "person_id": "b1000000-0019-4000-8000-000000000019",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 1.0,
+  "name_assertions": [
+    {"name_as_written": "Abraham Lincoln", "given_name": "Abraham", "surname": "Lincoln", "name_type": "birth", "confidence": 1.0, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "judge-agent-sonnet-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0003-4000-8000-000000000003"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "judge-agent-sonnet-001",
+  "asserted_at": "2026-05-01T14:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-01T14:01:00Z"
+}

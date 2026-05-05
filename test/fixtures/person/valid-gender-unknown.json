@@ -1,0 +1,17 @@
+{
+  "person_id": "b1000000-0013-4000-8000-000000000013",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.50,
+  "name_assertions": [
+    {"name_as_written": "A. Lincoln", "given_name": "A.", "surname": "Lincoln", "name_type": "unknown", "confidence": 0.50, "source_record_id": "a1b2c3d4-0013-4000-8000-000000000013", "asserted_by": "extractor-agent-haiku-002", "asserted_at": "2026-05-03T10:00:00Z"}
+  ],
+  "gender_assertions": [
+    {"gender_as_written": "unknown", "confidence": 0.50, "source_record_id": "a1b2c3d4-0013-4000-8000-000000000013", "asserted_by": "extractor-agent-haiku-002", "asserted_at": "2026-05-03T10:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0013-4000-8000-000000000013"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-002",
+  "asserted_at": "2026-05-03T10:00:00Z",
+  "judge_approved": false
+}

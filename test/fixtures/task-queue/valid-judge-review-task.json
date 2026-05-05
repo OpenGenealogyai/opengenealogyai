@@ -1,0 +1,18 @@
+{
+  "task_id": "c1000000-0002-4000-8000-000000000002",
+  "schema_version": "0.1",
+  "task_type": "judge_review",
+  "status": "processing",
+  "priority": 8,
+  "payload": {
+    "person_id": "b1000000-0001-4000-8000-000000000001",
+    "assertions_to_review": ["parent_assertions", "birth_assertions"]
+  },
+  "assigned_to": "judge-agent-sonnet-001",
+  "cost_cap_usd": 2.00,
+  "retry_count": 0,
+  "max_retries": 1,
+  "created_at": "2026-05-01T11:00:00Z",
+  "created_by": "orchestrator-agent-sonnet-001",
+  "started_at": "2026-05-01T11:05:00Z"
+}

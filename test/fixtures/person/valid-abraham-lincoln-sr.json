@@ -1,0 +1,101 @@
+{
+  "person_id": "b1000000-0001-4000-8000-000000000001",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.82,
+  "name_assertions": [
+    {
+      "name_as_written": "Abraham Lincoln",
+      "given_name": "Abraham",
+      "surname": "Lincoln",
+      "name_type": "birth",
+      "confidence": 0.82,
+      "source_record_id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "asserted_by": "extractor-agent-haiku-001",
+      "asserted_at": "2026-05-01T12:00:00Z"
+    },
+    {
+      "name_as_written": "Abraham Lincoln Sr.",
+      "given_name": "Abraham",
+      "surname": "Lincoln",
+      "name_type": "variant_spelling",
+      "confidence": 0.75,
+      "source_record_id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "asserted_by": "extractor-agent-haiku-003",
+      "asserted_at": "2026-05-02T13:00:00Z"
+    }
+  ],
+  "birth_assertions": [
+    {
+      "year_min": 1744,
+      "year_max": 1744,
+      "date_type": "estimated",
+      "place_as_written": "Virginia Colony",
+      "country_code": "US",
+      "state_province": "Virginia",
+      "confidence": 0.65,
+      "source_record_id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "asserted_by": "extractor-agent-haiku-003",
+      "asserted_at": "2026-05-02T13:00:00Z"
+    }
+  ],
+  "death_assertions": [
+    {
+      "year_min": 1786,
+      "year_max": 1786,
+      "date_type": "estimated",
+      "place_as_written": "Jefferson County, Kentucky",
+      "country_code": "US",
+      "state_province": "Kentucky",
+      "cause_as_written": "Killed by Indians",
+      "confidence": 0.88,
+      "source_record_id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "asserted_by": "extractor-agent-haiku-003",
+      "asserted_at": "2026-05-02T13:00:00Z"
+    }
+  ],
+  "parent_assertions": [
+    {
+      "parent_person_id": "b1000000-0010-4000-8000-000000000010",
+      "relationship_type": "biological",
+      "parent_role": "father",
+      "confidence": 0.55,
+      "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "asserted_by": "extractor-agent-haiku-004",
+      "asserted_at": "2026-05-03T09:00:00Z",
+      "conflict_flag": false
+    }
+  ],
+  "spouse_assertions": [
+    {
+      "spouse_person_id": "b1000000-0002-4000-8000-000000000002",
+      "marriage_year_min": 1770,
+      "marriage_year_max": 1775,
+      "confidence": 0.78,
+      "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "asserted_by": "extractor-agent-haiku-004",
+      "asserted_at": "2026-05-03T09:00:00Z"
+    }
+  ],
+  "gender_assertions": [
+    {
+      "gender_as_written": "M",
+      "confidence": 0.99,
+      "source_record_id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "asserted_by": "extractor-agent-haiku-001",
+      "asserted_at": "2026-05-01T12:00:00Z"
+    }
+  ],
+  "source_record_ids": [
+    "a1b2c3d4-0002-4000-8000-000000000002",
+    "a1b2c3d4-0004-4000-8000-000000000004",
+    "a1b2c3d4-0009-4000-8000-000000000009",
+    "a1b2c3d4-0012-4000-8000-000000000012"
+  ],
+  "redistribution_license": "public-domain",
+  "asserted_by": "orchestrator-agent-sonnet-001",
+  "asserted_at": "2026-05-01T10:00:00Z",
+  "last_updated_at": "2026-05-03T09:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-03T10:00:00Z"
+}

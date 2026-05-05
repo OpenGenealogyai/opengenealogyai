@@ -1,0 +1,48 @@
+{
+  "person_id": "b1000000-0003-4000-8000-000000000003",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.60,
+  "name_assertions": [
+    {
+      "name_as_written": "Thomas Lincoln",
+      "given_name": "Thomas",
+      "surname": "Lincoln",
+      "name_type": "birth",
+      "confidence": 0.90,
+      "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "asserted_by": "extractor-agent-haiku-001",
+      "asserted_at": "2026-05-01T12:00:00Z"
+    }
+  ],
+  "parent_assertions": [
+    {
+      "parent_person_id": "b1000000-0001-4000-8000-000000000001",
+      "relationship_type": "biological",
+      "parent_role": "father",
+      "confidence": 0.85,
+      "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "asserted_by": "extractor-agent-haiku-001",
+      "asserted_at": "2026-05-01T12:00:00Z",
+      "conflict_flag": false
+    },
+    {
+      "parent_person_id": "b1000000-0050-4000-8000-000000000050",
+      "relationship_type": "biological",
+      "parent_role": "father",
+      "confidence": 0.22,
+      "source_record_id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "asserted_by": "extractor-agent-haiku-002",
+      "asserted_at": "2026-05-02T10:00:00Z",
+      "conflict_flag": true
+    }
+  ],
+  "source_record_ids": [
+    "a1b2c3d4-0001-4000-8000-000000000001",
+    "a1b2c3d4-0006-4000-8000-000000000006"
+  ],
+  "redistribution_license": "public-domain",
+  "asserted_by": "orchestrator-agent-sonnet-001",
+  "asserted_at": "2026-05-01T12:00:00Z",
+  "judge_approved": false
+}

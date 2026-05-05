@@ -1,0 +1,14 @@
+{
+  "person_id": "b1000000-0011-4000-8000-000000000011",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.22,
+  "name_assertions": [
+    {"name_as_written": "John Linkon", "surname": "Linkon", "name_type": "variant_spelling", "confidence": 0.22, "source_record_id": "a1b2c3d4-0014-4000-8000-000000000014", "asserted_by": "extractor-agent-haiku-003", "asserted_at": "2026-05-03T11:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0014-4000-8000-000000000014"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-003",
+  "asserted_at": "2026-05-03T11:00:00Z",
+  "judge_approved": false
+}

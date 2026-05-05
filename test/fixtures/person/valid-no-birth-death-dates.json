@@ -1,0 +1,14 @@
+{
+  "person_id": "b1000000-0008-4000-8000-000000000008",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.35,
+  "name_assertions": [
+    {"name_as_written": "Abram Linkhorn", "surname": "Linkhorn", "name_type": "variant_spelling", "confidence": 0.35, "source_record_id": "a1b2c3d4-0016-4000-8000-000000000016", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-03T12:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0016-4000-8000-000000000016"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-03T12:00:00Z",
+  "judge_approved": false
+}

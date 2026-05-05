@@ -1,0 +1,14 @@
+{
+  "person_id": "b1000000-0018-4000-8000-000000000018",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.0,
+  "name_assertions": [
+    {"name_as_written": "Unknown", "name_type": "unknown", "confidence": 0.0, "source_record_id": "a1b2c3d4-0015-4000-8000-000000000015", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T00:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0015-4000-8000-000000000015"],
+  "redistribution_license": "tier2-private",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-01T00:00:00Z",
+  "judge_approved": false
+}

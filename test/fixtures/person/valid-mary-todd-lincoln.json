@@ -1,0 +1,25 @@
+{
+  "person_id": "b1000000-0006-4000-8000-000000000006",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.95,
+  "name_assertions": [
+    {"name_as_written": "Mary Todd", "given_name": "Mary", "surname": "Todd", "name_type": "birth", "confidence": 0.95, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"},
+    {"name_as_written": "Mary Lincoln", "given_name": "Mary", "surname": "Lincoln", "name_type": "married", "confidence": 0.99, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1818, "year_max": 1818, "month": 12, "day": 13, "date_type": "exact", "place_as_written": "Lexington, Kentucky", "country_code": "US", "confidence": 0.98, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "death_assertions": [
+    {"year_min": 1882, "year_max": 1882, "month": 7, "day": 16, "date_type": "exact", "place_as_written": "Springfield, Illinois", "country_code": "US", "confidence": 0.99, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "spouse_assertions": [
+    {"spouse_person_id": "b1000000-0007-4000-8000-000000000007", "marriage_year_min": 1842, "marriage_year_max": 1842, "confidence": 0.99, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0003-4000-8000-000000000003"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-01T14:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-04T09:00:00Z"
+}

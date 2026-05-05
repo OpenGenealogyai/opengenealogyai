@@ -1,0 +1,19 @@
+{
+  "task_id": "c1000000-0016-4000-8000-000000000016",
+  "schema_version": "0.1",
+  "task_type": "resolve_conflict",
+  "status": "done",
+  "priority": 9,
+  "payload": {"person_id": "b1000000-0012-4000-8000-000000000012"},
+  "result": {"resolution": "adoptive_mother_confirmed", "winning_parent_id": "b1000000-0030-4000-8000-000000000030", "confidence": 0.72},
+  "assigned_to": "opus-conflict-resolver",
+  "cost_usd": 4.20,
+  "cost_cap_usd": 5.00,
+  "retry_count": 0,
+  "max_retries": 1,
+  "escalation_reason": "Conflicting biological vs adoptive mother with confidence gap 0.05",
+  "created_at": "2026-05-04T15:00:00Z",
+  "created_by": "judge-agent-sonnet-001",
+  "started_at": "2026-05-04T15:10:00Z",
+  "completed_at": "2026-05-04T15:45:00Z"
+}

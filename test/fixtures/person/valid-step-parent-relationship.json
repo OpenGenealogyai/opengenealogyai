@@ -1,0 +1,17 @@
+{
+  "person_id": "b1000000-0016-4000-8000-000000000016",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.68,
+  "name_assertions": [
+    {"name_as_written": "Sarah Bush Johnston Lincoln", "given_name": "Sarah", "surname": "Bush Johnston", "name_type": "birth", "confidence": 0.68, "source_record_id": "a1b2c3d4-0011-4000-8000-000000000011", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T15:00:00Z"}
+  ],
+  "parent_assertions": [
+    {"parent_person_id": "b1000000-0005-4000-8000-000000000005", "relationship_type": "step", "parent_role": "father", "confidence": 0.88, "source_record_id": "a1b2c3d4-0011-4000-8000-000000000011", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T15:00:00Z", "conflict_flag": false}
+  ],
+  "source_record_ids": ["a1b2c3d4-0011-4000-8000-000000000011"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-02T15:00:00Z",
+  "judge_approved": false
+}

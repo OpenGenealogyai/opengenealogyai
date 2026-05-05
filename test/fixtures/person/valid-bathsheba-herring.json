@@ -1,0 +1,37 @@
+{
+  "person_id": "b1000000-0002-4000-8000-000000000002",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.71,
+  "name_assertions": [
+    {
+      "name_as_written": "Bathsheba Herring",
+      "given_name": "Bathsheba",
+      "surname": "Herring",
+      "name_type": "birth",
+      "confidence": 0.71,
+      "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "asserted_by": "extractor-agent-haiku-004",
+      "asserted_at": "2026-05-03T09:00:00Z"
+    }
+  ],
+  "birth_assertions": [
+    {
+      "year_min": 1742,
+      "year_max": 1750,
+      "date_type": "estimated",
+      "place_as_written": "Virginia",
+      "country_code": "US",
+      "confidence": 0.45,
+      "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "asserted_by": "extractor-agent-haiku-004",
+      "asserted_at": "2026-05-03T09:00:00Z"
+    }
+  ],
+  "parent_assertions": [],
+  "source_record_ids": ["a1b2c3d4-0012-4000-8000-000000000012"],
+  "redistribution_license": "CC-BY-SA",
+  "asserted_by": "extractor-agent-haiku-004",
+  "asserted_at": "2026-05-03T09:00:00Z",
+  "judge_approved": false
+}

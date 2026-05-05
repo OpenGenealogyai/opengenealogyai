@@ -1,0 +1,30 @@
+{
+  "person_id": "b1000000-0023-4000-8000-000000000023",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.94,
+  "name_assertions": [
+    {"name_as_written": "Abraham Lincoln", "given_name": "Abraham", "surname": "Lincoln", "name_type": "birth", "confidence": 0.99, "source_record_id": "a1b2c3d4-0003-4000-8000-000000000003", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T14:00:00Z"}
+  ],
+  "birth_assertions": [
+    {"year_min": 1809, "year_max": 1809, "month": 2, "day": 12, "date_type": "exact", "place_as_written": "Hardin County, Kentucky", "country_code": "US", "confidence": 0.98, "source_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z"}
+  ],
+  "death_assertions": [
+    {"year_min": 1865, "year_max": 1865, "month": 4, "day": 15, "date_type": "exact", "place_as_written": "Washington, D.C.", "country_code": "US", "cause_as_written": "Gunshot wound", "confidence": 1.0, "source_record_id": "a1b2c3d4-0004-4000-8000-000000000004", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T15:00:00Z"}
+  ],
+  "source_record_ids": [
+    "a1b2c3d4-0001-4000-8000-000000000001",
+    "a1b2c3d4-0002-4000-8000-000000000002",
+    "a1b2c3d4-0003-4000-8000-000000000003",
+    "a1b2c3d4-0004-4000-8000-000000000004",
+    "a1b2c3d4-0007-4000-8000-000000000007",
+    "a1b2c3d4-0014-4000-8000-000000000014",
+    "a1b2c3d4-0018-4000-8000-000000000018"
+  ],
+  "redistribution_license": "public-domain",
+  "asserted_by": "orchestrator-agent-sonnet-001",
+  "asserted_at": "2026-05-01T10:00:00Z",
+  "last_updated_at": "2026-05-04T12:00:00Z",
+  "judge_approved": true,
+  "judge_approved_at": "2026-05-04T13:00:00Z"
+}

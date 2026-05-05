@@ -1,0 +1,16 @@
+{
+  "person_id": "b1000000-0025-4000-8000-000000000025",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.66,
+  "name_assertions": [
+    {"name_as_written": "Nancy Lincoln", "given_name": "Nancy", "surname": "Lincoln", "name_type": "birth", "confidence": 0.66, "source_record_id": "a1b2c3d4-0011-4000-8000-000000000011", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-01T12:00:00Z"},
+    {"name_as_written": "Nancy Grigsby", "given_name": "Nancy", "surname": "Grigsby", "name_type": "married", "confidence": 0.55, "source_record_id": "a1b2c3d4-0012-4000-8000-000000000012", "asserted_by": "extractor-agent-haiku-004", "asserted_at": "2026-05-10T08:00:00Z"}
+  ],
+  "source_record_ids": ["a1b2c3d4-0011-4000-8000-000000000011", "a1b2c3d4-0012-4000-8000-000000000012"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-01T12:00:00Z",
+  "last_updated_at": "2026-05-10T08:30:00Z",
+  "judge_approved": false
+}

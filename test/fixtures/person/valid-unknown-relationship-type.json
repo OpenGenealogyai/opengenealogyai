@@ -1,0 +1,17 @@
+{
+  "person_id": "b1000000-0024-4000-8000-000000000024",
+  "schema_version": "0.1",
+  "is_living": false,
+  "composite_confidence": 0.42,
+  "name_assertions": [
+    {"name_as_written": "Mordecai Lincoln II", "given_name": "Mordecai", "surname": "Lincoln", "name_type": "birth", "confidence": 0.42, "source_record_id": "a1b2c3d4-0006-4000-8000-000000000006", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T10:00:00Z"}
+  ],
+  "parent_assertions": [
+    {"parent_person_id": "b1000000-0009-4000-8000-000000000009", "relationship_type": "unknown", "parent_role": "unknown", "confidence": 0.42, "source_record_id": "a1b2c3d4-0006-4000-8000-000000000006", "asserted_by": "extractor-agent-haiku-001", "asserted_at": "2026-05-02T10:00:00Z", "conflict_flag": false}
+  ],
+  "source_record_ids": ["a1b2c3d4-0006-4000-8000-000000000006"],
+  "redistribution_license": "public-domain",
+  "asserted_by": "extractor-agent-haiku-001",
+  "asserted_at": "2026-05-02T10:00:00Z",
+  "judge_approved": false
+}

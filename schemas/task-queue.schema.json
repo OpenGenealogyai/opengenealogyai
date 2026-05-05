@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengenealogyai.org/schemas/v0.1/task-queue.schema.json",
+  "title": "TaskQueue",
+  "description": "A unit of distributed work dispatched by the Orchestrator agent and consumed by worker agents.",
+  "type": "object",
+  "required": ["task_id", "task_type", "status", "created_at", "created_by"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique task identifier."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "extract_record",
+        "validate_record",
+        "merge_person",
+        "judge_review",
+        "resolve_conflict",
+        "ingest_to_qdrant",
+        "build_tree",
+        "fetch_internet_archive",
+        "cost_report",
+        "other"
+      ],
+      "description": "Category of work to be performed."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "processing", "done", "failed", "escalated"],
+      "description": "Current lifecycle state. Transitions: pending -> processing -> done|failed|escalated."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5,
+      "description": "1=lowest, 10=highest. Judge tasks default 8, cost-report tasks default 3."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Task-specific input data. Schema varies by task_type.",
+      "additionalProperties": true
+    },
+    "result": {
+      "type": "object",
+      "description": "Task output set by the consuming agent on completion.",
+      "additionalProperties": true
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Agent ID currently processing this task. Null when pending."
+    },
+    "cost_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Actual API cost incurred by the processing agent."
+    },
+    "cost_cap_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Maximum allowed cost for this task. Agent must stop and escalate if exceeded."
+    },
+    "retry_count": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Number of times this task has been retried after failure."
+    },
+    "max_retries": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 3
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error description if status is failed or escalated."
+    },
+    "escalation_reason": {
+      "type": "string",
+      "description": "Why this task was escalated to the Opus conflict resolver."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Agent ID that created this task."
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "queue_file_path": {
+      "type": "string",
+      "description": "Filesystem path in the file-based queue (inbox/processing/done/failed). Set by orchestrator."
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "Task IDs that must be in status=done before this task can start.",
+      "items": { "type": "string", "format": "uuid" }
+    }
+  },
+  "additionalProperties": false
+}
