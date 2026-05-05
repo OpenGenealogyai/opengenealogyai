@@ -1,5 +1,5 @@
-.env
-*.pyc
-__pycache__/
 node_modules/
-logos/
+.env
+*.log
+logs/
+db/staging.db
