@@ -1,0 +1,21 @@
+{
+  "record_id": "a1b2c3d4-0001-4000-8000-000000000001",
+  "schema_version": "0.1",
+  "record_type": "birth_certificate",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Thomas Lincoln", "role": "subject", "age_as_written": "newborn"},
+    {"name_as_written": "Abraham Lincoln Sr.", "role": "parent"},
+    {"name_as_written": "Bathsheba Herring", "role": "parent"}
+  ],
+  "record_date": {"year_min": 1778, "year_max": 1778, "month": 1, "day": 6, "date_type": "exact"},
+  "location": {"place_as_written": "Virginia Colony", "country_code": "US", "state_province": "Virginia"},
+  "transcription": "Be it known that Thomas Lincoln son of Abraham Lincoln and Bathsheba Herring was born this 6th day of January 1778.",
+  "language": "en",
+  "source_url": "https://archive.org/details/virginia-births-1778",
+  "extraction_confidence": 0.92,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-01T12:00:00Z",
+  "sensitive_data_redacted": false
+}

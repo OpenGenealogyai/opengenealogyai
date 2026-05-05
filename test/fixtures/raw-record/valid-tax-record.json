@@ -1,0 +1,19 @@
+{
+  "record_id": "a1b2c3d4-0013-4000-8000-000000000013",
+  "schema_version": "0.1",
+  "record_type": "tax_record",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln", "role": "subject"}
+  ],
+  "record_date": {"year_min": 1787, "year_max": 1787, "date_type": "exact"},
+  "location": {"place_as_written": "Rockingham County, Virginia", "country_code": "US", "state_province": "Virginia", "county_district": "Rockingham"},
+  "transcription": "Abraham Lincoln, Rockingham County tax list 1787, 1 tithe, 150 acres on the North River.",
+  "language": "en",
+  "source_url": "https://archive.org/details/rockingham-county-va-tax-1787",
+  "extraction_confidence": 0.86,
+  "extracted_by": "extractor-agent-haiku-002",
+  "extracted_at": "2026-05-03T10:00:00Z",
+  "sensitive_data_redacted": false
+}

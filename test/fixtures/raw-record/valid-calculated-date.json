@@ -1,0 +1,19 @@
+{
+  "record_id": "a1b2c3d4-0020-4000-8000-000000000020",
+  "schema_version": "0.1",
+  "record_type": "census_row",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln Sr.", "role": "subject", "age_as_written": "42"}
+  ],
+  "record_date": {"year_min": 1786, "year_max": 1786, "date_type": "calculated"},
+  "location": {"place_as_written": "Jefferson County, Kentucky", "country_code": "US", "state_province": "Kentucky"},
+  "transcription": "Abraham Lincoln, 42, farmer, Jefferson County. [Date calculated from age at death recorded elsewhere]",
+  "language": "en",
+  "source_url": "https://archive.org/details/jefferson-county-ky-1786-tithables",
+  "extraction_confidence": 0.62,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-04T09:00:00Z",
+  "sensitive_data_redacted": false
+}

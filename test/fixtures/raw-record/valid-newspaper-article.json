@@ -1,0 +1,19 @@
+{
+  "record_id": "a1b2c3d4-0014-4000-8000-000000000014",
+  "schema_version": "0.1",
+  "record_type": "newspaper_article",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln Esq.", "role": "subject"}
+  ],
+  "record_date": {"year_min": 1836, "year_max": 1836, "month": 6, "day": 13, "date_type": "exact"},
+  "location": {"place_as_written": "Sangamo Journal, Springfield, Illinois", "country_code": "US", "state_province": "Illinois"},
+  "transcription": "Abraham Lincoln Esq. has been admitted to the bar of the State of Illinois and is now prepared to practice law in all courts.",
+  "language": "en",
+  "source_url": "https://archive.org/details/sangamo-journal-june-1836",
+  "extraction_confidence": 0.91,
+  "extracted_by": "extractor-agent-haiku-003",
+  "extracted_at": "2026-05-03T11:00:00Z",
+  "sensitive_data_redacted": false
+}

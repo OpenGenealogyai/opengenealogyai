@@ -1,0 +1,20 @@
+{
+  "record_id": "a1b2c3d4-0009-4000-8000-000000000009",
+  "schema_version": "0.1",
+  "record_type": "gravestone",
+  "redistribution_license": "CC0",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln Sr.", "role": "subject"}
+  ],
+  "record_date": {"year_min": 1786, "year_max": 1786, "date_type": "estimated"},
+  "location": {"place_as_written": "Long Run Baptist Church Cemetery, Jefferson County, Kentucky", "country_code": "US", "state_province": "Kentucky"},
+  "transcription": "ABRAHAM LINCOLN SR. Born approx 1744 Virginia. Killed by Indians 1786. Father of Thomas Lincoln.",
+  "language": "en",
+  "image_url": "https://archive.org/download/long-run-cemetery/lincoln-sr-stone.jpg",
+  "source_url": "https://archive.org/details/long-run-cemetery-jefferson-county",
+  "extraction_confidence": 0.96,
+  "extracted_by": "extractor-agent-haiku-003",
+  "extracted_at": "2026-05-02T13:00:00Z",
+  "sensitive_data_redacted": false
+}

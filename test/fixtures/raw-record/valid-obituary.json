@@ -1,0 +1,21 @@
+{
+  "record_id": "a1b2c3d4-0011-4000-8000-000000000011",
+  "schema_version": "0.1",
+  "record_type": "obituary",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Thomas Lincoln", "role": "subject"},
+    {"name_as_written": "Abraham Lincoln", "role": "child"},
+    {"name_as_written": "Sarah Lincoln Grigsby", "role": "child"}
+  ],
+  "record_date": {"year_min": 1851, "year_max": 1851, "month": 1, "day": 17, "date_type": "exact"},
+  "location": {"place_as_written": "Coles County, Illinois", "country_code": "US", "state_province": "Illinois"},
+  "transcription": "Died January 17 1851 Thomas Lincoln aged 73 years. Survived by son Abraham Lincoln of Springfield and daughter Sarah Lincoln Grigsby.",
+  "language": "en",
+  "source_url": "https://archive.org/details/coles-county-gazette-jan-1851",
+  "extraction_confidence": 0.93,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-02T15:00:00Z",
+  "sensitive_data_redacted": false
+}

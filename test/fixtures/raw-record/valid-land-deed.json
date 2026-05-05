@@ -1,0 +1,22 @@
+{
+  "record_id": "a1b2c3d4-0010-4000-8000-000000000010",
+  "schema_version": "0.1",
+  "record_type": "land_deed",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Thomas Lincoln", "role": "subject"},
+    {"name_as_written": "Charles Melton", "role": "witness"},
+    {"name_as_written": "James Hardin", "role": "witness"}
+  ],
+  "record_date": {"year_min": 1803, "year_max": 1803, "date_type": "exact"},
+  "location": {"place_as_written": "Hardin County, Kentucky", "country_code": "US", "state_province": "Kentucky", "county_district": "Hardin"},
+  "transcription": "Thomas Lincoln grants 238 acres on the South Fork of Nolin Creek, Hardin County, witnessed by Charles Melton and James Hardin.",
+  "language": "en",
+  "source_url": "https://archive.org/details/hardin-county-deeds-1803",
+  "repository": "Hardin County Clerk",
+  "extraction_confidence": 0.90,
+  "extracted_by": "extractor-agent-haiku-002",
+  "extracted_at": "2026-05-02T14:00:00Z",
+  "sensitive_data_redacted": false
+}

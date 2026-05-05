@@ -1,0 +1,22 @@
+{
+  "record_id": "a1b2c3d4-0003-4000-8000-000000000003",
+  "schema_version": "0.1",
+  "record_type": "marriage_certificate",
+  "redistribution_license": "CC0",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln", "role": "subject"},
+    {"name_as_written": "Mary Todd", "role": "spouse"},
+    {"name_as_written": "Rev. Charles Dresser", "role": "officiant"},
+    {"name_as_written": "James Matheny", "role": "witness"}
+  ],
+  "record_date": {"year_min": 1842, "year_max": 1842, "month": 11, "day": 4, "date_type": "exact"},
+  "location": {"place_as_written": "Springfield, Illinois", "country_code": "US", "state_province": "Illinois", "city_town": "Springfield"},
+  "transcription": "Abraham Lincoln and Mary Todd were united in marriage on the 4th day of November 1842 by Rev. Charles Dresser in the presence of James Matheny.",
+  "language": "en",
+  "source_url": "https://archive.org/details/illinois-marriage-1842-sangamon",
+  "extraction_confidence": 0.97,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-01T14:00:00Z",
+  "sensitive_data_redacted": false
+}

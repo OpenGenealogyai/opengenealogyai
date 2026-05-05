@@ -1,0 +1,20 @@
+{
+  "record_id": "a1b2c3d4-0004-4000-8000-000000000004",
+  "schema_version": "0.1",
+  "record_type": "death_certificate",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln Sr.", "role": "subject", "age_as_written": "approximately 42"},
+    {"name_as_written": "Thomas Lincoln", "role": "informant"}
+  ],
+  "record_date": {"year_min": 1786, "year_max": 1786, "date_type": "estimated"},
+  "location": {"place_as_written": "Jefferson County, Kentucky", "country_code": "US", "state_province": "Kentucky", "county_district": "Jefferson"},
+  "transcription": "Abraham Lincoln, farmer, died in Jefferson County Kentucky, aged approximately 42 years. Informant: Thomas Lincoln, son.",
+  "language": "en",
+  "source_url": "https://archive.org/details/kentucky-death-records-1786",
+  "extraction_confidence": 0.71,
+  "extracted_by": "extractor-agent-haiku-003",
+  "extracted_at": "2026-05-01T15:00:00Z",
+  "sensitive_data_redacted": false
+}

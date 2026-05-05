@@ -1,0 +1,22 @@
+{
+  "record_id": "a1b2c3d4-0006-4000-8000-000000000006",
+  "schema_version": "0.1",
+  "record_type": "probate_record",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Mordecai Lincoln", "role": "subject"},
+    {"name_as_written": "Abraham Lincoln", "role": "child"},
+    {"name_as_written": "Josiah Lincoln", "role": "child"},
+    {"name_as_written": "Mary Lincoln", "role": "child"}
+  ],
+  "record_date": {"year_min": 1786, "year_max": 1786, "date_type": "exact"},
+  "location": {"place_as_written": "Jefferson County, Kentucky", "country_code": "US", "state_province": "Kentucky"},
+  "transcription": "Will of Mordecai Lincoln of Jefferson County Kentucky, leaving land to sons Abraham, Josiah and daughter Mary.",
+  "language": "en",
+  "source_url": "https://archive.org/details/jefferson-county-probate-1786",
+  "extraction_confidence": 0.85,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-02T10:00:00Z",
+  "sensitive_data_redacted": false
+}

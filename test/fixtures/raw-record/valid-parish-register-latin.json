@@ -1,0 +1,24 @@
+{
+  "record_id": "a1b2c3d4-0005-4000-8000-000000000005",
+  "schema_version": "0.1",
+  "record_type": "parish_register",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Jacobus Linkoln", "role": "subject"},
+    {"name_as_written": "Henricus Linkoln", "role": "parent"},
+    {"name_as_written": "Maria Shipley", "role": "parent"}
+  ],
+  "record_date": {"year_min": 1637, "year_max": 1638, "date_type": "range"},
+  "location": {"place_as_written": "Hingham, Norfolk, England", "country_code": "GB", "state_province": "Norfolk", "city_town": "Hingham"},
+  "transcription": "Jacobus Linkoln filius Henrici Linkoln et Mariae Shipley baptizatus est die 10 Januarii 1637.",
+  "language": "la",
+  "source_url": "https://archive.org/details/hingham-norfolk-parish-1637",
+  "digital_object_id": "ark:/13960/hgm-parish-1637",
+  "repository": "Norfolk Record Office",
+  "collection": "Hingham Parish Registers",
+  "extraction_confidence": 0.79,
+  "extracted_by": "extractor-agent-haiku-004",
+  "extracted_at": "2026-05-02T09:00:00Z",
+  "sensitive_data_redacted": false
+}

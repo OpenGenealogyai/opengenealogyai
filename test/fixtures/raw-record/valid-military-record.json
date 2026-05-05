@@ -1,0 +1,20 @@
+{
+  "record_id": "a1b2c3d4-0007-4000-8000-000000000007",
+  "schema_version": "0.1",
+  "record_type": "military_record",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln", "role": "subject", "age_as_written": "23", "gender_as_written": "Male"}
+  ],
+  "record_date": {"year_min": 1832, "year_max": 1832, "date_type": "exact"},
+  "location": {"place_as_written": "Sangamon County, Illinois", "country_code": "US", "state_province": "Illinois"},
+  "transcription": "Abraham Lincoln, private, Captain Jacob Early's company, Illinois Volunteers, mustered in April 21, 1832.",
+  "language": "en",
+  "source_url": "https://archive.org/details/illinois-militia-1832",
+  "repository": "Illinois State Archives",
+  "extraction_confidence": 0.94,
+  "extracted_by": "extractor-agent-haiku-002",
+  "extracted_at": "2026-05-02T11:00:00Z",
+  "sensitive_data_redacted": false
+}

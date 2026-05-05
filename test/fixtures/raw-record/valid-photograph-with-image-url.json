@@ -1,0 +1,24 @@
+{
+  "record_id": "a1b2c3d4-0018-4000-8000-000000000018",
+  "schema_version": "0.1",
+  "record_type": "photograph",
+  "redistribution_license": "CC-BY",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln", "role": "subject"},
+    {"name_as_written": "Mathew Brady", "role": "other"}
+  ],
+  "record_date": {"year_min": 1860, "year_max": 1865, "date_type": "range"},
+  "location": {"place_as_written": "Brady's Gallery, Washington DC", "country_code": "US"},
+  "transcription": "Portrait photograph of Abraham Lincoln. Attributed to Mathew Brady studio.",
+  "language": "en",
+  "image_url": "https://archive.org/download/lincoln-brady-1862/lincoln-brady-portrait.jpg",
+  "source_url": "https://archive.org/details/lincoln-brady-1862",
+  "digital_object_id": "ark:/13960/brady-lincoln-1862",
+  "repository": "Library of Congress",
+  "collection": "Brady-Handy Photograph Collection",
+  "extraction_confidence": 0.88,
+  "extracted_by": "extractor-agent-haiku-002",
+  "extracted_at": "2026-05-03T14:00:00Z",
+  "sensitive_data_redacted": false
+}

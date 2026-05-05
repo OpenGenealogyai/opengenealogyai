@@ -1,0 +1,24 @@
+{
+  "record_id": "a1b2c3d4-0002-4000-8000-000000000002",
+  "schema_version": "0.1",
+  "record_type": "census_row",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abraham Lincoln", "role": "subject", "age_as_written": "45", "gender_as_written": "M"},
+    {"name_as_written": "Mary Lincoln", "role": "spouse", "age_as_written": "38", "gender_as_written": "F"},
+    {"name_as_written": "Thomas Lincoln", "role": "child", "age_as_written": "12"}
+  ],
+  "record_date": {"year_min": 1820, "year_max": 1820, "date_type": "exact"},
+  "location": {"place_as_written": "Hardin County, Kentucky", "country_code": "US", "state_province": "Kentucky", "county_district": "Hardin"},
+  "transcription": "Abraham Lincoln, 45, farmer. Mary Lincoln, 38. Thomas Lincoln, 12.",
+  "language": "en",
+  "source_url": "https://archive.org/details/1820-us-census-hardin-county",
+  "digital_object_id": "ark:/13960/t9h43x123",
+  "repository": "National Archives",
+  "collection": "1820 US Federal Census",
+  "extraction_confidence": 0.88,
+  "extracted_by": "extractor-agent-haiku-002",
+  "extracted_at": "2026-05-01T13:00:00Z",
+  "sensitive_data_redacted": false
+}

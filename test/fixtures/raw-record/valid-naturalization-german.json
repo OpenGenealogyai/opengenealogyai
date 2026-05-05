@@ -1,0 +1,20 @@
+{
+  "record_id": "a1b2c3d4-0019-4000-8000-000000000019",
+  "schema_version": "0.1",
+  "record_type": "naturalization_record",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Johann Heinrich Schlink", "role": "subject", "age_as_written": "32"},
+    {"name_as_written": "Friedrich Bauer", "role": "witness"}
+  ],
+  "record_date": {"year_min": 1854, "year_max": 1854, "date_type": "exact"},
+  "location": {"place_as_written": "Cincinnati, Hamilton County, Ohio", "country_code": "US", "state_province": "Ohio", "city_town": "Cincinnati"},
+  "transcription": "Johann Heinrich Schlink, born Wuertemberg, aged 32, renounces allegiance to the King of Wuertemberg. Witness: Friedrich Bauer.",
+  "language": "de",
+  "source_url": "https://archive.org/details/hamilton-county-naturalization-1854",
+  "extraction_confidence": 0.77,
+  "extracted_by": "extractor-agent-haiku-004",
+  "extracted_at": "2026-05-03T15:00:00Z",
+  "sensitive_data_redacted": false
+}

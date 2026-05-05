@@ -1,0 +1,25 @@
+{
+  "record_id": "a1b2c3d4-0012-4000-8000-000000000012",
+  "schema_version": "0.1",
+  "record_type": "family_bible",
+  "redistribution_license": "CC-BY-SA",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Bathsheba Herring", "role": "subject"},
+    {"name_as_written": "Abraham Lincoln", "role": "spouse"},
+    {"name_as_written": "Mordecai Lincoln", "role": "child"},
+    {"name_as_written": "Josiah Lincoln", "role": "child"},
+    {"name_as_written": "Thomas Lincoln", "role": "child"},
+    {"name_as_written": "Mary Lincoln", "role": "child"},
+    {"name_as_written": "Nancy Lincoln", "role": "child"}
+  ],
+  "record_date": {"year_min": 1780, "year_max": 1800, "date_type": "range"},
+  "location": {"place_as_written": "Virginia / Kentucky", "country_code": "US"},
+  "transcription": "Family record from the Lincoln family bible. Bathsheba Herring married Abraham Lincoln. Children: Mordecai, Josiah, Thomas, Mary, Nancy.",
+  "language": "en",
+  "source_url": "https://archive.org/details/lincoln-family-bible-herring",
+  "extraction_confidence": 0.75,
+  "extracted_by": "extractor-agent-haiku-004",
+  "extracted_at": "2026-05-03T09:00:00Z",
+  "sensitive_data_redacted": false
+}

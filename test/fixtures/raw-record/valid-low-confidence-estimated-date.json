@@ -1,0 +1,19 @@
+{
+  "record_id": "a1b2c3d4-0016-4000-8000-000000000016",
+  "schema_version": "0.1",
+  "record_type": "census_row",
+  "redistribution_license": "public-domain",
+  "is_living_flag": false,
+  "persons_mentioned": [
+    {"name_as_written": "Abram Linkhorn", "role": "subject", "age_as_written": "abt 40"}
+  ],
+  "record_date": {"year_min": 1750, "year_max": 1760, "date_type": "estimated"},
+  "location": {"place_as_written": "Augusta County, Virginia", "country_code": "US"},
+  "transcription": "Abram Linkhorn, abt 40, tythable in Augusta County.",
+  "language": "en",
+  "source_url": "https://archive.org/details/augusta-county-va-tithables-1755",
+  "extraction_confidence": 0.41,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-03T12:00:00Z",
+  "sensitive_data_redacted": false
+}

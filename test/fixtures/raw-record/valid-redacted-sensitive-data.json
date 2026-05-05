@@ -1,0 +1,20 @@
+{
+  "record_id": "a1b2c3d4-0017-4000-8000-000000000017",
+  "schema_version": "0.1",
+  "record_type": "court_record",
+  "redistribution_license": "tier2-private",
+  "is_living_flag": true,
+  "persons_mentioned": [
+    {"name_as_written": "[REDACTED]", "role": "subject"}
+  ],
+  "record_date": {"year_min": 2015, "year_max": 2015, "date_type": "exact"},
+  "location": {"place_as_written": "Cook County, Illinois", "country_code": "US", "state_province": "Illinois"},
+  "transcription": "[REDACTED - living person]",
+  "language": "en",
+  "source_url": "https://archive.org/details/cook-county-court-2015",
+  "extraction_confidence": 0.99,
+  "extracted_by": "extractor-agent-haiku-001",
+  "extracted_at": "2026-05-03T13:00:00Z",
+  "sensitive_data_redacted": true,
+  "redaction_notes": "Full name and case number redacted: subject confirmed living per birth year 1985."
+}

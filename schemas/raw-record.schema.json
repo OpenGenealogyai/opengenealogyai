@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengenealogyai.org/schemas/v0.1/raw-record.schema.json",
+  "title": "RawRecord",
+  "description": "A single original source document exactly as found, with no interpretation added.",
+  "type": "object",
+  "required": [
+    "record_id", "record_type", "redistribution_license",
+    "source_url", "extraction_confidence", "is_living_flag"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this record."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "Schema version this record conforms to."
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "birth_certificate", "death_certificate", "marriage_certificate",
+        "census_row", "parish_register", "probate_record", "military_record",
+        "immigration_record", "naturalization_record", "land_deed",
+        "gravestone", "obituary", "newspaper_article", "photograph",
+        "family_bible", "court_record", "tax_record", "other"
+      ],
+      "description": "The type of source document."
+    },
+    "redistribution_license": {
+      "type": "string",
+      "enum": ["CC0", "CC-BY", "CC-BY-SA", "public-domain", "tier2-private"],
+      "description": "Whether this record can be redistributed. tier2-private means never include in open dataset."
+    },
+    "is_living_flag": {
+      "type": "boolean",
+      "description": "True if any person in this record may be living. Triggers 404 on all open endpoints."
+    },
+    "persons_mentioned": {
+      "type": "array",
+      "description": "All persons referenced in this document, as written in the source.",
+      "items": {
+        "type": "object",
+        "required": ["name_as_written", "role"],
+        "properties": {
+          "name_as_written": {
+            "type": "string",
+            "description": "Name exactly as it appears in the source document."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "subject", "parent", "spouse", "child", "witness",
+              "informant", "officiant", "other"
+            ],
+            "description": "Role this person plays in the document."
+          },
+          "age_as_written": { "type": "string" },
+          "gender_as_written": { "type": "string" }
+        }
+      }
+    },
+    "alternate_names": {
+      "type": "array",
+      "description": "Variant spellings or alternate names for persons mentioned, as they appear across multiple documents.",
+      "items": { "type": "string" }
+    },
+    "record_date": {
+      "type": "object",
+      "description": "Date range of the event recorded. Never store a single year unless certain.",
+      "properties": {
+        "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+        "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "date_type": {
+          "type": "string",
+          "enum": ["exact", "estimated", "calculated", "range"],
+          "default": "exact"
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "place_as_written": { "type": "string" },
+        "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "state_province": { "type": "string" },
+        "county_district": { "type": "string" },
+        "city_town": { "type": "string" }
+      }
+    },
+    "transcription": {
+      "type": "string",
+      "description": "Full text transcription of the document content."
+    },
+    "language": {
+      "type": "string",
+      "description": "BCP-47 language code of the document (e.g. en, de, fr, la).",
+      "default": "en"
+    },
+    "image_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the scanned image of the original document."
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URL of the source (e.g. https://archive.org/details/...)."
+    },
+    "digital_object_id": {
+      "type": "string",
+      "description": "Persistent identifier such as ARK, DOI, or Internet Archive identifier."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Name of the archive or repository holding the original document."
+    },
+    "collection": {
+      "type": "string",
+      "description": "Collection name within the repository."
+    },
+    "extraction_confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence that the transcription accurately reflects the original document."
+    },
+    "extracted_by": {
+      "type": "string",
+      "description": "Agent ID or contributor ID that produced this RawRecord."
+    },
+    "extracted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of extraction."
+    },
+    "sensitive_data_redacted": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if SSNs, medical data, or other sensitive fields were removed."
+    },
+    "redaction_notes": {
+      "type": "string",
+      "description": "Description of what was redacted and why."
+    }
+  },
+  "additionalProperties": false
+}
