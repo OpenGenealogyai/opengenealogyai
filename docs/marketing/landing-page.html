@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenGenealogyAI — Probabilistic Genealogy for Everyone</title>
-<!-- DRAFT: Awaiting HG-6 approval before publishing -->
 <style>
   :root {
     --ink: #1a1a2e;
@@ -21,7 +20,7 @@
   header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
   .hero { background: linear-gradient(135deg, var(--ink) 60%, var(--accent)); color: var(--paper); padding: 5rem 2rem; text-align: center; }
   .hero h2 { font-size: 2.8rem; max-width: 700px; margin: 0 auto 1.2rem; line-height: 1.25; }
-  .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; opacity: 0.85; }
+  .hero p { font-size: 1.2rem; max-width: 620px; margin: 0 auto 2rem; opacity: 0.85; }
   .hero-cta { display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
   .btn { padding: 0.75rem 1.75rem; border-radius: 4px; font-size: 1rem; cursor: pointer; text-decoration: none; font-family: sans-serif; }
   .btn-primary { background: var(--gold); color: var(--ink); font-weight: bold; }
@@ -32,9 +31,15 @@
   .card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; }
   .card h4 { font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--accent); }
   .confidence-demo { background: var(--light); border-radius: 8px; padding: 2rem; margin-top: 2rem; font-family: monospace; font-size: 0.85rem; }
-  .conf-bar { display: flex; align-items: center; gap: 0.75rem; margin: 0.4rem 0; }
-  .bar { height: 10px; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+  .conf-label { font-weight: bold; margin-bottom: 0.4rem; }
+  .conf-sub { font-size: 0.78rem; opacity: 0.65; margin-bottom: 1.2rem; }
+  .conf-bar { display: flex; align-items: center; gap: 0.75rem; margin: 0.5rem 0; }
+  .conf-name { width: 210px; flex-shrink: 0; }
+  .bar { height: 10px; background: var(--accent); border-radius: 3px; }
   .bar-low { background: #c97a3a; }
+  .conf-score { white-space: nowrap; }
+  .conf-evidence { font-size: 0.78rem; opacity: 0.7; margin-left: 210px; margin-bottom: 0.8rem; }
+  .conf-note { margin-top: 1.2rem; font-size: 0.88rem; opacity: 0.7; border-top: 1px solid var(--border); padding-top: 1rem; }
   .pricing { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
   .plan { border: 2px solid var(--border); border-radius: 8px; padding: 2rem; }
   .plan.paid { border-color: var(--accent); }
@@ -45,7 +50,7 @@
   .plan ul li { margin-bottom: 0.4rem; font-size: 0.95rem; }
   footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2rem; font-family: sans-serif; font-size: 0.85rem; opacity: 0.7; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-  @media (max-width: 600px) { .hero h2 { font-size: 2rem; } .pricing { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .hero h2 { font-size: 2rem; } .pricing { grid-template-columns: 1fr; } .conf-evidence { margin-left: 0; } }
 </style>
 </head>
 <body>
@@ -60,8 +65,8 @@
 </header>
 
 <div class="hero">
-  <h2>Your Family Tree, With Honest Uncertainty</h2>
-  <p>Ancestry says Abraham Lincoln had one father. We show you three possible fathers — with evidence scores for each. Because that's what the documents actually say.</p>
+  <h2>We Don't Guess. We Measure.</h2>
+  <p>When a marriage record says your ancestor's father was "James Whitfield" — we find every James Whitfield alive at that time and place, score each one against the evidence, and give you real leads to follow. Not a single invented answer.</p>
   <div class="hero-cta">
     <a href="#search" class="btn btn-primary">Search Your Name</a>
     <a href="https://github.com/opengenealogyai" class="btn btn-secondary">Read the Standard</a>
@@ -91,20 +96,33 @@
 
 <section id="how">
   <h3>How Confidence Scores Work</h3>
-  <p>Instead of a single answer, we give every assertion a score from 0.0 to 1.0 based on documentary evidence.</p>
+  <p>Instead of picking one answer, we score every candidate against the documentary record — and show you exactly where to look next.</p>
   <div class="confidence-demo">
-    <div style="margin-bottom:1rem;font-weight:bold;">Who was Abraham Lincoln's father? (b. 1809)</div>
+    <div class="conf-label">Who is the father of Sarah Mitchell (b. ~1847, Giles Co., Tennessee)?</div>
+    <div class="conf-sub">Her 1866 marriage record lists father as "James Mitchell" — no further detail. Three candidates found in county records:</div>
+
     <div class="conf-bar">
-      <span style="width:160px">Thomas Lincoln</span>
-      <div class="bar" style="width:82%"></div>
-      <span>0.82 — birth record + census + 3 witnesses</span>
+      <span class="conf-name">James Mitchell (b. ~1818, VA)</span>
+      <div class="bar bar-low" style="width:5%"></div>
+      <span class="conf-score">0.05</span>
     </div>
+    <div class="conf-evidence">1840 census, Giles Co. — age matches, no wife named yet — <em>needs church record search</em></div>
+
     <div class="conf-bar">
-      <span style="width:160px">Abraham Enloe</span>
-      <div class="bar bar-low" style="width:12%"></div>
-      <span>0.12 — 1899 claim, single source, disputed</span>
+      <span class="conf-name">James H. Mitchell (b. ~1821, NC)</span>
+      <div class="bar bar-low" style="width:5%"></div>
+      <span class="conf-score">0.05</span>
     </div>
-    <div style="margin-top:1rem;font-size:0.9rem;opacity:0.7;">Both assertions preserved. No one's research is deleted. A researcher can cite either.</div>
+    <div class="conf-evidence">1850 census, adjacent Lawrence Co. — wife Mary, 2 children — <em>needs migration record</em></div>
+
+    <div class="conf-bar">
+      <span class="conf-name">James W. Mitchell (b. ~1820, TN)</span>
+      <div class="bar bar-low" style="width:7%"></div>
+      <span class="conf-score">0.07</span>
+    </div>
+    <div class="conf-evidence">Methodist membership roll, Pulaski TN 1843 — same county, right age — <em>best lead so far</em></div>
+
+    <div class="conf-note">Low scores are honest scores. We have a name and some leads — not a conclusion. Every candidate is preserved so any researcher can dig further. The one who finds the missing church record updates the score for everyone.</div>
   </div>
 </section>
 
@@ -164,7 +182,6 @@
 <footer>
   <p>OpenGenealogyAI &mdash; Open-source genealogy standard &mdash; opengenealogyai.org</p>
   <p style="margin-top:0.5rem">All public data is CC0. Source on <a href="https://github.com/opengenealogyai" style="color:var(--gold)">GitHub</a>.</p>
-  <!-- DRAFT v0.1 — awaiting HG-6 approval before publishing -->
 </footer>
 
 </body>
