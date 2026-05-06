@@ -1,5 +1,6 @@
 """Test file-based queue claim/complete/fail operations."""
 import sys, json, os, tempfile, shutil
+import pytest
 from pathlib import Path
 
 # Add scripts dir to path
@@ -32,6 +33,14 @@ def make_task(tmp_queue: str, task_id: str = "test-task-001") -> Path:
     with open(path, "w") as f:
         json.dump(task, f)
     return path
+
+@pytest.fixture
+def tmp():
+    """Provide a temp queue directory, patching Q.QUEUE_ROOT."""
+    tmp_dir = setup_temp_queue()
+    yield tmp_dir
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+
 
 def test_claim_success(tmp):
     task_path = make_task(tmp, "claim-test-001")
@@ -108,3 +117,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

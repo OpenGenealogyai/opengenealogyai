@@ -252,12 +252,14 @@ def main():
             dry_run = True
 
     totals = {"fetched": 0, "converted": 0, "validated": 0, "ingested": 0,
-              "skipped_living": 0, "skipped_invalid": 0, "validation_errors": 0}
+              "skipped_living": 0, "skipped_invalid": 0, "validation_errors": 0, "errors": 0}
 
     for col in collections:
         col_id = col["id"]
         record_type_hint = col.get("record_type")  # field name in ia_collections.json
         license_val = col.get("redistribution_license", "public-domain")
+        col_year_min = col.get("year_min")
+        col_year_max = col.get("year_max")
 
         print(f"\n[COLLECTION] {col_id} ({col.get('description', col.get('name', ''))})")
 
@@ -276,7 +278,9 @@ def main():
         for item in items:
             item["collection_id"] = col_id
             record = ia_to_rawrecord(item, record_type_hint=record_type_hint,
-                                     redistribution_license=license_val)
+                                     redistribution_license=license_val,
+                                     collection_year_min=col_year_min,
+                                     collection_year_max=col_year_max)
             totals["converted"] += 1
 
             # Schema validation
@@ -335,5 +339,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 

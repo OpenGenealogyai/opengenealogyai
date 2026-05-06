@@ -70,7 +70,7 @@ class TestIsLiving(unittest.TestCase):
         self.assertFalse(is_potentially_living(1850))
 
     def test_recent_record_potentially_living(self):
-        self.assertTrue(is_potentially_living(1950))
+        self.assertTrue(is_potentially_living(1960))  # 1960 is within 75-year window
 
     def test_none_defaults_to_living(self):
         self.assertTrue(is_potentially_living(None))
@@ -183,3 +183,4 @@ class TestFetchCollectionItems(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

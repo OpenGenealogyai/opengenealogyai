@@ -53,7 +53,10 @@ def is_potentially_living(year_min: int | None) -> bool:
     if year_min is None:
         return True
     current_year = datetime.datetime.now().year
-    return year_min > (current_year - 110)
+    # year_min is the RECORD date (not birth year). Records older than 75 years
+    # document people who are almost certainly deceased. 75yr is the standard
+    # genealogical threshold for treating records as historical.
+    return year_min > (current_year - 75)
 
 def ia_to_rawrecord(
     ia_item: dict,
@@ -61,6 +64,8 @@ def ia_to_rawrecord(
     redistribution_license: str = "public-domain",
     extractor_id: str = "extractor-agent-haiku-001",
     text_content: str | None = None,
+    collection_year_min: int | None = None,
+    collection_year_max: int | None = None,
 ) -> dict:
     title = ia_item.get("title", "")
     description = ia_item.get("description", "")
@@ -70,6 +75,14 @@ def ia_to_rawrecord(
 
     record_type = infer_record_type(title, description, record_type_hint)
     year_min, year_max = infer_year_range(date_str)
+
+    # If IA date is more recent than the collection range hint, use the hint.
+    # IA often stores microfilm/scan date (e.g. 1965) not the original record date.
+    if collection_year_min is not None:
+        if year_min is None or year_min > collection_year_min:
+            year_min = collection_year_min
+            year_max = collection_year_max if collection_year_max is not None else year_min
+
     living_flag = is_potentially_living(year_min)
 
     # Transcription: use text_content if available, else title + description
@@ -144,3 +157,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
