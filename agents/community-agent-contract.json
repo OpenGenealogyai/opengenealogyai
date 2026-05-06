@@ -1,0 +1,27 @@
+{
+  "agent_id": "community-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "Contributor onboarding, Adopt a Collection task management, recognition content.",
+  "context_isolation": false,
+  "cost_cap_per_run_usd": 1.00,
+  "input": {
+    "queue_state": "queue/done/",
+    "contributing_doc": "docs/CONTRIBUTING.md"
+  },
+  "output_directory": "docs/community/",
+  "outputs": [
+    "onboarding-guide.md",
+    "adopt-a-collection-tasks.md",
+    "contributor-leaderboard.md"
+  ],
+  "allowed_tools": [
+    "read_file",
+    "write_file_docs_community_only"
+  ],
+  "forbidden_actions": [
+    "push_to_github",
+    "post_external",
+    "send_messages",
+    "read_tier2_data"
+  ]
+}

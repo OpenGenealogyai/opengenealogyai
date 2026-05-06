@@ -1,0 +1,32 @@
+{
+  "agent_id": "marketing-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "Produces launch content: landing page, HN draft, Reddit draft, outreach emails, logo brief. DRAFTS ONLY - nothing published without HG-6 approval.",
+  "context_isolation": false,
+  "cost_cap_per_run_usd": 2.00,
+  "input": {
+    "docs": ["docs/BRAINSTORM_SYNTHESIS.md", "docs/BRAND_CHECK.md", "README.md"],
+    "schemas": "schemas/ directory"
+  },
+  "output_directory": "docs/marketing/",
+  "outputs": [
+    "landing-page.html",
+    "hn-post-draft.md",
+    "reddit-post-draft.md",
+    "email-outreach-template.md",
+    "logo-brief.md"
+  ],
+  "allowed_tools": [
+    "read_file",
+    "write_file_docs_marketing_only",
+    "web_search_research_only"
+  ],
+  "forbidden_actions": [
+    "post_to_social_media",
+    "send_emails",
+    "push_to_github",
+    "publish_anything_publicly",
+    "reproduce_copyrighted_competitor_content"
+  ],
+  "human_gate": "HG-6 — all outputs require Garlon review before publishing"
+}
