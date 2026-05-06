@@ -3,3 +3,15 @@ node_modules/
 *.log
 logs/
 db/staging.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Qdrant local storage
+qdrant_data/
+
+# Generated assets
+logos/
+

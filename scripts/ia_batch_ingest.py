@@ -43,6 +43,7 @@ except ImportError:
 COLLECTIONS_FILE = REPO_ROOT / "agents" / "ia-fetcher" / "ia_collections.json"
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
+QDRANT_PATH = os.environ.get("QDRANT_PATH", "")  # set to use embedded mode without Docker
 COLLECTION_NAME = "raw_records_v01"
 VECTOR_DIM = 1536
 OPENAI_EMBED_MODEL = "text-embedding-3-small"
@@ -230,13 +231,22 @@ def main():
     else:
         embed_fn = dummy_embedding
 
-    # Connect to Qdrant
+    # Connect to Qdrant (embedded local path or remote server)
     qdrant = None
     if not dry_run and QDRANT_AVAILABLE:
         try:
-            qdrant = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, timeout=10)
-            qdrant.get_collection(COLLECTION_NAME)
-            print(f"[QDRANT] Connected to {QDRANT_HOST}:{QDRANT_PORT} / {COLLECTION_NAME}")
+            if QDRANT_PATH:
+                from qdrant_client.models import Distance, VectorParams
+                qdrant = QdrantClient(path=QDRANT_PATH)
+                try:
+                    qdrant.get_collection(COLLECTION_NAME)
+                except Exception:
+                    qdrant.create_collection(COLLECTION_NAME, vectors_config=VectorParams(size=VECTOR_DIM, distance=Distance.COSINE))
+                print(f"[QDRANT] Embedded mode: {QDRANT_PATH} / {COLLECTION_NAME}")
+            else:
+                qdrant = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT, timeout=10)
+                qdrant.get_collection(COLLECTION_NAME)
+                print(f"[QDRANT] Connected to {QDRANT_HOST}:{QDRANT_PORT} / {COLLECTION_NAME}")
         except Exception as e:
             print(f"[WARN] Qdrant not reachable ({e}) — switching to dry-run")
             dry_run = True
@@ -325,4 +335,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
