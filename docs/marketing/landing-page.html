@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenGenealogyAI — Probabilistic Genealogy for Everyone</title>
+<!-- DRAFT: Awaiting HG-6 approval before publishing -->
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --accent: #2d6a4f;
+    --gold: #b5873d;
+    --paper: #faf7f0;
+    --light: #f0ede4;
+    --border: #d4c9b0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; }
+  header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  .hero { background: linear-gradient(135deg, var(--ink) 60%, var(--accent)); color: var(--paper); padding: 5rem 2rem; text-align: center; }
+  .hero h2 { font-size: 2.8rem; max-width: 700px; margin: 0 auto 1.2rem; line-height: 1.25; }
+  .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; opacity: 0.85; }
+  .hero-cta { display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn { padding: 0.75rem 1.75rem; border-radius: 4px; font-size: 1rem; cursor: pointer; text-decoration: none; font-family: sans-serif; }
+  .btn-primary { background: var(--gold); color: var(--ink); font-weight: bold; }
+  .btn-secondary { border: 1px solid var(--paper); color: var(--paper); }
+  section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; }
+  h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--ink); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; }
+  .card h4 { font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .confidence-demo { background: var(--light); border-radius: 8px; padding: 2rem; margin-top: 2rem; font-family: monospace; font-size: 0.85rem; }
+  .conf-bar { display: flex; align-items: center; gap: 0.75rem; margin: 0.4rem 0; }
+  .bar { height: 10px; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+  .bar-low { background: #c97a3a; }
+  .pricing { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+  .plan { border: 2px solid var(--border); border-radius: 8px; padding: 2rem; }
+  .plan.paid { border-color: var(--accent); }
+  .plan h4 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .plan .price { font-size: 2rem; font-weight: bold; color: var(--accent); margin-bottom: 1rem; }
+  .plan ul { list-style: none; }
+  .plan ul li::before { content: "✓ "; color: var(--accent); }
+  .plan ul li { margin-bottom: 0.4rem; font-size: 0.95rem; }
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2rem; font-family: sans-serif; font-size: 0.85rem; opacity: 0.7; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  @media (max-width: 600px) { .hero h2 { font-size: 2rem; } .pricing { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>OpenGenealogyAI</h1>
+  <nav>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <h2>Your Family Tree, With Honest Uncertainty</h2>
+  <p>Ancestry says Abraham Lincoln had one father. We show you three possible fathers — with evidence scores for each. Because that's what the documents actually say.</p>
+  <div class="hero-cta">
+    <a href="#search" class="btn btn-primary">Search Your Name</a>
+    <a href="https://github.com/opengenealogyai" class="btn btn-secondary">Read the Standard</a>
+  </div>
+</div>
+
+<section id="problem">
+  <h3>Genealogy Has a Truth Problem</h3>
+  <p>Every major genealogy platform forces a single answer. When two records disagree, one gets deleted. When researchers fight over who someone's mother was, the loudest voice wins. The uncertainty — the most honest part of historical research — disappears.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>Ancestry / FamilySearch</h4>
+      <p>One answer per fact. Edit wars. Proprietary data you can't export. Your research locked in their system.</p>
+    </div>
+    <div class="card">
+      <h4>GEDCOM Standard</h4>
+      <p>40-year-old file format. No confidence scores. No source provenance. No machine readability for AI agents.</p>
+    </div>
+    <div class="card">
+      <h4>OpenGenealogyAI</h4>
+      <p>Every fact carries a confidence score and its source. Multiple possible parents coexist. Open JSON standard. Agent-verifiable.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="how">
+  <h3>How Confidence Scores Work</h3>
+  <p>Instead of a single answer, we give every assertion a score from 0.0 to 1.0 based on documentary evidence.</p>
+  <div class="confidence-demo">
+    <div style="margin-bottom:1rem;font-weight:bold;">Who was Abraham Lincoln's father? (b. 1809)</div>
+    <div class="conf-bar">
+      <span style="width:160px">Thomas Lincoln</span>
+      <div class="bar" style="width:82%"></div>
+      <span>0.82 — birth record + census + 3 witnesses</span>
+    </div>
+    <div class="conf-bar">
+      <span style="width:160px">Abraham Enloe</span>
+      <div class="bar bar-low" style="width:12%"></div>
+      <span>0.12 — 1899 claim, single source, disputed</span>
+    </div>
+    <div style="margin-top:1rem;font-size:0.9rem;opacity:0.7;">Both assertions preserved. No one's research is deleted. A researcher can cite either.</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="pricing">
+  <h3>Free Data. Paid Agent Labor.</h3>
+  <p>All public genealogy data is and will remain free forever. What you pay for is AI agents doing the work of a professional researcher — in 30 minutes, not 30 years.</p>
+  <div class="pricing">
+    <div class="plan">
+      <h4>Free</h4>
+      <div class="price">$0 / mo</div>
+      <ul>
+        <li>Browse all public probabilistic trees</li>
+        <li>Download any record as JSON</li>
+        <li>Search 10M+ open-license documents</li>
+        <li>Read confidence scores and source citations</li>
+        <li>Fork and extend the open standard</li>
+      </ul>
+    </div>
+    <div class="plan paid">
+      <h4>Research Tier</h4>
+      <div class="price">$9 / mo</div>
+      <ul>
+        <li>Auto-build 3+ ancestral generations in 30 min</li>
+        <li>Private document uploads (50 MB/mo)</li>
+        <li>Export to GEDCOM, PDF, or JSON</li>
+        <li>DNA match integration (coming Q3)</li>
+        <li>Priority queue for collection indexing</li>
+        <li>Living Memory voice attachment (coming Q4)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section>
+  <h3>The Open Standard</h3>
+  <p>OpenGenealogyAI is a JSON schema standard, not just a website. Any researcher, application, or AI agent can produce or consume our records.</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>RawRecord</h4>
+      <p>Source documents exactly as found — birth certificates, census rows, parish registers — with provenance and confidence.</p>
+    </div>
+    <div class="card">
+      <h4>Person</h4>
+      <p>Probabilistic identity with multiple possible parents, confidence-scored name assertions, and an immutable assertion log.</p>
+    </div>
+    <div class="card">
+      <h4>TaskQueue</h4>
+      <p>Distributed work queue for AI agents — ingest, judge, build, resolve conflicts — with cost caps and human gates built in.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>OpenGenealogyAI &mdash; Open-source genealogy standard &mdash; opengenealogyai.org</p>
+  <p style="margin-top:0.5rem">All public data is CC0. Source on <a href="https://github.com/opengenealogyai" style="color:var(--gold)">GitHub</a>.</p>
+  <!-- DRAFT v0.1 — awaiting HG-6 approval before publishing -->
+</footer>
+
+</body>
+</html>
