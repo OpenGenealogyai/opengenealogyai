@@ -1,0 +1,60 @@
+{
+  "agent_id": "integrator-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "The ONLY agent that writes to SQLite and Qdrant. Commits judge-approved assertions to the Person graph and generates vector embeddings for semantic search.",
+  "context_isolation": false,
+  "cost_cap_per_run_usd": 2.00,
+  "prerequisite": "Must have judge_verdict=APPROVE for the assertion being integrated. Abort if verdict file not found.",
+  "input": {
+    "format": "json",
+    "fields": {
+      "person": "Existing or new Person JSON per schemas/person.schema.json",
+      "new_assertion": "The approved assertion object to append",
+      "assertion_type": "name_assertion | birth_assertion | death_assertion | parent_assertion | spouse_assertion | gender_assertion",
+      "judge_verdict_path": "Path to the APPROVE verdict JSON from judge_agent.py",
+      "source_records": "Map of source_record_id to RawRecord for embedding context"
+    }
+  },
+  "output": {
+    "format": "json",
+    "fields": {
+      "person_id": "UUID of the updated Person",
+      "sqlite_row_id": "SQLite rowid of the committed record",
+      "qdrant_point_id": "Qdrant point UUID (same as person_id)",
+      "embedding_dims": "Dimensionality of the embedding stored",
+      "integrated_at": "ISO 8601 timestamp"
+    }
+  },
+  "embedding_approach": {
+    "strategy": "hybrid",
+    "name_embedding": "character_ngram_3gram combined with phonetic (Soundex + Jaro-Winkler)",
+    "text_embedding_model": "text-embedding-3-small",
+    "rationale": "Generic text embeddings perform poorly on historical name variants (Linkhorn vs Lincoln). Character n-grams + phonetic bridging captures spelling variants across centuries.",
+    "qdrant_collection": "persons_v01",
+    "vector_dims": 1536
+  },
+  "conflict_handling": "See docs/CONFLICT_PROTOCOL.md. Never overwrite existing assertions. Append only. Set conflict_flag=true on lower-confidence competitor.",
+  "allowed_tools": [
+    "sqlite3_write",
+    "qdrant_client_upsert",
+    "openai_embeddings_api",
+    "read_file",
+    "python_json",
+    "python_datetime"
+  ],
+  "forbidden_actions": [
+    "write_without_judge_approve_verdict",
+    "delete_any_assertion",
+    "merge_persons_without_opus_if_confidence_gap_lt_0.4",
+    "expose_tier2_data_on_public_endpoints",
+    "write_if_cost_cap_exceeded"
+  ],
+  "success_criteria": [
+    "Every write has a corresponding judge APPROVE verdict file",
+    "SQLite and Qdrant stay in sync after every write",
+    "Write latency under 2 seconds",
+    "db/staging.db passes integrity check after write",
+    "cost under cost_cap_per_run_usd"
+  ],
+  "escalation_path": "Duplicate person_id: alert Orchestrator. Qdrant failure: retry 3x. SQLite UNIQUE violation: log, do not crash."
+}

@@ -1,0 +1,36 @@
+{
+  "agent_id": "validator-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "Schema and data quality checker. Runs AJV validation on RawRecord output from Extractor. Catches is_living_flag violations before Critic.",
+  "context_isolation": true,
+  "cost_cap_per_run_usd": 0.20,
+  "input": {
+    "format": "path to RawRecord JSON in queue/processing/"
+  },
+  "output": {
+    "format": "json",
+    "fields": {
+      "valid": "boolean",
+      "errors": "array of AJV error strings",
+      "warnings": "array of non-blocking issues",
+      "record_id": "UUID",
+      "validated_at": "ISO 8601"
+    }
+  },
+  "allowed_tools": [
+    "node_ajv_validator",
+    "read_file",
+    "write_queue_processing"
+  ],
+  "forbidden_actions": [
+    "modify_rawrecord",
+    "write_sqlite",
+    "write_qdrant",
+    "approve_living_flag_violation"
+  ],
+  "success_criteria": [
+    "AJV pass rate >= 99%",
+    "is_living_flag violations caught 100%",
+    "Runtime under 10 seconds"
+  ]
+}

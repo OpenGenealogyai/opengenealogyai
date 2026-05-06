@@ -1,0 +1,43 @@
+{
+  "agent_id": "judge-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "Assertion gatekeeper. Runs 5 checks on every proposed assertion before it can enter the database. No assertion bypasses the judge.",
+  "context_isolation": true,
+  "cost_cap_per_run_usd": 0.50,
+  "implementation": "agents/judge_agent.py",
+  "checks": [
+    "schema_conformance",
+    "confidence_validity",
+    "source_credibility",
+    "privacy_gate",
+    "relationship_consistency"
+  ],
+  "verdicts": ["APPROVE", "REJECT"],
+  "input": {
+    "format": "json",
+    "fields": {
+      "person": "Person entity JSON",
+      "assertion": "The proposed assertion to evaluate",
+      "assertion_type": "name_assertion | birth_assertion | ...",
+      "source_records": "Map of UUIDs to RawRecord objects"
+    }
+  },
+  "output": {
+    "format": "json",
+    "fields": {
+      "verdict": "APPROVE or REJECT",
+      "checks": "dict of check_name to {passed, reason}",
+      "reasons": "array of rejection reasons",
+      "judged_at": "ISO 8601",
+      "agent": "judge-agent-v0.1"
+    }
+  },
+  "test_suite": "agents/test_judge.py (10 tests, all must pass)",
+  "forbidden_actions": [
+    "write_sqlite",
+    "write_qdrant",
+    "approve_with_missing_source_record",
+    "approve_zero_confidence",
+    "approve_tier2_without_tier2_private_license"
+  ]
+}

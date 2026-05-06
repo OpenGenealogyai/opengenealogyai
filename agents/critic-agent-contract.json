@@ -1,0 +1,55 @@
+{
+  "agent_id": "critic-agent-v0.1",
+  "model": "claude-sonnet-4-6",
+  "role": "Confidence scorer. Evaluates evidence quality of a validated RawRecord and adjusts extraction_confidence. Does NOT see extractor reasoning (context_isolation: true).",
+  "context_isolation": true,
+  "cost_cap_per_run_usd": 1.50,
+  "input": {
+    "format": "json",
+    "fields": {
+      "raw_record": "Valid RawRecord JSON per schemas/raw-record.schema.json",
+      "existing_persons": "Array of existing Person UUIDs that may relate to this record (for cross-reference)"
+    }
+  },
+  "output": {
+    "format": "json",
+    "fields": {
+      "approved": "boolean",
+      "confidence_adjustment": "float, added to extraction_confidence (negative=reduce, positive=increase)",
+      "final_confidence": "float, extraction_confidence + confidence_adjustment, clamped [0.0, 0.95]",
+      "flags": "array of strings describing issues found",
+      "record_id": "UUID of the RawRecord reviewed",
+      "reviewed_at": "ISO 8601 timestamp"
+    }
+  },
+  "scoring_heuristics": {
+    "corroborating_source_bonus": 0.05,
+    "single_source_no_corroboration_cap": 0.5,
+    "ocr_handwritten_penalty": -0.1,
+    "conflicting_existing_assertion_penalty": -0.05,
+    "missing_persons_mentioned_penalty": -0.2,
+    "date_range_too_wide_penalty": -0.1,
+    "very_old_record_uncertainty_penalty": -0.05
+  },
+  "allowed_tools": [
+    "read_file",
+    "python_json",
+    "python_datetime",
+    "python_re"
+  ],
+  "forbidden_actions": [
+    "write_to_sqlite",
+    "write_to_qdrant",
+    "read_task_queue",
+    "access_extractor_reasoning",
+    "call_external_api",
+    "see_judge_verdicts"
+  ],
+  "success_criteria": [
+    "final_confidence always in [0.0, 0.95] — never 1.0",
+    "flags array non-empty when confidence_adjustment < 0",
+    "runtime under 30 seconds",
+    "cost under cost_cap_per_run_usd"
+  ],
+  "escalation_path": "If record appears fabricated (no plausible historical source), set approved=false and confidence_adjustment=-1.0"
+}

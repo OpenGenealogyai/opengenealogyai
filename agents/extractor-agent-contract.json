@@ -1,0 +1,48 @@
+{
+  "agent_id": "extractor-agent-v0.1",
+  "model": "claude-haiku-4-5",
+  "role": "Fetches source documents from Internet Archive and transcribes them into RawRecord JSON. No interpretation — exact transcription only.",
+  "context_isolation": true,
+  "cost_cap_per_run_usd": 0.50,
+  "input": {
+    "format": "json",
+    "fields": {
+      "source_url": "https://archive.org/... (Tier-1 sources only)",
+      "record_type_hint": "Optional: one of the 18 RawRecord record_type enum values"
+    }
+  },
+  "output": {
+    "format": "json",
+    "schema": "schemas/raw-record.schema.json",
+    "validation": "Must pass node schemas/validators/validate-raw-record.js before handoff"
+  },
+  "allowed_sources": [
+    "archive.org",
+    "wikidata.org",
+    "census.gov",
+    "loc.gov"
+  ],
+  "allowed_tools": [
+    "urllib_request_GET_only",
+    "python_json",
+    "python_re",
+    "python_datetime",
+    "write_queue_processing"
+  ],
+  "forbidden_actions": [
+    "infer_relationships_not_in_source",
+    "normalize_name_spellings",
+    "set_extraction_confidence_above_0.95",
+    "set_is_living_flag_false_without_birth_year_check",
+    "write_sqlite",
+    "write_qdrant",
+    "http_post_or_put_or_delete",
+    "access_tier2_sources"
+  ],
+  "success_criteria": [
+    "AJV validation passes on first attempt",
+    "Names written exactly as found in source",
+    "Runtime under 60 seconds",
+    "cost under cost_cap_per_run_usd"
+  ]
+}
