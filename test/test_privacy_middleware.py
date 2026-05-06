@@ -135,5 +135,51 @@ class TestPrivacyGateBatch(unittest.TestCase):
         self.assertEqual(privacy_gate_batch(records), [])
 
 
+
+class TestHttpStatusCodes(unittest.TestCase):
+    """Per Qwen 3 review: living=404 (existence denied), deceased tier2=403 (access denied)."""
+
+    def test_living_person_is_404(self):
+        try:
+            privacy_gate(_record(is_living=True))
+            self.fail("Expected PrivacyBlock")
+        except PrivacyBlock as e:
+            self.assertEqual(e.http_status, 404,
+                             "Living persons must return 404 — existence must not be confirmed")
+
+    def test_deceased_tier2_is_403(self):
+        try:
+            privacy_gate(_record(is_living=False, license_val="tier2-private"))
+            self.fail("Expected PrivacyBlock")
+        except PrivacyBlock as e:
+            self.assertEqual(e.http_status, 403,
+                             "Deceased tier2-private records exist but are restricted — 403 is correct")
+
+    def test_unknown_license_is_403(self):
+        try:
+            privacy_gate(_record(is_living=False, license_val="commercial-restricted"))
+            self.fail("Expected PrivacyBlock")
+        except PrivacyBlock as e:
+            self.assertEqual(e.http_status, 403)
+
+    def test_audit_log_includes_http_status(self):
+        """Audit log must record the HTTP status so ops can distinguish living vs access blocks."""
+        import tempfile
+        log_path = Path(tempfile.mktemp(suffix=".jsonl"))
+        import privacy_middleware as pm
+        original = pm.AUDIT_LOG
+        pm.AUDIT_LOG = log_path
+        try:
+            with self.assertRaises(PrivacyBlock):
+                privacy_gate(_record(is_living=False, license_val="tier2-private",
+                                     record_id="fs-deceased"))
+        finally:
+            pm.AUDIT_LOG = original
+
+        entry = json.loads(log_path.read_text().strip())
+        self.assertEqual(entry["http_status"], 403)
+        log_path.unlink(missing_ok=True)
+
 if __name__ == "__main__":
     unittest.main()
+

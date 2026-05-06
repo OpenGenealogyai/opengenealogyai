@@ -34,9 +34,10 @@ Project context:
 - Stack: SQLite + Qdrant, Internet Archive (Tier-1), FamilySearch OAuth (Tier-2, private only)"""
 
 def consult(question: str, context: str = "") -> str:
-    prompt = question
+    # /no_think disables Qwen3 extended thinking mode so response goes to response field
+    prompt = "/no_think\n" + question
     if context:
-        prompt = f"Context:\n{context}\n\nQuestion: {question}"
+        prompt = "/no_think\nContext:\n{context}\n\nQuestion: {question}".format(context=context, question=question)
 
     payload = json.dumps({
         "model": MODEL,
@@ -49,9 +50,11 @@ def consult(question: str, context: str = "") -> str:
     try:
         req = urllib.request.Request(OLLAMA_URL, data=payload,
                                       headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=600) as resp:
             data = json.loads(resp.read())
             return data.get("response", "").strip()
+    except urllib.error.URLError as e:
+        return f"[Qwen consultation failed: {e}]"
     except Exception as e:
         return f"[Qwen consultation failed: {e}]"
 
@@ -83,3 +86,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
