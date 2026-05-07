@@ -6,60 +6,180 @@
 <title>OpenGenealogyAI — Probabilistic Genealogy for Everyone</title>
 <style>
   :root {
-    --ink: #1a1a2e;
-    --accent: #2d6a4f;
-    --gold: #b5873d;
-    --paper: #faf7f0;
-    --light: #f0ede4;
-    --border: #d4c9b0;
+    --light: #f0ede4; /* page alias; tokens.css owns the canonical vars */
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
   header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.6rem; }
+  .site-logo { height: 2rem; width: auto; }
   header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  header nav a:hover { color: #fff; }
   .hero { background: linear-gradient(135deg, var(--ink) 60%, var(--accent)); color: var(--paper); padding: 5rem 2rem; text-align: center; }
   .hero h2 { font-size: 2.8rem; max-width: 700px; margin: 0 auto 1.2rem; line-height: 1.25; }
   .hero p { font-size: 1.2rem; max-width: 620px; margin: 0 auto 2rem; opacity: 0.85; }
   .hero-cta { display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-  .btn { padding: 0.75rem 1.75rem; border-radius: 4px; font-size: 1rem; cursor: pointer; text-decoration: none; font-family: sans-serif; }
+  .btn { padding: 0.75rem 1.75rem; border-radius: 4px; font-size: 1rem; cursor: pointer; text-decoration: none; font-family: sans-serif; display: inline-block; }
   .btn-primary { background: var(--gold); color: var(--ink); font-weight: bold; }
+  .btn-primary:hover { background: #c9973f; }
   .btn-secondary { border: 1px solid var(--paper); color: var(--paper); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
   section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; }
   h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--ink); }
   .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
   .card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; }
   .card h4 { font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--accent); }
   .confidence-demo { background: var(--light); border-radius: 8px; padding: 2rem; margin-top: 2rem; font-family: monospace; font-size: 0.85rem; }
-  .conf-label { font-weight: bold; margin-bottom: 0.4rem; }
-  .conf-sub { font-size: 0.78rem; opacity: 0.65; margin-bottom: 1.2rem; }
+  /* lineage chain */
+  .conf-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 1.5rem; font-family: sans-serif; font-size: 0.75rem; }
+  .chain-node { background: #e0ddd4; color: #555; padding: 3px 8px; border-radius: 3px; white-space: nowrap; }
+  .chain-node.you { background: var(--ink); color: var(--gold); font-weight: bold; }
+  .chain-node.known { background: #c8e6c9; color: #1b5e20; }
+  .chain-node.question { background: #fff3cd; color: #856404; }
+  .chain-node.unknown { background: #f8d7da; color: #721c24; }
+  .chain-arrow { color: #aaa; font-size: 0.8rem; }
+  /* confidence bars */
+  .conf-section-label { font-family: sans-serif; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 1.4rem 0 0.6rem; }
+  .conf-label { font-weight: bold; margin-bottom: 0.4rem; font-family: Georgia, serif; }
+  .conf-sub { font-size: 0.78rem; opacity: 0.65; margin-bottom: 1.2rem; font-family: Georgia, serif; }
   .conf-bar { display: flex; align-items: center; gap: 0.75rem; margin: 0.5rem 0; }
-  .conf-name { width: 210px; flex-shrink: 0; }
-  .bar { height: 10px; background: var(--accent); border-radius: 3px; }
+  .conf-name { width: 260px; flex-shrink: 0; }
+  .bar { height: 10px; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
+  .bar-med { background: var(--gold); }
   .bar-low { background: #c97a3a; }
-  .conf-score { white-space: nowrap; }
-  .conf-evidence { font-size: 0.78rem; opacity: 0.7; margin-left: 210px; margin-bottom: 0.8rem; }
-  .conf-note { margin-top: 1.2rem; font-size: 0.88rem; opacity: 0.7; border-top: 1px solid var(--border); padding-top: 1rem; }
-  .pricing { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
-  .plan { border: 2px solid var(--border); border-radius: 8px; padding: 2rem; }
-  .plan.paid { border-color: var(--accent); }
-  .plan h4 { font-size: 1.3rem; margin-bottom: 0.5rem; }
-  .plan .price { font-size: 2rem; font-weight: bold; color: var(--accent); margin-bottom: 1rem; }
+  .bar-spec { background: #aaa; }
+  .conf-score { white-space: nowrap; font-weight: bold; }
+  .conf-score.high { color: var(--success); }
+  .conf-score.med { color: #b5873d; }
+  .conf-score.low { color: #c97a3a; }
+  .conf-score.spec { color: #999; }
+  .conf-evidence { font-size: 0.78rem; opacity: 0.7; margin-left: 260px; margin-bottom: 0.8rem; font-family: Georgia, serif; }
+  .conf-demo-hr { border: none; border-top: 1px solid var(--border); margin: 1.4rem 0; }
+  .conf-note { margin-top: 1.2rem; font-size: 0.88rem; opacity: 0.7; border-top: 1px solid var(--border); padding-top: 1rem; font-family: Georgia, serif; }
+  @media (max-width: 700px) { .conf-name { width: 160px; } .conf-evidence { margin-left: 0; } }
+  /* Pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .plan { border: 2px solid var(--border); border-radius: 8px; padding: 1.75rem; background: white; }
+  .plan.featured { border-color: var(--accent); position: relative; }
+  .plan.featured::before { content: "Most Popular"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-family: sans-serif; font-size: 0.72rem; letter-spacing: 0.08em; padding: 2px 10px; border-radius: 10px; white-space: nowrap; }
+  .plan h4 { font-size: 1.1rem; margin-bottom: 0.25rem; font-family: sans-serif; }
+  .plan .price { font-size: 2rem; font-weight: bold; color: var(--ink); margin: 0.4rem 0 0.2rem; font-family: sans-serif; }
+  .plan .price span { font-size: 1rem; font-weight: normal; color: #888; }
+  .plan .tagline { font-size: 0.82rem; color: #888; margin-bottom: 1rem; font-family: sans-serif; min-height: 2.4rem; }
   .plan ul { list-style: none; }
-  .plan ul li::before { content: "✓ "; color: var(--accent); }
-  .plan ul li { margin-bottom: 0.4rem; font-size: 0.95rem; }
-  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2rem; font-family: sans-serif; font-size: 0.85rem; opacity: 0.7; }
-  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-  @media (max-width: 600px) { .hero h2 { font-size: 2rem; } .pricing { grid-template-columns: 1fr; } .conf-evidence { margin-left: 0; } }
+  .plan ul li { padding: 0.3rem 0; font-size: 0.92rem; font-family: sans-serif; border-bottom: 1px solid var(--light); display: flex; gap: 0.5rem; align-items: flex-start; }
+  .plan ul li:last-child { border-bottom: none; }
+  .plan ul li::before { content: "✓"; color: var(--accent); font-weight: bold; flex-shrink: 0; margin-top: 0.05rem; }
+  .plan .plan-cta { display: block; text-align: center; margin-top: 1.2rem; padding: 0.6rem; border-radius: 4px; font-family: sans-serif; font-size: 0.9rem; text-decoration: none; }
+  .plan .plan-cta-free { border: 1px solid var(--border); color: var(--ink); }
+  .plan .plan-cta-free:hover { background: var(--light); }
+  .plan .plan-cta-paid { background: var(--accent); color: white; font-weight: bold; }
+  .plan .plan-cta-paid:hover { background: var(--gold-deep); }
+  .plan .moves { font-size: 1.1rem; font-weight: bold; color: var(--accent); font-family: sans-serif; margin-bottom: 0.15rem; }
+  .payg-note { margin-top: 1rem; text-align: center; font-family: sans-serif; font-size: 0.85rem; color: #666; }
+  .payg-note a { color: var(--accent); }
+  .storage-addon { margin-top: 2.5rem; border: 2px dashed var(--border); border-radius: 8px; padding: 1.75rem; background: var(--light); }
+  .storage-addon-label { font-family: sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.25rem; text-align: center; }
+  .storage-tiers { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  .storage-tier { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.5rem; text-align: center; min-width: 160px; }
+  .storage-tier-mid { border-color: var(--accent); }
+  .storage-price { font-size: 1.6rem; font-weight: bold; color: var(--ink); font-family: sans-serif; }
+  .storage-price span { font-size: 0.9rem; font-weight: normal; color: #888; }
+  .storage-cap { font-family: sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--accent); margin: 0.25rem 0; }
+  .storage-note { font-size: 0.78rem; color: #888; font-family: sans-serif; }
+  .storage-fine { text-align: center; font-size: 0.82rem; color: #888; font-family: sans-serif; margin-top: 0.5rem; }
+  /* Report teaser */
+  .report-preview { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 2rem; margin-top: 2rem; }
+  .report-preview h4 { font-size: 1rem; font-family: sans-serif; font-weight: 600; margin-bottom: 0.2rem; }
+  .report-preview .rp-sub { font-size: 0.82rem; color: #888; font-family: sans-serif; margin-bottom: 1.2rem; }
+  .report-section { border-left: 3px solid var(--gold); padding: 0.6rem 1rem; margin: 0.8rem 0; }
+  .report-section h5 { font-size: 0.88rem; font-family: sans-serif; font-weight: 600; color: var(--accent); margin-bottom: 0.2rem; }
+  .report-section p { font-size: 0.88rem; }
+  .report-locked { background: var(--light); border: 1px dashed var(--border); border-radius: 6px; padding: 1rem; text-align: center; font-family: sans-serif; font-size: 0.85rem; color: #888; margin-top: 0.8rem; }
+  /* Footer */
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2.5rem 2rem; font-family: sans-serif; }
+  footer p { font-size: 0.85rem; opacity: 0.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+  /* GPU call to action banner */
+  .gpu-cta { background: #0e1a14; color: var(--paper); padding: 4rem 2rem; text-align: center; border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold); }
+  .gpu-cta h3 { font-size: 2rem; color: var(--gold); margin-bottom: 0.75rem; }
+  .gpu-cta .gpu-sub { font-size: 1.1rem; max-width: 680px; margin: 0 auto 1.5rem; opacity: 0.85; line-height: 1.7; }
+  .gpu-cta .gpu-sub strong { color: var(--gold); }
+  .gpu-stats { display: flex; justify-content: center; gap: 3rem; margin: 2rem 0; flex-wrap: wrap; }
+  .gpu-stat { text-align: center; }
+  .gpu-stat-num { font-size: 2rem; font-weight: bold; color: var(--gold); font-family: sans-serif; }
+  .gpu-stat-label { font-size: 0.78rem; opacity: 0.55; font-family: sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+  .gpu-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; max-width: 860px; margin: 2rem auto 2.5rem; text-align: left; }
+  .gpu-feature { background: rgba(255,255,255,0.04); border: 1px solid rgba(181,135,61,0.25); border-radius: 6px; padding: 1.1rem 1.3rem; }
+  .gpu-feature h4 { font-family: sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--gold); margin-bottom: 0.35rem; }
+  .gpu-feature p { font-size: 0.84rem; opacity: 0.7; line-height: 1.5; }
+  .btn-gold { background: var(--gold); color: var(--ink); font-weight: bold; }
+  .btn-gold:hover { background: #c9973f; }
+  .btn-outline-gold { border: 2px solid var(--gold); color: var(--gold); }
+  .btn-outline-gold:hover { background: rgba(181,135,61,0.1); }
+  /* Process steps */
+  .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 2rem; counter-reset: step; }
+  .process-step { counter-increment: step; position: relative; }
+  .process-step::before { content: counter(step); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: white; font-family: sans-serif; font-weight: bold; font-size: 1rem; margin-bottom: 0.75rem; }
+  .process-step h4 { font-size: 1rem; margin-bottom: 0.4rem; }
+  .process-step p { font-size: 0.9rem; color: #555; }
+  /* Free report form */
+  .free-cta { background: linear-gradient(135deg, var(--ink-soft), var(--ink-deep)); color: white; padding: 4rem 2rem; text-align: center; }
+  .free-cta h3 { font-size: 2rem; margin-bottom: 0.75rem; }
+  .free-cta > p { opacity: 0.85; max-width: 580px; margin: 0 auto 2rem; }
+  .intake-card { background: white; color: var(--ink); border-radius: 10px; padding: 2rem 2.5rem; max-width: 680px; margin: 0 auto; text-align: left; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+  .intake-card .card-title { font-family: sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  .form-group label { font-family: sans-serif; font-size: 0.78rem; font-weight: 600; color: #555; letter-spacing: 0.03em; }
+  .form-group label .opt { font-weight: 400; color: #aaa; font-size: 0.72rem; }
+  .form-group input, .form-group textarea { padding: 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.92rem; font-family: sans-serif; color: var(--ink); background: var(--paper); transition: border-color 0.15s; }
+  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+  .form-divider { border: none; border-top: 1px solid var(--light); margin: 1.25rem 0; }
+  .form-email-row { display: flex; gap: 1rem; align-items: flex-end; }
+  .form-email-row .form-group { flex: 1; }
+  .form-email-row button { padding: 0.6rem 1.5rem; background: var(--gold); color: var(--ink); border: none; border-radius: 4px; font-size: 0.95rem; font-family: sans-serif; font-weight: bold; cursor: pointer; white-space: nowrap; height: 38px; }
+  .form-email-row button:hover { background: #c9973f; }
+  .form-note { font-size: 0.78rem; opacity: 0.7; margin-top: 1rem; font-family: sans-serif; text-align: center; color: #555; }
+  @media (max-width: 580px) {
+    .form-row, .form-row.triple { grid-template-columns: 1fr; }
+    .form-email-row { flex-direction: column; }
+    .form-email-row button { width: 100%; }
+    .intake-card { padding: 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .hero h2 { font-size: 2rem; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .conf-evidence { margin-left: 0; }
+  }
+
+  /* Contributor attribution bar */
+  .contrib-bar { background: #07090d; border-top: 2px solid #1e2d1e; color: #ccc; font-family: sans-serif; font-size: 0.82rem; }
+  .contrib-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .contrib-bar-label { color: #4a7a4a; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+  .contrib-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.1rem; align-items: center; flex: 1; }
+  .contrib-name { color: #a8c8a8; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; }
+  .contrib-name:hover { background: rgba(74,122,74,0.2); color: #c8e8c8; cursor: default; }
+  .contrib-sep { color: #2a3a2a; margin: 0 1px; }
+  .contrib-more { background: none; border: 1px solid #2a4a2a; color: #4a7a4a; border-radius: 4px; padding: 2px 10px; font-size: 0.73rem; cursor: pointer; white-space: nowrap; font-family: sans-serif; }
+  .contrib-more:hover { border-color: #4a7a4a; color: #6aaa6a; }
+  .contrib-expanded { max-width: 1100px; margin: 0 auto; padding: 0 2rem 0.75rem; display: flex; flex-wrap: wrap; gap: 0.25rem 0; border-top: 1px solid #111; }
 </style>
+<link rel="stylesheet" href="css/tokens.css">
 </head>
 <body>
 
 <header>
-  <h1>OpenGenealogyAI</h1>
+  <h1><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</h1>
   <nav>
-    <a href="#how">How It Works</a>
-    <a href="#pricing">Pricing</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute</a>
+    <a href="community.html">Community Trees</a>
     <a href="https://github.com/opengenealogyai">GitHub</a>
   </nav>
 </header>
@@ -68,8 +188,8 @@
   <h2>We Don't Guess. We Measure.</h2>
   <p>When a marriage record says your ancestor's father was "James Whitfield" — we find every James Whitfield alive at that time and place, score each one against the evidence, and give you real leads to follow. Not a single invented answer.</p>
   <div class="hero-cta">
-    <a href="#search" class="btn btn-primary">Search Your Name</a>
-    <a href="https://github.com/opengenealogyai" class="btn btn-secondary">Read the Standard</a>
+    <a href="#free-report" class="btn btn-primary">Get Your Free Report</a>
+    <a href="standard.html" class="btn btn-secondary">Read the Standard</a>
   </div>
 </div>
 
@@ -79,15 +199,15 @@
   <div class="card-grid">
     <div class="card">
       <h4>Ancestry / FamilySearch</h4>
-      <p>One answer per fact. Edit wars. Proprietary data you can't export. Your research locked in their system.</p>
+      <p>One answer per fact. Edit wars. Proprietary data you can't export. Your research locked in their system forever.</p>
     </div>
     <div class="card">
       <h4>GEDCOM Standard</h4>
-      <p>40-year-old file format. No confidence scores. No source provenance. No machine readability for AI agents.</p>
+      <p>40-year-old file format. No confidence scores. No source provenance. Built before AI existed — completely unreadable by modern agents.</p>
     </div>
     <div class="card">
       <h4>OpenGenealogyAI</h4>
-      <p>Every fact carries a confidence score and its source. Multiple possible parents coexist. Open JSON standard. Agent-verifiable.</p>
+      <p>Every fact carries a confidence score and its source. Multiple possible parents coexist. Nothing is ever deleted. Built from the ground up for AI-powered research.</p>
     </div>
   </div>
 </section>
@@ -95,93 +215,551 @@
 <hr class="divider">
 
 <section id="how">
-  <h3>How Confidence Scores Work</h3>
-  <p>Instead of picking one answer, we score every candidate against the documentary record — and show you exactly where to look next.</p>
+  <h3>A Real Example: The Maxwell Family Line</h3>
+  <p>This is a real genealogy problem — the Maxwell family, founder Garlon Maxwell's own ancestors. It shows exactly why confidence scores matter and why "one right answer" isn't how history works.</p>
   <div class="confidence-demo">
-    <div class="conf-label">Who is the father of Sarah Mitchell (b. ~1847, Giles Co., Tennessee)?</div>
-    <div class="conf-sub">Her 1866 marriage record lists father as "James Mitchell" — no further detail. Three candidates found in county records:</div>
+
+    <!-- Lineage chain -->
+    <div class="conf-chain">
+      <span class="chain-node known">James Bailey Maxwell (b. ~1870)</span>
+      <span class="chain-arrow">←</span>
+      <span class="chain-node known">James Bailey Maxwell (b. 30 Oct 1843, Lee Co., IA — d. 16 Jul 1876, Panguitch, UT)</span>
+      <span class="chain-arrow">←</span>
+      <span class="chain-node known">William Bailey Maxwell (b. 14 Mar 1821, Shawneetown, IL — d. 26 Aug 1895, Mesa, AZ)</span>
+      <span class="chain-arrow">←</span>
+      <span class="chain-node question">Richard Maxwell (b. ~1796, KY — d. ~Sept 1821, IL)</span>
+      <span class="chain-arrow">←</span>
+      <span class="chain-node unknown">Father: Unknown</span>
+    </div>
+
+    <!-- Well-documented link -->
+    <div class="conf-section-label">Well-Documented Link — William's Father</div>
+    <div class="conf-label">Who is the father of William Bailey Maxwell (b. 14 March 1821, Shawneetown, Gallatin Co., Illinois)?</div>
+    <div class="conf-sub">William was a Mormon pioneer who served in the Mormon Battalion (Company D) and later settled in Mesa, Arizona. He died 26 August 1895. Six independent source systems agree on his father:</div>
 
     <div class="conf-bar">
-      <span class="conf-name">James Mitchell (b. ~1818, VA)</span>
-      <div class="bar bar-low" style="width:5%"></div>
-      <span class="conf-score">0.05</span>
+      <span class="conf-name">Richard Maxwell (b. ~1796, KY; m. Ruth Hodge 20 Apr 1820)</span>
+      <div class="bar" style="width:90%"></div>
+      <span class="conf-score high">0.90</span>
     </div>
-    <div class="conf-evidence">1840 census, Giles Co. — age matches, no wife named yet — <em>needs church record search</em></div>
+    <div class="conf-evidence">FamilySearch + WikiTree + Find A Grave + Geni + LDS records + 1959 compiled family history — Richard died ~Sept 1821 when William was only 6 months old; Ruth later remarried William Barnett</div>
+
+    <div class="conf-demo-hr"></div>
+
+    <!-- The unknown link -->
+    <div class="conf-section-label">Unknown Link — Richard's Father</div>
+    <div class="conf-label">Who is the father of Richard Maxwell (~1796, likely Bourbon/Pulaski Co., Kentucky)?</div>
+    <div class="conf-sub">The 1959 compiled family history <em>William B. Maxwell and some of his descendants, 1821–1959</em> — written by direct descendants with access to family Bibles — states explicitly: <strong>"The parents of Richard Maxwell are not known."</strong> No probate, deed, or Bible record names his father. A GEDCOM forces you to pick one and delete the rest. MaxGen keeps every lead with an honest score:</div>
 
     <div class="conf-bar">
-      <span class="conf-name">James H. Mitchell (b. ~1821, NC)</span>
-      <div class="bar bar-low" style="width:5%"></div>
-      <span class="conf-score">0.05</span>
+      <span class="conf-name">William Maxwell Jr. (~1775, VA) + Elizabeth Kirkpatrick</span>
+      <div class="bar bar-med" style="width:45%"></div>
+      <span class="conf-score med">0.45</span>
     </div>
-    <div class="conf-evidence">1850 census, adjacent Lawrence Co. — wife Mary, 2 children — <em>needs migration record</em></div>
+    <div class="conf-evidence">Best geographic fit — William Jr. died in Shawneetown, same town, same year as Richard. Listed in FamilySearch but <em>no primary source proves parentage</em>; zero attached census, deed, or probate</div>
 
     <div class="conf-bar">
-      <span class="conf-name">James W. Mitchell (b. ~1820, TN)</span>
-      <div class="bar bar-low" style="width:7%"></div>
-      <span class="conf-score">0.07</span>
+      <span class="conf-name">Thomas Maxwell + Elizabeth Wright (m. 1791, Bourbon Co., KY)</span>
+      <div class="bar bar-low" style="width:28%"></div>
+      <span class="conf-score low">0.28</span>
     </div>
-    <div class="conf-evidence">Methodist membership roll, Pulaski TN 1843 — same county, right age — <em>best lead so far</em></div>
+    <div class="conf-evidence">Marriage record found in Bourbon Co., KY — the exact reported birthplace county for Richard, right timing. No children's list survives to confirm or deny</div>
 
-    <div class="conf-note">Low scores are honest scores. We have a name and some leads — not a conclusion. Every candidate is preserved so any researcher can dig further. The one who finds the missing church record updates the score for everyone.</div>
+    <div class="conf-bar">
+      <span class="conf-name">George Maxwell (Bourbon/Madison Co., KY, ~1790s)</span>
+      <div class="bar bar-low" style="width:20%"></div>
+      <span class="conf-score low">0.20</span>
+    </div>
+    <div class="conf-evidence">Part of documented Maxwell settler cluster in Bourbon Co. tax lists. Geographic plausibility only — no direct link to Richard found</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">David D. Maxwell + Mary (Madison Co., KY)</span>
+      <div class="bar bar-spec" style="width:8%"></div>
+      <span class="conf-score spec">0.08</span>
+    </div>
+    <div class="conf-evidence">Large landholder with sons in Madison Co. — adjacent to Bourbon, right era. Speculative; no migration link to Gallatin Co., IL</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">William Maxwell (~1778?) + Ann Judy</span>
+      <div class="bar bar-spec" style="width:7%"></div>
+      <span class="conf-score spec">0.07</span>
+    </div>
+    <div class="conf-evidence">Appears in scattered Ancestry trees and a Maxwell Y-DNA project alongside a Richard line. Separate from Kirkpatrick line; possible tree error or parallel family</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">Samuel Maxwell (VA/PA border, ~1776)</span>
+      <div class="bar bar-spec" style="width:5%"></div>
+      <span class="conf-score spec">&lt;0.05</span>
+    </div>
+    <div class="conf-evidence">Active in VA/PA border areas with later western ties — name commonality + broad migration pattern only</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">Nathaniel Maxwell + Esther Carson (Washington Co., VA)</span>
+      <div class="bar bar-spec" style="width:4%"></div>
+      <span class="conf-score spec">&lt;0.05</span>
+    </div>
+    <div class="conf-evidence">Settled Washington Co., VA ~1770; large family with frontier descendants. No direct KY→IL link documented</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">Alexander Maxwell (Bourbon Co., KY, ~1790s)</span>
+      <div class="bar bar-spec" style="width:4%"></div>
+      <span class="conf-score spec">&lt;0.05</span>
+    </div>
+    <div class="conf-evidence">Part of Scotch-Irish cluster in Bourbon Co. — speculative; no record ties this Alexander to a son Richard born 1796</div>
+
+    <div class="conf-bar">
+      <span class="conf-name">John Maxwell Sr. + Margaret Mary Carson (VA/PA → KY)</span>
+      <div class="bar bar-spec" style="width:3%"></div>
+      <span class="conf-score spec">&lt;0.05</span>
+    </div>
+    <div class="conf-evidence">Irish immigrants, multiple sons; descendants pushed to KY frontier ~1770s. No specific record ties them to Gallatin Co., IL by 1820</div>
+
+    <div class="conf-note">
+      Every one of these stays open in MaxGen — none is deleted while the research continues. When a researcher finds the Gallatin County probate record, a Maxwell family Bible, or a Y-DNA match in the Maxwell surname project, they update the score and that update applies to every tree that references Richard Maxwell. That is how genealogy should work.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="process">
+  <h3>What Happens When You Ask a Question</h3>
+  <p>A research report isn't a search result — it's a coordinated investigation across millions of documents, scored and delivered to your inbox.</p>
+  <div class="process-steps">
+    <div class="process-step">
+      <h4>You name an ancestor</h4>
+      <p>Give us a name, an approximate birth year, and the last place they were known to live.</p>
+    </div>
+    <div class="process-step">
+      <h4>Agents search the archive</h4>
+      <p>Our AI agents scan census rows, land patents, church registers, newspapers, and ship manifests — millions of records in minutes.</p>
+    </div>
+    <div class="process-step">
+      <h4>Every match is scored</h4>
+      <p>Each candidate gets a confidence score based on how many facts align. No record is discarded — conflicting claims are preserved alongside each other.</p>
+    </div>
+    <div class="process-step">
+      <h4>You get a real report</h4>
+      <p>A clean PDF and email summary lands in your inbox — what we found, what it means, and exactly what to look for next.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FREE REPORT CTA -->
+<div id="free-report" class="free-cta">
+  <h3>Try It Free — One Ancestor Report</h3>
+  <p>No credit card. Tell us what you know — the more detail you give, the deeper we can search. We'll email your report within 24 hours.</p>
+
+  <div class="intake-card">
+    <div class="card-title">About Your Ancestor</div>
+
+    <!-- Thank-you state (hidden until form submits successfully) -->
+    <div id="report-thankyou" style="display:none;text-align:center;padding:2rem 0;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">✉️</div>
+      <h4 style="font-family:sans-serif;font-size:1.2rem;margin-bottom:0.5rem;color:#2a5a2a;">Report on its way!</h4>
+      <p style="font-family:sans-serif;font-size:0.95rem;color:#555;max-width:420px;margin:0 auto;">
+        We're generating your ancestor research report now. Check your inbox within 24 hours — sometimes just a few minutes.
+      </p>
+      <a href="https://opengenealogyai.org" style="display:inline-block;margin-top:1.5rem;background:#b5873d;color:#fff;padding:0.65rem 1.75rem;border-radius:4px;font-family:sans-serif;font-weight:bold;text-decoration:none;">Explore the Platform →</a>
+    </div>
+
+    <form id="ancestor-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name <span class="opt">(required)</span></label>
+        <input type="text" name="ancestor_name" placeholder="e.g. William James Whitfield" />
+      </div>
+      <div class="form-group">
+        <label>Spouse / Wife's Name <span class="opt">(optional)</span></label>
+        <input type="text" name="spouse_name" placeholder="e.g. Mary Ann Henderson" />
+      </div>
+    </div>
+
+    <div class="form-row triple">
+      <div class="form-group">
+        <label>Birth Year <span class="opt">(approx. ok)</span></label>
+        <input type="text" name="birth_year" placeholder="e.g. 1842 or ~1840s" />
+      </div>
+      <div class="form-group">
+        <label>Death Year <span class="opt">(if known)</span></label>
+        <input type="text" name="death_year" placeholder="e.g. 1918" />
+      </div>
+      <div class="form-group">
+        <label>Birthplace <span class="opt">(optional)</span></label>
+        <input type="text" name="birthplace" placeholder="e.g. Giles Co., TN" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Town / County They Lived In</label>
+        <input type="text" name="town_county" placeholder="e.g. Pulaski, Tennessee" />
+      </div>
+      <div class="form-group">
+        <label>Last Known Address <span class="opt">(optional)</span></label>
+        <input type="text" name="last_address" placeholder="e.g. 412 Main St, Pulaski TN" />
+      </div>
+    </div>
+
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Children's Names <span class="opt">(list as many as you know)</span></label>
+        <input type="text" name="children" placeholder="e.g. Sarah, James Jr., Thomas, Eliza" />
+      </div>
+    </div>
+
+    <div class="form-row single">
+      <div class="form-group">
+        <label>Anything Else You Know <span class="opt">(occupation, church, immigration, military, etc.)</span></label>
+        <textarea name="extra_info" placeholder="e.g. He was a Methodist farmer, served in the Civil War, may have emigrated from Virginia around 1835..."></textarea>
+      </div>
+    </div>
+
+    <hr class="form-divider">
+
+    <div class="form-email-row">
+      <div class="form-group">
+        <label>Your Email Address <span class="opt">(required — we'll send the report here)</span></label>
+        <input type="email" name="email" placeholder="you@example.com" />
+      </div>
+      <button type="button" id="report-submit-btn" onclick="submitAncestorReport()">Send My Report →</button>
+    </div>
+
+    <div id="report-form-error" style="display:none;color:#c0392b;font-family:sans-serif;font-size:0.85rem;margin-top:0.75rem;text-align:center;"></div>
+    <div class="form-note">One free report per verified email · Delivered within 24 hours · No spam, ever</div>
+    </form>
+  </div>
+
+<script>
+function submitAncestorReport() {
+  var form = document.getElementById('ancestor-form');
+  var btn = document.getElementById('report-submit-btn');
+  var errDiv = document.getElementById('report-form-error');
+
+  // Gather field values by name
+  var fields = ['ancestor_name','spouse_name','birth_year','death_year','birthplace',
+                'town_county','last_address','children','extra_info','email'];
+  var payload = {};
+  fields.forEach(function(name) {
+    var el = form.querySelector('[name="' + name + '"]');
+    payload[name] = el ? el.value.trim() : '';
+  });
+
+  // Client-side validation
+  if (!payload.ancestor_name) {
+    errDiv.textContent = 'Please enter the ancestor\'s full name.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  if (!payload.email) {
+    errDiv.textContent = 'Please enter your email address.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  errDiv.style.display = 'none';
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  fetch('http://localhost:8080/api/report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (data.success) {
+      form.style.display = 'none';
+      document.getElementById('report-thankyou').style.display = 'block';
+    } else {
+      errDiv.textContent = data.error || 'Something went wrong. Please try again.';
+      errDiv.style.display = 'block';
+      btn.textContent = 'Send My Report →';
+      btn.disabled = false;
+    }
+  })
+  .catch(function(err) {
+    errDiv.textContent = 'Could not reach the server. Make sure ancestor_report.py is running on port 8080.';
+    errDiv.style.display = 'block';
+    btn.textContent = 'Send My Report →';
+    btn.disabled = false;
+  });
+}
+</script>
+</div>
+
+<section id="report-sample">
+  <h3>What's in a Research Report</h3>
+  <p>Every report — free or paid — follows the same format. Paid accounts get more research moves, more depth, and a running Confidence Map that grows with every session.</p>
+  <div class="report-preview">
+    <h4>Sarah Mitchell Research Report</h4>
+    <div class="rp-sub">Free report · 1 ancestor · 14 research moves used · delivered May 6, 2026</div>
+    <div class="report-section">
+      <h5>What We Found</h5>
+      <p>Three "James Mitchell" candidates in Giles County, TN in the right time period. Best lead: James W. Mitchell (b. ~1820, TN) — same county, Methodist church rolls, right age bracket. Score: 0.07.</p>
+    </div>
+    <div class="report-section">
+      <h5>One Good Story</h5>
+      <p>Sarah's 1866 marriage record — filed in Pulaski, Giles Co. — lists her father only as "James Mitchell, farmer." The witness was a J.W. Mitchell, listed as neighbor. That witness may be the same man.</p>
+    </div>
+    <div class="report-section">
+      <h5>Open Threads</h5>
+      <p>Methodist church membership rolls (Pulaski, 1840–1860) have not been digitized. The Giles County probate index for 1860–1880 may name a daughter Sarah. These are your two best next steps.</p>
+    </div>
+    <div class="report-locked">
+      🔒 <strong>Confidence Map, full task log, and Next Month's Plan</strong> — available on Starter and above
+    </div>
   </div>
 </section>
 
 <hr class="divider">
 
 <section id="pricing">
-  <h3>Free Data. Paid Agent Labor.</h3>
-  <p>All public genealogy data is and will remain free forever. What you pay for is AI agents doing the work of a professional researcher — in 30 minutes, not 30 years.</p>
-  <div class="pricing">
+  <h3>Research Moves</h3>
+  <p>A <em>research move</em> is one agent action: search a collection, score a candidate, cross-check a date, find a church record. Free users get one report. Paid users get a monthly allowance of moves — the more you buy, the deeper we dig. Add private document storage separately for $2/mo + usage.</p>
+  <div class="pricing-grid">
+
     <div class="plan">
       <h4>Free</h4>
-      <div class="price">$0 / mo</div>
+      <div class="price">$0<span> / mo</span></div>
+      <div class="tagline">One complete report to get started</div>
+      <div class="moves">1 ancestor report</div>
       <ul>
-        <li>Browse all public probabilistic trees</li>
+        <li>One emailed research report (24 hrs)</li>
+        <li>What We Found + One Good Story</li>
+        <li>Open Threads to follow up</li>
+        <li>Browse all public trees</li>
         <li>Download any record as JSON</li>
-        <li>Search 10M+ open-license documents</li>
-        <li>Read confidence scores and source citations</li>
-        <li>Fork and extend the open standard</li>
+        <li style="color:#aaa;">No document storage</li>
       </ul>
+      <a href="#free-report" class="plan-cta plan-cta-free">Get Free Report</a>
     </div>
-    <div class="plan paid">
-      <h4>Research Tier</h4>
-      <div class="price">$9 / mo</div>
+
+    <div class="plan featured">
+      <h4>Starter</h4>
+      <div class="price">$10<span> / mo</span></div>
+      <div class="tagline">One family line, steady progress</div>
+      <div class="moves">100 research moves/mo</div>
       <ul>
-        <li>Auto-build 3+ ancestral generations in 30 min</li>
-        <li>Private document uploads (50 MB/mo)</li>
-        <li>Export to GEDCOM, PDF, or JSON</li>
-        <li>DNA match integration (coming Q3)</li>
-        <li>Priority queue for collection indexing</li>
-        <li>Living Memory voice attachment (coming Q4)</li>
+        <li>Monthly report: discoveries + task log</li>
+        <li>Confidence Map — grows each month</li>
+        <li>50 moves roll over if unused</li>
+        <li>One family line tracked</li>
+        <li>Email + PDF delivery</li>
+        <li>Next Month's Plan included</li>
       </ul>
+      <a href="#" class="plan-cta plan-cta-paid">Start for $10</a>
     </div>
+
+    <div class="plan">
+      <h4>Pro</h4>
+      <div class="price">$29<span> / mo</span></div>
+      <div class="tagline">Multiple lines, real depth</div>
+      <div class="moves">350 research moves/mo</div>
+      <ul>
+        <li>Everything in Starter</li>
+        <li>Three family lines tracked</li>
+        <li>175 moves roll over</li>
+        <li>DNA match cross-reference (coming Q3)</li>
+        <li>Priority indexing queue</li>
+      </ul>
+      <a href="#" class="plan-cta plan-cta-paid">Start for $29</a>
+    </div>
+
+    <div class="plan">
+      <h4>Power</h4>
+      <div class="price">$100<span> / mo</span></div>
+      <div class="tagline">Full tree, maximum depth</div>
+      <div class="moves">1,250 research moves/mo</div>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>All family lines, no limit</li>
+        <li>625 moves roll over</li>
+        <li>Living Memory voice attachment (Q4)</li>
+        <li>Early access to new features</li>
+      </ul>
+      <a href="#" class="plan-cta plan-cta-paid">Start for $100</a>
+    </div>
+
+  </div>
+  <p class="payg-note">Need a single deep dive? <a href="#">Pay-as-you-go at $0.12/move</a> — no subscription required.</p>
+
+  <div class="storage-addon">
+    <div class="storage-addon-label">Private Document Storage — Add to any plan</div>
+    <div class="storage-tiers">
+      <div class="storage-tier">
+        <div class="storage-price">$2<span>/mo</span></div>
+        <div class="storage-cap">Up to 1,000 documents</div>
+        <div class="storage-note">Certificates, letters, photos</div>
+      </div>
+      <div class="storage-tier storage-tier-mid">
+        <div class="storage-price">$5<span>/mo</span></div>
+        <div class="storage-cap">Up to 5,000 documents</div>
+        <div class="storage-note">Documents + high-res photos</div>
+      </div>
+      <div class="storage-tier">
+        <div class="storage-price">$12<span>/mo</span></div>
+        <div class="storage-cap">Up to 20,000 items</div>
+        <div class="storage-note">Full archive — docs, photos, video &amp; audio</div>
+      </div>
+    </div>
+    <p class="storage-fine">Photos, certificates, letters, audio recordings, home videos — all linked directly to your tree. Download your files any time. You own them.</p>
   </div>
 </section>
 
 <hr class="divider">
 
 <section>
-  <h3>The Open Standard</h3>
-  <p>OpenGenealogyAI is a JSON schema standard, not just a website. Any researcher, application, or AI agent can produce or consume our records.</p>
+  <h3>Built on an Open Standard</h3>
+  <p>The data format powering this platform — <strong>MaxGen</strong>, the Maxwell Genealogy Standard — was built from the ground up so that AI can work and process genealogy data efficiently. Every assertion carries a confidence score, every fact traces back to a source document. You can export your data at any time, build your own tools, and host your own records. The standard belongs to everyone.</p>
   <div class="card-grid">
     <div class="card">
-      <h4>RawRecord</h4>
-      <p>Source documents exactly as found — birth certificates, census rows, parish registers — with provenance and confidence.</p>
+      <h4>MaxGen Record</h4>
+      <p>Every source document stored exactly as found — birth certificates, census rows, parish registers — with its origin and a confidence score attached.</p>
     </div>
     <div class="card">
-      <h4>Person</h4>
-      <p>Probabilistic identity with multiple possible parents, confidence-scored name assertions, and an immutable assertion log.</p>
+      <h4>MaxGen Person</h4>
+      <p>A person profile that can hold multiple possible parents at once, each scored by how much evidence supports them. Nothing is ever deleted.</p>
     </div>
     <div class="card">
-      <h4>TaskQueue</h4>
-      <p>Distributed work queue for AI agents — ingest, judge, build, resolve conflicts — with cost caps and human gates built in.</p>
+      <h4>MaxGen Task</h4>
+      <p>A work queue entry for AI agents — search a collection, score candidates, flag conflicts, hand off to a human when needed.</p>
     </div>
+  </div>
+  <div style="text-align:center;margin-top:2rem">
+    <a href="standard.html" class="btn btn-primary" style="background:var(--accent);color:white">Read the MaxGen Standard →</a>
   </div>
 </section>
 
+<!-- GPU / EMBEDDING CALL TO ACTION -->
+<div class="gpu-cta">
+  <h3>We Need Your GPU</h3>
+  <p class="gpu-sub">
+    The most important digital library in human history won't build itself. Hundreds of millions of genealogy records exist as scanned images and aging microfilm — birth certificates, census rows, church registers, land patents, immigration papers going back centuries. <strong>AI can search them, but only after they are converted into a form AI can understand.</strong> That conversion requires GPU power, and it needs to happen at a scale no single organization can achieve alone.
+  </p>
+  <p class="gpu-sub" style="margin-top:-0.5rem;">
+    If you have a gaming computer, a workstation, or any machine with a dedicated graphics card, you can be part of this global endeavor — and <strong>earn a share of the revenue your compute generates.</strong> Contributors who run research tasks for paying users are paid the majority of every dollar collected. The platform keeps a small coordination fee. You do the work. You earn the income.
+  </p>
+
+  <div class="gpu-stats">
+    <div class="gpu-stat">
+      <div class="gpu-stat-num">34.3M</div>
+      <div class="gpu-stat-label">Records Waiting to Be Embedded</div>
+    </div>
+    <div class="gpu-stat">
+      <div class="gpu-stat-num">17</div>
+      <div class="gpu-stat-label">Collections Open to Claim Now</div>
+    </div>
+    <div class="gpu-stat">
+      <div class="gpu-stat-num">80%</div>
+      <div class="gpu-stat-label">Of Revenue Returned to Contributors</div>
+    </div>
+    <div class="gpu-stat">
+      <div class="gpu-stat-num">∞</div>
+      <div class="gpu-stat-label">Families Who Will Benefit</div>
+    </div>
+  </div>
+
+  <div class="gpu-features">
+    <div class="gpu-feature">
+      <h4>Any GPU Welcome</h4>
+      <p>RTX 3060 or better runs embeddings ~10× faster than CPU. Even a basic gaming card or laptop GPU makes a real difference. CPU-only machines contribute to scraping collections.</p>
+    </div>
+    <div class="gpu-feature">
+      <h4>Earn While You Sleep</h4>
+      <p>Check out a collection before you go to sleep. The pipeline runs unattended — fetching, transcribing, embedding. Submit in the morning. Your machine did genealogy research while you slept — and earned.</p>
+    </div>
+    <div class="gpu-feature">
+      <h4>You Keep the Majority</h4>
+      <p>80% of every research dollar goes back to contributors: 70% to the worker who ran the task, 10% to the quality checker who verified it. We keep just 20% to keep the lights on. Payouts tracked transparently in your contributor dashboard.</p>
+    </div>
+    <div class="gpu-feature">
+      <h4>Permanent Attribution</h4>
+      <p>Beyond earnings — every record you embed carries your name in the database permanently. When a researcher's report cites that record, your contribution is in the citation chain forever.</p>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <a href="contribute.html" class="btn btn-gold">See How It Works →</a>
+    <a href="https://github.com/opengenealogyai" class="btn btn-outline-gold">Clone on GitHub</a>
+  </div>
+</div>
+
+<!-- CONTRIBUTOR ATTRIBUTION BAR -->
+<div class="contrib-bar">
+  <div class="contrib-bar-inner">
+    <span class="contrib-bar-label">Record Contributors</span>
+    <div class="contrib-row" id="contribRow">
+      <span class="contrib-name">Garlon Maxwell</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Sarah O'Brien</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Klaus Bergmann</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Yuki Tanaka</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Maria Santos</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">James Whitfield</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Priya Nair</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Lars Eriksson</span>
+    </div>
+    <button class="contrib-more" id="contribToggle" onclick="(function(){var e=document.getElementById('contribExpanded'),t=document.getElementById('contribToggle'),o=e.style.display==='none';e.style.display=o?'flex':'none';t.textContent=o?'▲ collapse':'▼ 44 more contributors';})()">▼ 44 more contributors</button>
+  </div>
+  <div class="contrib-expanded" id="contribExpanded" style="display:none">
+    <span class="contrib-name">Aoife Murphy</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Chen Wei</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Robert Kowalski</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Elena Petrova</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Carlos Mendez</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Fatima Al-Rashid</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Thomas Blackwood</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Amara Diallo</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Ingrid Halvorsen</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Dmitri Volkov</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Nkechi Okafor</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Hamid Tehrani</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Brigitte Lefebvre</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Arjun Mehta</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Siobhan Gallagher</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Wilhelm Schäfer</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Lucía Vargas</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Oluwaseun Adeyemi</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Hana Novák</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Takeshi Yamamoto</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Bridget Callahan</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Piotr Wiśniewski</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Zanele Dlamini</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Antoine Moreau</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Mei-Ling Zhou</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Eoin Ó'Sullivan</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Risto Mäkinen</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Valentina Greco</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Samuel Aboagye</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Nadia Leclerc</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Hiroshi Kawamoto</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Magdalena Horváth</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Kwame Asante</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Saoirse Brennan</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Viktor Andersson</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Isabela Ferreira</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Andrei Popescu</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Chioma Eze</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Søren Kjeldsen</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Miriam Goldstein</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Ravi Krishnamurthy</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Astrid Thorvaldsen</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Emeka Obiora</span><span class="contrib-sep">·</span>
+    <span class="contrib-name">Caitlín Ní Fhaoláin</span>
+  </div>
+</div>
+
 <footer>
-  <p>OpenGenealogyAI &mdash; Open-source genealogy standard &mdash; opengenealogyai.org</p>
-  <p style="margin-top:0.5rem">All public data is CC0. Source on <a href="https://github.com/opengenealogyai" style="color:var(--gold)">GitHub</a>.</p>
+  <p>OpenGenealogyAI — Open-source genealogy standard — opengenealogyai.org</p>
+  <div class="footer-links">
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute Data</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+    <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/docs/AGENT_EXTRACTION_RULES.md">Extraction Rules</a>
+  </div>
+  <p style="margin-top:1rem">All public data is CC0. Built with agentic AI. Named for Garlon Maxwell.</p>
 </footer>
 
 </body>

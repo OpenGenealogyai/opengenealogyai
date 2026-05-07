@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opengenealogyai.org/schemas/v0.1/person.schema.json",
-  "title": "Person",
-  "description": "A probabilistic identity synthesized from one or more RawRecords. No fact is ever overwritten; new evidence creates new assertions.",
+  "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
+  "title": "MXPerson",
+  "description": "MAXGEN v1.0 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MXRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,8 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "0.1"
+      "const": "1.0",
+      "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
       "type": "boolean",

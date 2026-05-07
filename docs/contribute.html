@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contribute — OpenGenealogyAI</title>
+<style>
+  :root {
+    --light: #f0ede4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.6rem; }
+  .site-logo { height: 2rem; width: auto; }
+  header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  header nav a:hover { color: #fff; }
+
+  /* Hero */
+  .contribute-hero { background: var(--ink); color: var(--paper); padding: 4rem 2rem; text-align: center; }
+  .contribute-hero h2 { font-size: 2.4rem; margin-bottom: 0.75rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+  .contribute-hero p { opacity: 0.8; max-width: 600px; margin: 0 auto 1.5rem; font-size: 1.05rem; }
+  .stats-row { display: flex; justify-content: center; gap: 3rem; margin: 2rem 0 1.5rem; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2.2rem; font-weight: bold; color: var(--gold); font-family: sans-serif; }
+  .stat-label { font-size: 0.8rem; opacity: 0.6; font-family: sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+  .progress-wrap { margin: 0.5rem auto 0; }
+  .progress-label { font-size: 0.8rem; opacity: 0.5; font-family: sans-serif; margin-bottom: 4px; }
+  .progress-bar-outer { background: #333; border-radius: 4px; height: 8px; width: 300px; margin: 0 auto; }
+  .progress-bar-inner { background: var(--gold); height: 8px; border-radius: 4px; }
+  .progress-pct { font-size: 0.75rem; opacity: 0.4; font-family: sans-serif; margin-top: 4px; }
+
+  /* Content wrap */
+  .content-wrap { max-width: 960px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+  /* Section labels */
+  .section-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-family: sans-serif; margin: 3rem 0 1rem; }
+
+  /* How-to steps */
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .step { background: var(--light); border-left: 3px solid var(--gold); border-radius: 4px; padding: 1rem 1.2rem; }
+  .step-num { font-size: 1.4rem; font-weight: bold; color: var(--gold); font-family: sans-serif; }
+  .step-text { font-size: 0.9rem; margin-top: 0.3rem; }
+  .step-code { font-family: monospace; font-size: 0.8rem; background: var(--ink); color: var(--gold); padding: 0.4rem 0.7rem; border-radius: 3px; margin-top: 0.5rem; display: block; white-space: pre; overflow-x: auto; }
+  .step a { color: var(--accent); }
+
+  /* Attribution note */
+  .attribution-note { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem 1.5rem; margin-top: 1.5rem; font-size: 0.9rem; }
+  .attribution-note strong { color: var(--accent); }
+
+  /* Requirements */
+  .req-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .req-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.2rem 1.5rem; }
+  .req-card h4 { font-family: sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--accent); margin-bottom: 0.4rem; }
+  .req-card p { font-size: 0.88rem; }
+  .req-card code { font-family: monospace; background: var(--light); padding: 1px 4px; border-radius: 2px; font-size: 0.82rem; }
+
+  /* Tables */
+  .checkout-table-outer { overflow-x: auto; margin-top: 0.5rem; }
+  .checkout-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.88rem; min-width: 600px; }
+  .checkout-table th { text-align: left; color: var(--gold); font-weight: 600; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .checkout-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid #e8e0d0; vertical-align: top; }
+  .checkout-table tr:last-child td { border-bottom: none; }
+  .checkout-table tr:hover td { background: var(--light); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; font-family: sans-serif; white-space: nowrap; }
+  .badge-gpu { background: #d4edda; color: #1a6e34; }
+  .badge-cpu { background: #d1ecf1; color: #0c5460; }
+  .badge-scrape { background: #fff3cd; color: #856404; }
+  .badge-out { background: #f8d7da; color: #721c24; }
+  .col-id { font-family: monospace; font-size: 0.82rem; color: var(--accent); white-space: nowrap; }
+  .col-records { white-space: nowrap; color: #555; }
+  .col-time { white-space: nowrap; color: #777; }
+
+  /* Pipeline info */
+  .pipeline-block { background: var(--ink); color: #e0ddd4; font-family: monospace; font-size: 0.83rem; border-radius: 6px; padding: 1.5rem; margin: 1rem 0; line-height: 1.8; overflow-x: auto; }
+  .pipeline-block .comment { color: #6a8; }
+  .pipeline-block .cmd { color: var(--gold); }
+
+  /* Footer */
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2.5rem 2rem; font-family: sans-serif; }
+  footer p { font-size: 0.85rem; opacity: 0.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+
+  /* Profit share section */
+  .profit-banner { background: #0e1a14; color: var(--paper); padding: 4rem 2rem; text-align: center; border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold); }
+  .profit-banner h2 { font-size: 2rem; color: var(--gold); margin-bottom: 0.75rem; }
+  .profit-banner .pb-sub { font-size: 1.05rem; max-width: 680px; margin: 0 auto 2rem; opacity: 0.85; line-height: 1.7; }
+  .profit-banner .pb-sub strong { color: var(--gold); }
+  .revenue-model { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 860px; margin: 2rem auto; text-align: left; }
+  .revenue-col { background: rgba(255,255,255,0.04); border: 1px solid rgba(181,135,61,0.3); border-radius: 8px; padding: 1.75rem; }
+  .revenue-col h3 { font-family: sans-serif; font-size: 1rem; color: var(--gold); margin-bottom: 1rem; }
+  .revenue-col ul { list-style: none; }
+  .revenue-col ul li { font-size: 0.9rem; opacity: 0.85; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; gap: 1rem; }
+  .revenue-col ul li:last-child { border-bottom: none; }
+  .revenue-col ul li .rev-val { color: var(--gold); font-weight: bold; font-family: sans-serif; white-space: nowrap; }
+  .revenue-flow { max-width: 680px; margin: 2.5rem auto; }
+  .flow-row { display: flex; align-items: center; gap: 0; border-radius: 6px; overflow: hidden; height: 48px; font-family: sans-serif; font-size: 0.82rem; font-weight: 600; }
+  .flow-contrib { background: var(--gold); color: var(--ink); display: flex; align-items: center; justify-content: center; height: 100%; transition: width 0.3s; font-size: 0.78rem; }
+  .flow-checker { background: #c97b2a; color: white; display: flex; align-items: center; justify-content: center; height: 100%; font-size: 0.78rem; }
+  .flow-platform { background: var(--ink-soft); color: white; display: flex; align-items: center; justify-content: center; height: 100%; font-size: 0.78rem; }
+  .flow-label { font-size: 0.78rem; font-family: sans-serif; opacity: 0.6; margin-top: 0.5rem; display: flex; justify-content: space-between; }
+  .earn-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.88rem; margin: 1.5rem auto; max-width: 680px; }
+  .earn-table th { text-align: left; padding: 0.5rem 1rem; background: rgba(181,135,61,0.15); color: var(--gold); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .earn-table td { padding: 0.6rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .earn-table td:last-child { color: var(--gold); font-weight: bold; }
+  .earn-table tr:last-child td { border-bottom: none; }
+  .waitlist-form { display: flex; gap: 0.75rem; max-width: 480px; margin: 2rem auto 0; flex-wrap: wrap; justify-content: center; }
+  .waitlist-form input { flex: 1; min-width: 220px; padding: 0.65rem 1rem; border: 1px solid rgba(181,135,61,0.4); border-radius: 4px; background: rgba(255,255,255,0.06); color: white; font-size: 0.95rem; font-family: sans-serif; }
+  .waitlist-form input::placeholder { opacity: 0.45; }
+  .waitlist-form button { padding: 0.65rem 1.5rem; background: var(--gold); color: var(--ink); border: none; border-radius: 4px; font-size: 0.95rem; font-family: sans-serif; font-weight: bold; cursor: pointer; }
+
+  .btn { padding: 0.65rem 1.5rem; border-radius: 4px; font-size: 0.95rem; cursor: pointer; text-decoration: none; font-family: sans-serif; display: inline-block; }
+  .btn-accent { background: var(--accent); color: white; font-weight: bold; }
+  .btn-accent:hover { background: var(--gold-deep); }
+
+  /* Donation section */
+  .donate-banner { background: #080f1a; color: var(--paper); padding: 4rem 2rem; border-top: 3px solid #3a6fd8; border-bottom: 3px solid #3a6fd8; }
+  .donate-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+  .donate-badge { display: inline-block; background: #1a3a6e; color: #7ab3ff; font-family: sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; padding: 4px 14px; border-radius: 20px; border: 1px solid #3a6fd8; margin-bottom: 1.25rem; }
+  .donate-heading { font-size: 2rem; color: #7ab3ff; margin-bottom: 0.75rem; }
+  .donate-sub { font-size: 0.95rem; max-width: 720px; margin: 0 auto 2rem; opacity: 0.82; line-height: 1.75; }
+  .donate-sub strong { color: #7ab3ff; }
+  .donate-model { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem; margin: 2rem 0; text-align: left; }
+  .donate-model-col { background: rgba(58,111,216,0.08); border: 1px solid rgba(58,111,216,0.25); border-radius: 8px; padding: 1.25rem; }
+  .donate-model-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .donate-model-col h4 { font-family: sans-serif; font-size: 0.9rem; color: #7ab3ff; margin-bottom: 0.4rem; }
+  .donate-model-col p { font-size: 0.82rem; opacity: 0.75; line-height: 1.6; }
+  .donate-amounts { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin: 2rem 0 1.25rem; }
+  .donate-btn { background: rgba(58,111,216,0.12); border: 1px solid rgba(58,111,216,0.4); color: #a8caff; font-family: sans-serif; font-size: 1rem; font-weight: 600; padding: 0.6rem 1.4rem; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+  .donate-btn:hover { background: rgba(58,111,216,0.25); border-color: #7ab3ff; color: white; }
+  .donate-btn.selected { background: #3a6fd8; border-color: #7ab3ff; color: white; }
+  .donate-btn-custom { padding: 0.6rem 0.75rem; min-width: 120px; }
+  .donate-submit { background: #3a6fd8; color: white; border: none; border-radius: 6px; font-family: sans-serif; font-size: 1rem; font-weight: 700; padding: 0.8rem 2rem; cursor: pointer; margin-top: 0.5rem; }
+  .donate-submit:hover { background: #2d5ab8; }
+  .donate-note { font-size: 0.78rem; opacity: 0.45; font-family: sans-serif; margin-top: 0.6rem; }
+  .donate-actions { margin-bottom: 2.5rem; }
+  .donate-example { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 1.5rem; max-width: 620px; margin: 0 auto; text-align: left; }
+  .donate-example-label { font-family: sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7ab3ff; opacity: 0.7; margin-bottom: 1rem; }
+  .donate-example-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+  .de-contributor { font-family: sans-serif; font-size: 0.8rem; width: 160px; flex-shrink: 0; opacity: 0.8; }
+  .de-bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 3px; height: 10px; }
+  .de-bar { background: linear-gradient(90deg, #3a6fd8, #7ab3ff); height: 10px; border-radius: 3px; }
+  .de-amount { font-family: sans-serif; font-size: 0.8rem; font-weight: 600; color: #7ab3ff; white-space: nowrap; }
+  .de-pct { font-weight: 400; opacity: 0.6; font-size: 0.72rem; }
+  .de-total { font-family: sans-serif; font-size: 0.8rem; color: #7ab3ff; margin-top: 1rem; text-align: center; font-weight: 600; letter-spacing: 0.03em; }
+
+  @media (max-width: 600px) {
+    .stats-row { gap: 1.5rem; }
+    .contribute-hero h2 { font-size: 1.8rem; }
+  }
+</style>
+<link rel="stylesheet" href="css/tokens.css">
+</head>
+<body>
+
+<header>
+  <h1><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</h1>
+  <nav>
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html" class="active">Contribute</a>
+    <a href="community.html">Community Trees</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<div class="contribute-hero">
+  <h2>Help Build the Database</h2>
+  <p>Check out a collection, run our pipeline on your machine, and embed millions of genealogy records into the open archive. You get full attribution on every record you contribute — permanently.</p>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">34.3M</div>
+      <div class="stat-label">Records Available</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Active Contributors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">17</div>
+      <div class="stat-label">Collections Open</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">139K</div>
+      <div class="stat-label">Records Embedded</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label">Overall Progress</div>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:0%"></div></div>
+    <div class="progress-pct">0.0% complete</div>
+  </div>
+</div>
+
+<div class="content-wrap">
+
+  <!-- PROFIT SHARE MODEL -->
+</div>
+
+<div class="profit-banner">
+  <h2>Your Compute. Your Income.</h2>
+  <p class="pb-sub">
+    Contributors don't just volunteer — <strong>they earn.</strong> When a paying user submits a research request, that work runs on contributor machines. <strong>80% of every dollar</strong> goes back to contributors: 70% to the worker doing the research, 10% to the checker verifying quality. OpenGenealogyAI keeps just 20% for coordination and hosting. You do the work. You earn the income. The more you contribute, the more you earn.
+  </p>
+
+  <!-- Revenue flow bar -->
+  <div class="revenue-flow">
+    <div class="flow-row">
+      <div class="flow-contrib" style="width:70%">70% → Worker</div>
+      <div class="flow-checker" style="width:10%">10%</div>
+      <div class="flow-platform" style="width:20%">20% Platform</div>
+    </div>
+    <div class="flow-label" style="justify-content:space-between;">
+      <span>Worker: does the research / embedding work</span>
+      <span>Checker: quality verification</span>
+      <span>Platform</span>
+    </div>
+  </div>
+
+  <!-- How the money moves -->
+  <div class="revenue-model">
+    <div class="revenue-col">
+      <h3>How Revenue Is Generated</h3>
+      <ul>
+        <li><span>Free user report (one-time)</span><span class="rev-val">$0</span></li>
+        <li><span>Pay-as-you-go research move</span><span class="rev-val">$0.12/move</span></li>
+        <li><span>Starter plan (100 moves/mo)</span><span class="rev-val">$10/mo</span></li>
+        <li><span>Pro plan (350 moves/mo)</span><span class="rev-val">$29/mo</span></li>
+        <li><span>Power plan (1,250 moves/mo)</span><span class="rev-val">$100/mo</span></li>
+        <li><span>Document storage (platform — see note)</span><span class="rev-val">$2/mo + usage</span></li>
+      </ul>
+    </div>
+    <div class="revenue-col">
+      <h3>Revenue Split Per $0.12 Move</h3>
+      <ul>
+        <li><span>Worker (does the research)</span><span class="rev-val">$0.084 — 70%</span></li>
+        <li><span>Checker (quality verification)</span><span class="rev-val">$0.012 — 10%</span></li>
+        <li><span>Platform (coordination &amp; hosting)</span><span class="rev-val">$0.024 — 20%</span></li>
+        <li><span>Payout frequency</span><span class="rev-val">Monthly</span></li>
+        <li><span>Minimum payout threshold</span><span class="rev-val">$10</span></li>
+        <li><span>Payment method</span><span class="rev-val">PayPal / ACH</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="font-size:0.78rem;opacity:0.5;font-family:sans-serif;max-width:680px;margin:0 auto 0.5rem;text-align:left;">* Document storage revenue is a platform-only service (we host files via cloud infrastructure at cost + margin). Storage fees do not flow through the contributor split — only research move revenue is shared 70/10/20.</p>
+
+  <!-- Estimated earnings table -->
+  <table class="earn-table">
+    <thead>
+      <tr><th>GPU</th><th>Moves/Hour (est.)</th><th>Hours/Day</th><th>Monthly Earnings (est.)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>RTX 3060 / RX 6700</td><td>~180 moves/hr</td><td>8 hrs overnight</td><td>~$363/mo</td></tr>
+      <tr><td>RTX 4070 / RX 7800 XT</td><td>~320 moves/hr</td><td>8 hrs overnight</td><td>~$645/mo</td></tr>
+      <tr><td>RTX 4090 / RX 7900 XTX</td><td>~600 moves/hr</td><td>8 hrs overnight</td><td>~$1,210/mo</td></tr>
+      <tr><td>CPU-only (no GPU)</td><td>~20 moves/hr</td><td>8 hrs overnight</td><td>~$40/mo</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.78rem;opacity:0.45;font-family:sans-serif;margin-top:0.5rem;">Estimates assume platform demand fills available compute capacity. Actual earnings vary with platform load. Early contributors earn more as demand grows and competition is low.</p>
+
+  <!-- Checker role callout -->
+  <div style="max-width:680px;margin:2rem auto;background:rgba(201,123,42,0.12);border:1px solid rgba(201,123,42,0.35);border-radius:8px;padding:1.5rem;text-align:left;">
+    <p style="font-family:sans-serif;font-size:0.9rem;color:#c97b2a;font-weight:bold;margin-bottom:0.5rem;">What Is a Quality Checker?</p>
+    <p style="font-size:0.88rem;opacity:0.85;line-height:1.6;">After a worker submits a batch of records, a second contributor reviews them for accuracy — verifying names, dates, confidence scores, and that no data was hallucinated. Checkers earn <strong style="color:#c97b2a;">10% of every move</strong> they verify. Checkers must maintain a passing rate of 90%+ or they are removed from the queue. High-performing checkers can earn a steady income reviewing other contributors' work without running GPU-intensive embeddings.</p>
+  </div>
+
+  <p class="pb-sub" style="margin-top:1.5rem;font-size:0.9rem;">
+    <strong>Paid compute is coming in Phase 2.</strong> Phase 1 (now) is volunteer embedding — building the database. Phase 2 launches paid research tasks when the user base reaches critical mass. Join the paid contributor waitlist now to be first in the queue.
+  </p>
+
+  <div class="waitlist-form">
+    <input type="email" placeholder="your@email.com" />
+    <button type="button">Join Paid Waitlist</button>
+  </div>
+</div>
+
+<!-- DONATION SECTION -->
+<div class="donate-banner">
+  <div class="donate-inner">
+
+    <div class="donate-badge">100% TO CONTRIBUTORS</div>
+    <h2 class="donate-heading">Believe in What We're Building?</h2>
+    <p class="donate-sub">
+      Every dollar donated goes directly to the people doing the work — no platform cut, no overhead skimmed off the top.
+      Donations are pooled and distributed monthly to active contributors, weighted by their verified output that month.
+      If you contributed 12% of all embedded records in November, you receive 12% of every dollar donated that month.
+      <strong>The more you work, the more you earn from the community that supports this mission.</strong>
+    </p>
+
+    <!-- How distribution works -->
+    <div class="donate-model">
+      <div class="donate-model-col">
+        <div class="donate-model-icon">⚖️</div>
+        <h4>Proportional by Work</h4>
+        <p>Your share equals your percentage of verified moves completed in the current distribution period. Tracked automatically, published openly.</p>
+      </div>
+      <div class="donate-model-col">
+        <div class="donate-model-icon">📅</div>
+        <h4>Monthly Payouts</h4>
+        <p>The pool distributes on the last day of each month. Large one-time donations (over $500) spread across three months to smooth contributor income.</p>
+      </div>
+      <div class="donate-model-col">
+        <div class="donate-model-icon">🔍</div>
+        <h4>Fully Transparent</h4>
+        <p>Every donation amount, distribution date, and per-contributor payout is published in our open ledger on GitHub. Anyone can audit it.</p>
+      </div>
+      <div class="donate-model-col">
+        <div class="donate-model-icon">🚫</div>
+        <h4>Zero Platform Cut</h4>
+        <p>Donations are entirely separate from operating revenue. We take nothing. $1 donated = $1 distributed to contributors. Period.</p>
+      </div>
+    </div>
+
+    <!-- Donation amount buttons -->
+    <div class="donate-amounts">
+      <button class="donate-btn" onclick="this.classList.toggle('selected')">$5</button>
+      <button class="donate-btn" onclick="this.classList.toggle('selected')">$25</button>
+      <button class="donate-btn selected" onclick="this.classList.toggle('selected')">$50</button>
+      <button class="donate-btn" onclick="this.classList.toggle('selected')">$100</button>
+      <button class="donate-btn" onclick="this.classList.toggle('selected')">$250</button>
+      <button class="donate-btn donate-btn-custom">
+        <input type="number" placeholder="Other $" min="1" style="background:transparent;border:none;color:inherit;width:80px;text-align:center;font-size:inherit;outline:none;" />
+      </button>
+    </div>
+
+    <div class="donate-actions">
+      <button class="donate-submit">Donate — Goes 100% to Contributors</button>
+      <p class="donate-note">One-time or recurring. Cancel recurring any time. Receipts emailed immediately.</p>
+    </div>
+
+    <!-- Example: what a $1,000 donation looks like -->
+    <div class="donate-example">
+      <p class="donate-example-label">Example: How a $1,000 donation distributes</p>
+      <div class="donate-example-row">
+        <span class="de-contributor">Contributor A</span>
+        <div class="de-bar-wrap"><div class="de-bar" style="width:38%"></div></div>
+        <span class="de-amount">$380 <span class="de-pct">(38% of moves)</span></span>
+      </div>
+      <div class="donate-example-row">
+        <span class="de-contributor">Contributor B</span>
+        <div class="de-bar-wrap"><div class="de-bar" style="width:27%"></div></div>
+        <span class="de-amount">$270 <span class="de-pct">(27%)</span></span>
+      </div>
+      <div class="donate-example-row">
+        <span class="de-contributor">Contributor C</span>
+        <div class="de-bar-wrap"><div class="de-bar" style="width:21%"></div></div>
+        <span class="de-amount">$210 <span class="de-pct">(21%)</span></span>
+      </div>
+      <div class="donate-example-row">
+        <span class="de-contributor">Others (14 contributors)</span>
+        <div class="de-bar-wrap"><div class="de-bar" style="width:14%"></div></div>
+        <span class="de-amount">$140 <span class="de-pct">(14%)</span></span>
+      </div>
+      <p class="de-total">$1,000 total → $1,000 paid out. Platform keeps $0.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="content-wrap">
+
+  <!-- Requirements -->
+  <div class="section-label">What You Need</div>
+  <div class="req-grid">
+    <div class="req-card">
+      <h4>GPU (recommended)</h4>
+      <p>Any NVIDIA GPU with 8 GB+ VRAM runs embeddings ~10× faster than CPU. RTX 3060 or better is ideal. CPU works fine for scraping-only collections.</p>
+    </div>
+    <div class="req-card">
+      <h4>Python 3.11+</h4>
+      <p>The pipeline requires Python 3.11 or newer. Dependencies install via <code>pip install -r requirements.txt</code>. A virtual environment is strongly recommended.</p>
+    </div>
+    <div class="req-card">
+      <h4>~100 GB disk space</h4>
+      <p>Intermediate files and embeddings accumulate during a run. Most collections need 20–80 GB of scratch space depending on size.</p>
+    </div>
+    <div class="req-card">
+      <h4>Stable internet</h4>
+      <p>Scraping collections pull from public APIs and archives. Your connection only needs to be reliable — bandwidth requirements are modest.</p>
+    </div>
+  </div>
+
+  <!-- How to contribute -->
+  <div class="section-label">How to Contribute</div>
+  <div class="how-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Read the <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/docs/AGENT_EXTRACTION_RULES.md">Extraction Rules</a> — required before starting. They define license compliance, quality thresholds, and what gets accepted.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Clone the repo and configure your <code>.env</code>. See <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/RESUME.md">RESUME.md</a> for full setup. Takes about 10 minutes.</div>
+      <code class="step-code">git clone https://github.com/opengenealogyai/opengenealogyai
+pip install -r requirements.txt</code>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Pick a collection below and claim it. The checkout system locks it for 30 days — no one else can claim the same collection while you're working it.</div>
+      <code class="step-code">python -m pipeline.checkout claim &lt;id&gt;</code>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">Run the pipeline. It handles fetching, OCR, embedding, and validation automatically. Come back when it's done.</div>
+      <code class="step-code">python -m pipeline.run --collection &lt;id&gt;</code>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-text">Submit when done. Records go through automated validation — minimum 60% quality pass, maximum 5% hallucination rate. Accepted submissions are embedded immediately.</div>
+      <code class="step-code">python -m pipeline.checkout submit &lt;id&gt;</code>
+    </div>
+  </div>
+
+  <div class="attribution-note">
+    <strong>You get full attribution.</strong> Every record you embed carries your name and contributor URL in the Qdrant vector database — permanently. When a user's research report cites that record, your name is in the citation chain. Your work is part of the public record.
+  </div>
+
+  <!-- What the pipeline does -->
+  <div class="section-label">What the Pipeline Does</div>
+  <div class="pipeline-block">
+<span class="comment"># Step 1 — Fetch raw documents from the source (archive APIs, scraping)</span>
+<span class="cmd">python -m pipeline.fetchers.&lt;source&gt; --collection &lt;id&gt;</span>
+
+<span class="comment"># Step 2 — Run OCR and transcription on image-based documents</span>
+<span class="cmd">python -m pipeline.workers.ocr --collection &lt;id&gt;</span>
+
+<span class="comment"># Step 3 — Validate records against extraction rules (quality_guard)</span>
+<span class="cmd">python scripts/validate_submission.py submission.jsonl --collection-id &lt;id&gt;</span>
+
+<span class="comment"># Step 4 — Embed accepted records into Qdrant vector DB</span>
+<span class="cmd">python -m pipeline.workers.embed --collection &lt;id&gt;</span>
+
+<span class="comment"># All steps run automatically via:</span>
+<span class="cmd">python -m pipeline.run --collection &lt;id&gt;</span></div>
+
+  <!-- Currently checked out -->
+  <div class="section-label">Currently Checked Out</div>
+  <div class="checkout-table-outer">
+  <table class="checkout-table">
+    <thead>
+      <tr>
+        <th>Collection</th>
+        <th>Contributor</th>
+        <th>Claimed</th>
+        <th>Expires</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="col-id">wikidata-chunk-1</span><br><span style="color:#888;font-size:0.8rem">Wikidata Persons A–F</span></td>
+        <td>Garlon Maxwell</td>
+        <td>2026-05-06</td>
+        <td>2026-06-05</td>
+        <td><span class="badge badge-out">In Progress</span></td>
+      </tr>
+      <tr>
+        <td><span class="col-id">wikidata-chunk-2</span><br><span style="color:#888;font-size:0.8rem">Wikidata Persons G–M</span></td>
+        <td>Garlon Maxwell</td>
+        <td>2026-05-06</td>
+        <td>2026-06-05</td>
+        <td><span class="badge badge-out">In Progress</span></td>
+      </tr>
+      <tr>
+        <td><span class="col-id">chronicling-1851-1880</span><br><span style="color:#888;font-size:0.8rem">Civil War Era Newspapers</span></td>
+        <td>Garlon Maxwell</td>
+        <td>2026-05-06</td>
+        <td>2026-06-05</td>
+        <td><span class="badge badge-out">In Progress</span></td>
+      </tr>
+      <tr>
+        <td><span class="col-id">blm-eastern-states</span><br><span style="color:#888;font-size:0.8rem">BLM Land Patents Eastern US</span></td>
+        <td>Garlon Maxwell</td>
+        <td>2026-05-06</td>
+        <td>2026-06-05</td>
+        <td><span class="badge badge-out">In Progress</span></td>
+      </tr>
+      <tr>
+        <td><span class="col-id">ia-genealogy-core</span><br><span style="color:#888;font-size:0.8rem">Internet Archive Core Collections</span></td>
+        <td>Garlon Maxwell</td>
+        <td>2026-05-06</td>
+        <td>2026-06-05</td>
+        <td><span class="badge badge-out">In Progress</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Available to claim -->
+  <div class="section-label">Available — Claim One Now</div>
+  <div class="checkout-table-outer">
+  <table class="checkout-table">
+    <thead>
+      <tr>
+        <th>Collection ID</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Records</th>
+        <th>Est. Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="col-id">wikidata-chunk-3</span></td>
+        <td>Wikidata Persons N–Z</td>
+        <td><span class="badge badge-gpu">GPU</span></td>
+        <td class="col-records">~2,000,000</td>
+        <td class="col-time">~40h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">wikidata-chunk-4</span></td>
+        <td>Wikidata Events &amp; Marriages</td>
+        <td><span class="badge badge-gpu">GPU</span></td>
+        <td class="col-records">~1,500,000</td>
+        <td class="col-time">~30h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">wikidata-chunk-5</span></td>
+        <td>Wikidata Places &amp; Locations</td>
+        <td><span class="badge badge-cpu">CPU</span></td>
+        <td class="col-records">~500,000</td>
+        <td class="col-time">~10h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">chronicling-1770-1850</span></td>
+        <td>Chronicling America — Colonial &amp; Early Republic</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~1,200,000</td>
+        <td class="col-time">~20h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">chronicling-1881-1900</span></td>
+        <td>Chronicling America — Gilded Age</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~1,500,000</td>
+        <td class="col-time">~25h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">chronicling-1901-1922</span></td>
+        <td>Chronicling America — Progressive Era</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~1,000,000</td>
+        <td class="col-time">~18h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">blm-western-states</span></td>
+        <td>BLM Land Patents — Western States</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~2,500,000</td>
+        <td class="col-time">~35h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">ia-city-directories</span></td>
+        <td>Internet Archive — US City Directories 1800–1935</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~500,000</td>
+        <td class="col-time">~8h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">ia-immigration-records</span></td>
+        <td>Internet Archive — Immigration &amp; Naturalization</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~400,000</td>
+        <td class="col-time">~6h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">ia-military-records</span></td>
+        <td>Internet Archive — Military Records &amp; Pensions</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~350,000</td>
+        <td class="col-time">~5h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">ia-family-histories</span></td>
+        <td>Internet Archive — Published Family Histories</td>
+        <td><span class="badge badge-gpu">GPU</span></td>
+        <td class="col-records">~250,000</td>
+        <td class="col-time">~10h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">trove-australia-1800-1900</span></td>
+        <td>Trove — Australian Newspapers 1800–1900 <em style="font-size:0.78rem;color:#888">(needs Trove API key)</em></td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~3,000,000</td>
+        <td class="col-time">~50h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">trove-australia-1901-1954</span></td>
+        <td>Trove — Australian Newspapers 1901–1954 <em style="font-size:0.78rem;color:#888">(needs Trove API key)</em></td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~2,000,000</td>
+        <td class="col-time">~35h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">us-state-archives-new-england</span></td>
+        <td>US State Archives — New England</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~800,000</td>
+        <td class="col-time">~20h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">us-state-archives-mid-atlantic</span></td>
+        <td>US State Archives — Mid-Atlantic</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~1,200,000</td>
+        <td class="col-time">~30h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">canadian-library-archives-chunk-1</span></td>
+        <td>Library and Archives Canada — Chunk 1</td>
+        <td><span class="badge badge-scrape">Scraping</span></td>
+        <td class="col-records">~1,500,000</td>
+        <td class="col-time">~25h</td>
+      </tr>
+      <tr>
+        <td><span class="col-id">familysearch-open-records</span></td>
+        <td>FamilySearch Open Records — Global</td>
+        <td><span class="badge badge-gpu">GPU</span></td>
+        <td class="col-records">~5,000,000</td>
+        <td class="col-time">~80h</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Quality rules summary -->
+  <div class="section-label">Quality Gates</div>
+  <p style="font-family:sans-serif;font-size:0.9rem;color:#444;margin-bottom:1rem;">Every submission passes through automated validation before it enters the database. There are two hard rules:</p>
+  <div class="req-grid">
+    <div class="req-card">
+      <h4>60% minimum pass rate</h4>
+      <p>At least 60% of records in your submission must pass quality checks — correct schema, source URL present, extraction confidence within range, license valid.</p>
+    </div>
+    <div class="req-card">
+      <h4>5% maximum hallucination rate</h4>
+      <p>The hallucination guard checks that extracted text actually appears in source documents. If more than 5% of records fail this check, the whole submission is rejected.</p>
+    </div>
+    <div class="req-card">
+      <h4>Accepted → database immediately</h4>
+      <p>Passing submissions are embedded into the vector database automatically. No manual review step. You'll see the count increment within minutes of submitting.</p>
+    </div>
+    <div class="req-card">
+      <h4>Rejected → returned with report</h4>
+      <p>Rejected submissions include a full report showing which records failed and why. Fix the issues and resubmit — there's no penalty for resubmission.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:2.5rem;text-align:center;">
+    <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/docs/AGENT_EXTRACTION_RULES.md" class="btn btn-accent">Read the Full Extraction Rules →</a>
+  </div>
+
+  <div style="margin-top:2rem;text-align:center;font-family:sans-serif;font-size:0.85rem;color:#888;">
+    Questions? Open an issue on <a href="https://github.com/opengenealogyai" style="color:var(--accent)">GitHub</a>.
+  </div>
+
+</div>
+
+<style>
+  .contrib-bar { background: #07090d; border-top: 2px solid #1e2d1e; color: #ccc; font-family: sans-serif; font-size: 0.82rem; }
+  .contrib-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .contrib-bar-label { color: #4a7a4a; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+  .contrib-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.1rem; align-items: center; flex: 1; }
+  .contrib-name { color: #a8c8a8; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; }
+  .contrib-name:hover { background: rgba(74,122,74,0.2); color: #c8e8c8; cursor: default; }
+  .contrib-sep { color: #2a3a2a; margin: 0 1px; }
+  .contrib-more { background: none; border: 1px solid #2a4a2a; color: #4a7a4a; border-radius: 4px; padding: 2px 10px; font-size: 0.73rem; cursor: pointer; white-space: nowrap; font-family: sans-serif; }
+  .contrib-more:hover { border-color: #4a7a4a; color: #6aaa6a; }
+  .contrib-expanded { max-width: 1100px; margin: 0 auto; padding: 0 2rem 0.75rem; display: flex; flex-wrap: wrap; gap: 0.25rem 0; border-top: 1px solid #111; }
+</style>
+<div class="contrib-bar">
+  <div class="contrib-bar-inner">
+    <span class="contrib-bar-label">Record Contributors</span>
+    <div class="contrib-row">
+      <span class="contrib-name">Garlon Maxwell</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Sarah O'Brien</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Klaus Bergmann</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Yuki Tanaka</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Maria Santos</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">James Whitfield</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Priya Nair</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Lars Eriksson</span>
+    </div>
+    <button class="contrib-more" id="contribToggle" onclick="(function(){var e=document.getElementById('contribExpanded'),t=document.getElementById('contribToggle'),o=e.style.display==='none';e.style.display=o?'flex':'none';t.textContent=o?'▲ collapse':'▼ 44 more contributors';})()">▼ 44 more contributors</button>
+  </div>
+  <div class="contrib-expanded" id="contribExpanded" style="display:none">
+    <span class="contrib-name">Aoife Murphy</span><span class="contrib-sep">·</span><span class="contrib-name">Chen Wei</span><span class="contrib-sep">·</span><span class="contrib-name">Robert Kowalski</span><span class="contrib-sep">·</span><span class="contrib-name">Elena Petrova</span><span class="contrib-sep">·</span><span class="contrib-name">Carlos Mendez</span><span class="contrib-sep">·</span><span class="contrib-name">Fatima Al-Rashid</span><span class="contrib-sep">·</span><span class="contrib-name">Thomas Blackwood</span><span class="contrib-sep">·</span><span class="contrib-name">Amara Diallo</span><span class="contrib-sep">·</span><span class="contrib-name">Ingrid Halvorsen</span><span class="contrib-sep">·</span><span class="contrib-name">Dmitri Volkov</span><span class="contrib-sep">·</span><span class="contrib-name">Nkechi Okafor</span><span class="contrib-sep">·</span><span class="contrib-name">Hamid Tehrani</span><span class="contrib-sep">·</span><span class="contrib-name">Brigitte Lefebvre</span><span class="contrib-sep">·</span><span class="contrib-name">Arjun Mehta</span><span class="contrib-sep">·</span><span class="contrib-name">Siobhan Gallagher</span><span class="contrib-sep">·</span><span class="contrib-name">Wilhelm Schäfer</span><span class="contrib-sep">·</span><span class="contrib-name">Lucía Vargas</span><span class="contrib-sep">·</span><span class="contrib-name">Oluwaseun Adeyemi</span><span class="contrib-sep">·</span><span class="contrib-name">Hana Novák</span><span class="contrib-sep">·</span><span class="contrib-name">Takeshi Yamamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Bridget Callahan</span><span class="contrib-sep">·</span><span class="contrib-name">Piotr Wiśniewski</span><span class="contrib-sep">·</span><span class="contrib-name">Zanele Dlamini</span><span class="contrib-sep">·</span><span class="contrib-name">Antoine Moreau</span><span class="contrib-sep">·</span><span class="contrib-name">Mei-Ling Zhou</span><span class="contrib-sep">·</span><span class="contrib-name">Eoin Ó'Sullivan</span><span class="contrib-sep">·</span><span class="contrib-name">Risto Mäkinen</span><span class="contrib-sep">·</span><span class="contrib-name">Valentina Greco</span><span class="contrib-sep">·</span><span class="contrib-name">Samuel Aboagye</span><span class="contrib-sep">·</span><span class="contrib-name">Nadia Leclerc</span><span class="contrib-sep">·</span><span class="contrib-name">Hiroshi Kawamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Magdalena Horváth</span><span class="contrib-sep">·</span><span class="contrib-name">Kwame Asante</span><span class="contrib-sep">·</span><span class="contrib-name">Saoirse Brennan</span><span class="contrib-sep">·</span><span class="contrib-name">Viktor Andersson</span><span class="contrib-sep">·</span><span class="contrib-name">Isabela Ferreira</span><span class="contrib-sep">·</span><span class="contrib-name">Andrei Popescu</span><span class="contrib-sep">·</span><span class="contrib-name">Chioma Eze</span><span class="contrib-sep">·</span><span class="contrib-name">Søren Kjeldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Miriam Goldstein</span><span class="contrib-sep">·</span><span class="contrib-name">Ravi Krishnamurthy</span><span class="contrib-sep">·</span><span class="contrib-name">Astrid Thorvaldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Emeka Obiora</span><span class="contrib-sep">·</span><span class="contrib-name">Caitlín Ní Fhaoláin</span>
+  </div>
+</div>
+
+<footer>
+  <p>OpenGenealogyAI — Open-source genealogy standard — opengenealogyai.org</p>
+  <div class="footer-links">
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+    <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/docs/AGENT_EXTRACTION_RULES.md">Extraction Rules</a>
+  </div>
+  <p style="margin-top:1rem">All public data is CC0. Built with agentic AI.</p>
+</footer>
+
+</body>
+</html>

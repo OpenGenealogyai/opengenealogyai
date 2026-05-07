@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXGEN — The Maxwell Genealogy Standard</title>
+<style>
+  :root {
+    --light: #f0ede4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.6rem; }
+  .site-logo { height: 2rem; width: auto; }
+  header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  header nav a:hover { color: #fff; }
+
+  /* Hero */
+  .standard-hero { background: var(--ink); color: var(--paper); padding: 5rem 2rem; text-align: center; position: relative; overflow: hidden; }
+  .maxgen-logo {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 96px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    background: linear-gradient(180deg,
+      #fff8e0 0%,
+      #f5c842 20%,
+      #c8922a 50%,
+      #7a5010 75%,
+      transparent 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 4px 12px rgba(200,146,42,0.4));
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .chain-bar { display: flex; align-items: center; justify-content: center; gap: 3px; margin: 0.75rem auto 1.5rem; }
+  .link { width: 14px; height: 8px; border: 2px solid; border-color: #c8922a #7a5010 #7a5010 #c8922a; border-radius: 50%; background: linear-gradient(135deg, #e8c040, #7a5010); opacity: 0.8; }
+  .standard-hero h2 { font-size: 1.15rem; letter-spacing: 0.25em; text-transform: uppercase; opacity: 0.6; font-family: sans-serif; font-weight: 400; margin-bottom: 1.5rem; }
+  .standard-hero p { font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem; opacity: 0.8; }
+  .hero-meta { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; font-family: sans-serif; font-size: 0.82rem; opacity: 0.5; letter-spacing: 0.05em; }
+
+  /* Layout */
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 0 2rem 5rem; }
+
+  /* TOC */
+  .toc { background: var(--light); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem 2rem; margin: 3rem 0 2rem; }
+  .toc h3 { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-family: sans-serif; margin-bottom: 1rem; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc li { counter-increment: toc; display: flex; gap: 0.5rem; font-family: sans-serif; font-size: 0.9rem; margin-bottom: 0.4rem; }
+  .toc li::before { content: counter(toc) "."; color: var(--gold); font-weight: bold; min-width: 1.5rem; }
+  .toc li a { color: var(--accent); text-decoration: none; }
+  .toc li a:hover { text-decoration: underline; }
+
+  /* Sections */
+  .spec-section { margin: 3rem 0; }
+  .spec-section h2 { font-size: 1.6rem; color: var(--ink); margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--gold); }
+  .spec-section h3 { font-size: 1.15rem; color: var(--accent); margin: 1.75rem 0 0.5rem; font-family: sans-serif; }
+  .spec-section p { margin-bottom: 0.9rem; }
+  .spec-section ul, .spec-section ol { margin: 0.5rem 0 1rem 1.5rem; }
+  .spec-section li { margin-bottom: 0.3rem; }
+  blockquote { border-left: 4px solid var(--gold); padding: 0.75rem 1.5rem; background: var(--light); border-radius: 0 4px 4px 0; margin: 1.5rem 0; font-style: italic; font-size: 1.05rem; }
+
+  /* Comparison table */
+  .compare-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.88rem; margin: 1.5rem 0; }
+  .compare-table th { text-align: left; padding: 0.6rem 1rem; background: var(--ink); color: var(--gold); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .compare-table td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--light); vertical-align: top; }
+  .compare-table tr:nth-child(even) td { background: var(--light); }
+  .compare-table td:first-child { font-weight: 600; color: #555; white-space: nowrap; }
+  .compare-table td:nth-child(2) { color: #c44; }
+  .compare-table td:nth-child(3) { color: var(--accent); }
+
+  /* Score table */
+  .score-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.88rem; margin: 1.5rem 0; }
+  .score-table th { text-align: left; padding: 0.5rem 1rem; background: var(--ink); color: var(--gold); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .score-table td { padding: 0.55rem 1rem; border-bottom: 1px solid var(--light); }
+  .score-table tr:last-child td { border-bottom: none; }
+  .score-bar-cell { width: 120px; }
+  .score-bar { height: 8px; border-radius: 3px; }
+
+  /* Code blocks */
+  pre { background: var(--ink); color: #e0ddd4; font-family: monospace; font-size: 0.83rem; border-radius: 6px; padding: 1.5rem; margin: 1rem 0; overflow-x: auto; line-height: 1.6; }
+  pre .key { color: #88c8e8; }
+  pre .str { color: #a8d8a0; }
+  pre .num { color: #f5c842; }
+  pre .comment { color: #6a9; }
+  code { font-family: monospace; background: var(--light); padding: 1px 5px; border-radius: 3px; font-size: 0.88em; }
+
+  /* Record type cards */
+  .record-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+  .record-card { border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; background: white; }
+  .record-card .rc-tag { font-family: monospace; font-size: 0.78rem; background: var(--ink); color: var(--gold); padding: 2px 8px; border-radius: 3px; display: inline-block; margin-bottom: 0.75rem; }
+  .record-card h4 { font-size: 1rem; font-family: sans-serif; margin-bottom: 0.4rem; }
+  .record-card p { font-size: 0.88rem; color: #444; }
+  .record-card .ext { font-family: monospace; font-size: 0.8rem; color: #888; margin-top: 0.75rem; }
+
+  /* Footer */
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2.5rem 2rem; font-family: sans-serif; }
+  footer p { font-size: 0.85rem; opacity: 0.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+
+  @media (max-width: 600px) {
+    .maxgen-logo { font-size: 64px; }
+    .spec-section h2 { font-size: 1.3rem; }
+  }
+</style>
+<link rel="stylesheet" href="css/tokens.css">
+</head>
+<body>
+
+<header>
+  <h1><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</h1>
+  <nav>
+    <a href="index.html">For Users</a>
+    <a href="standard.html" class="active">MaxGen Standard</a>
+    <a href="contribute.html">Contribute</a>
+    <a href="community.html">Community Trees</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </nav>
+</header>
+
+<div class="standard-hero">
+  <div class="maxgen-logo">MAXGEN</div>
+  <div class="chain-bar">
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+    <div class="link"></div><div class="link"></div><div class="link"></div>
+  </div>
+  <h2>The Maxwell Genealogy Standard</h2>
+  <p>An open JSON standard for representing genealogical identities in a way that is honest about uncertainty. Every claim is an assertion. Every assertion has a source. Nothing is ever overwritten.</p>
+  <div class="hero-meta">
+    <span>Version 1.0</span>
+    <span>Author: Garlon Maxwell</span>
+    <span>License: CC0 — Public Domain</span>
+    <span>Schema URI: opengenealogyai.org/schemas/maxgen/v1/</span>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <nav class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#what-is-maxgen">What Is MAXGEN?</a></li>
+      <li><a href="#vs-gedcom">How MAXGEN Differs from GEDCOM</a></li>
+      <li><a href="#record-types">The Three Record Types</a></li>
+      <li><a href="#confidence">The Confidence Score</a></li>
+      <li><a href="#examples">JSON Examples</a></li>
+      <li><a href="#files">File Extensions</a></li>
+      <li><a href="#versioning">Versioning</a></li>
+      <li><a href="#why-json">Why JSON?</a></li>
+      <li><a href="#contribute">How to Contribute</a></li>
+      <li><a href="#governance">Governance — How the Standard Changes</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <div id="what-is-maxgen" class="spec-section">
+    <h2>1. What Is MAXGEN?</h2>
+    <p>MAXGEN is an open JSON standard for representing individual genealogical identities in a way that is <strong>honest about uncertainty</strong>.</p>
+    <p>Some or most genealogy platforms today force researchers to pick one answer. When two records disagree about who someone's father was, one record wins and the other disappears. MAXGEN rejects that model.</p>
+    <p>In MAXGEN, <strong>every claim is an assertion</strong> — it has a confidence score, a source, and a timestamp. Nothing is ever overwritten. Multiple possible parents can coexist. Conflicting birth years both survive. The uncertainty is the data.</p>
+    <blockquote>An assertion with low confidence and a real source is worth more than a certain-looking answer with no source.</blockquote>
+  </div>
+
+  <!-- 2 -->
+  <div id="vs-gedcom" class="spec-section">
+    <h2>2. How MAXGEN Differs from GEDCOM</h2>
+    <table class="compare-table">
+      <thead>
+        <tr><th>Feature</th><th>GEDCOM</th><th>MAXGEN</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Format</td><td>Custom plaintext (.ged)</td><td>JSON (.maxgen / .mxrecord)</td></tr>
+        <tr><td>Relationships</td><td>Single answer forced</td><td>Multiple assertions with confidence scores</td></tr>
+        <tr><td>Uncertainty</td><td>Discarded</td><td>First-class citizen</td></tr>
+        <tr><td>Source tracing</td><td>Optional</td><td>Required on every assertion</td></tr>
+        <tr><td>AI-ready</td><td>No</td><td>Yes — vector-embeddable by design</td></tr>
+        <tr><td>Living persons</td><td>No enforcement</td><td><code>is_living</code> flag locks record, 404 on API</td></tr>
+        <tr><td>Conflicts</td><td>Overwrite</td><td><code>conflict_flag</code> preserved alongside both assertions</td></tr>
+        <tr><td>Dates</td><td>Single value</td><td><code>year_min</code> / <code>year_max</code> ranges + <code>date_type</code></td></tr>
+        <tr><td>Open</td><td>Controlled by GEDCOM Steering Committee</td><td>Public domain (CC0)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3 -->
+  <div id="record-types" class="spec-section">
+    <h2>3. The Three Record Types</h2>
+    <div class="record-cards">
+      <div class="record-card">
+        <div class="rc-tag">MaxGen Person</div>
+        <h4>The Individual</h4>
+        <p>A probabilistic human identity synthesized from one or more source documents. Every field is an assertion array — never a single value. Multiple possible parents can coexist with individual confidence scores.</p>
+        <div class="ext">person.schema.json · .maxgen</div>
+      </div>
+      <div class="record-card">
+        <div class="rc-tag">MaxGen Record</div>
+        <h4>The Source Document</h4>
+        <p>A single original historical document exactly as found — birth certificate, census row, parish register, obituary, land patent. No interpretation is added at this layer. Every MaxGen Person assertion traces back to at least one MaxGen Record.</p>
+        <div class="ext">raw-record.schema.json · .mxrecord</div>
+      </div>
+      <div class="record-card">
+        <div class="rc-tag">MaxGen Task</div>
+        <h4>The Work Queue Entry</h4>
+        <p>A unit of distributed work — scraping, OCR extraction, embedding, or verification. Used by the contributor checkout system and AI agents. Enables fully distributed, autonomous database construction.</p>
+        <div class="ext">task-queue.schema.json</div>
+      </div>
+    </div>
+
+    <h3>MaxGen Person — Key Design Decisions</h3>
+    <ul>
+      <li><code>composite_confidence</code> — overall probability that all assertions in this record refer to the same real individual</li>
+      <li><code>parent_assertions</code> — multiple entries are normal; confidence expresses certainty, not conflict; neither assertion is deleted</li>
+      <li><code>conflict_flag</code> — marks when two assertions for the same role disagree; both survive</li>
+      <li><code>is_living</code> — when true, the entire record returns 404 on all public endpoints</li>
+      <li><code>redistribution_license</code> — most restrictive license among all contributing source records</li>
+    </ul>
+
+    <h3>MaxGen Record — License Tiers</h3>
+    <ul>
+      <li><code>CC0</code> / <code>public-domain</code> — fully open, included in all datasets</li>
+      <li><code>CC-BY</code> / <code>CC-BY-SA</code> — open with attribution or share-alike requirements</li>
+      <li><code>tier2-private</code> — never included in open datasets; returned only to authenticated owner</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div id="confidence" class="spec-section">
+    <h2>4. The Confidence Score</h2>
+    <p>Every assertion in MAXGEN carries a <code>confidence</code> value from 0.0 to 1.0. Scores are <strong>mandatory and must be honest</strong>. A consistent 0.4 is more valuable than an inflated 0.9.</p>
+    <table class="score-table">
+      <thead>
+        <tr><th>Score</th><th>Visual</th><th>Meaning</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0.9 – 1.0</td>
+          <td class="score-bar-cell"><div class="score-bar" style="width:100%;background:var(--success)"></div></td>
+          <td>Field appears verbatim in source document, no ambiguity</td>
+        </tr>
+        <tr>
+          <td>0.7 – 0.89</td>
+          <td class="score-bar-cell"><div class="score-bar" style="width:80%;background:#4a9a6f"></div></td>
+          <td>Minor OCR error or spelling variation from the original</td>
+        </tr>
+        <tr>
+          <td>0.5 – 0.69</td>
+          <td class="score-bar-cell"><div class="score-bar" style="width:60%;background:#b5873d"></div></td>
+          <td>Inferred from context — not stated explicitly in the source</td>
+        </tr>
+        <tr>
+          <td>0.3 – 0.49</td>
+          <td class="score-bar-cell"><div class="score-bar" style="width:40%;background:#c97a3a"></div></td>
+          <td>Ambiguous or physically damaged source document</td>
+        </tr>
+        <tr>
+          <td>0.0 – 0.29</td>
+          <td class="score-bar-cell"><div class="score-bar" style="width:20%;background:#c44"></div></td>
+          <td>Best guess only — minimal documentary support</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Agents and contributors are expected to score conservatively. Over-confident scores degrade the quality of every downstream research report that relies on this assertion.</p>
+  </div>
+
+  <!-- 5 -->
+  <div id="examples" class="spec-section">
+    <h2>5. JSON Examples</h2>
+
+    <h3>MaxGen Person — minimal valid record</h3>
+<pre>{
+  <span class="key">"person_id"</span>: <span class="str">"550e8400-e29b-41d4-a716-446655440000"</span>,
+  <span class="key">"schema_version"</span>: <span class="str">"1.0"</span>,
+  <span class="key">"is_living"</span>: <span class="num">false</span>,
+  <span class="key">"composite_confidence"</span>: <span class="num">0.87</span>,
+  <span class="key">"name_assertions"</span>: [
+    {
+      <span class="key">"name_as_written"</span>: <span class="str">"William James Whitfield"</span>,
+      <span class="key">"given_name"</span>: <span class="str">"William James"</span>,
+      <span class="key">"surname"</span>: <span class="str">"Whitfield"</span>,
+      <span class="key">"name_type"</span>: <span class="str">"birth"</span>,
+      <span class="key">"confidence"</span>: <span class="num">0.95</span>,
+      <span class="key">"source_record_id"</span>: <span class="str">"a3f9c1d2-..."</span>,
+      <span class="key">"asserted_by"</span>: <span class="str">"nomic-embed-agent-v1"</span>,
+      <span class="key">"asserted_at"</span>: <span class="str">"2026-05-06T00:00:00Z"</span>
+    }
+  ],
+  <span class="key">"parent_assertions"</span>: [
+    {
+      <span class="key">"parent_person_id"</span>: <span class="str">"uuid-of-possible-father-A"</span>,
+      <span class="key">"relationship_type"</span>: <span class="str">"biological"</span>,
+      <span class="key">"parent_role"</span>: <span class="str">"father"</span>,
+      <span class="key">"confidence"</span>: <span class="num">0.62</span>,
+      <span class="key">"conflict_flag"</span>: <span class="num">true</span>,
+      <span class="key">"source_record_id"</span>: <span class="str">"b8e2..."</span>,
+      <span class="key">"asserted_by"</span>: <span class="str">"nomic-embed-agent-v1"</span>,
+      <span class="key">"asserted_at"</span>: <span class="str">"2026-05-06T00:00:00Z"</span>
+    },
+    {
+      <span class="key">"parent_person_id"</span>: <span class="str">"uuid-of-possible-father-B"</span>,
+      <span class="key">"relationship_type"</span>: <span class="str">"biological"</span>,
+      <span class="key">"parent_role"</span>: <span class="str">"father"</span>,
+      <span class="key">"confidence"</span>: <span class="num">0.31</span>,
+      <span class="key">"conflict_flag"</span>: <span class="num">true</span>,  <span class="comment">// both survive — neither is deleted</span>
+      <span class="key">"source_record_id"</span>: <span class="str">"c9f3..."</span>,
+      <span class="key">"asserted_by"</span>: <span class="str">"nomic-embed-agent-v1"</span>,
+      <span class="key">"asserted_at"</span>: <span class="str">"2026-05-06T00:00:00Z"</span>
+    }
+  ],
+  <span class="key">"asserted_by"</span>: <span class="str">"garlon-maxwell"</span>,
+  <span class="key">"asserted_at"</span>: <span class="str">"2026-05-06T00:00:00Z"</span>
+}</pre>
+
+    <h3>MaxGen Record — census row example</h3>
+<pre>{
+  <span class="key">"record_id"</span>: <span class="str">"a3f9c1d2-e5b7-4f8a-9c2d-1e3b5d7f9a0c"</span>,
+  <span class="key">"schema_version"</span>: <span class="str">"1.0"</span>,
+  <span class="key">"record_type"</span>: <span class="str">"census_row"</span>,
+  <span class="key">"redistribution_license"</span>: <span class="str">"CC0"</span>,
+  <span class="key">"is_living_flag"</span>: <span class="num">false</span>,
+  <span class="key">"persons_mentioned"</span>: [
+    {
+      <span class="key">"name_as_written"</span>: <span class="str">"Wm J Whitfield"</span>,
+      <span class="key">"role"</span>: <span class="str">"subject"</span>,
+      <span class="key">"age_as_written"</span>: <span class="str">"38"</span>,
+      <span class="key">"gender_as_written"</span>: <span class="str">"M"</span>
+    }
+  ],
+  <span class="key">"record_date"</span>: { <span class="key">"year_min"</span>: <span class="num">1880</span>, <span class="key">"year_max"</span>: <span class="num">1880</span>, <span class="key">"date_type"</span>: <span class="str">"exact"</span> },
+  <span class="key">"location"</span>: {
+    <span class="key">"place_as_written"</span>: <span class="str">"Giles County, Tennessee"</span>,
+    <span class="key">"country_code"</span>: <span class="str">"US"</span>,
+    <span class="key">"state_province"</span>: <span class="str">"Tennessee"</span>,
+    <span class="key">"county_district"</span>: <span class="str">"Giles"</span>
+  },
+  <span class="key">"source_url"</span>: <span class="str">"https://archive.org/details/1880-census-tennessee-giles"</span>,
+  <span class="key">"extraction_confidence"</span>: <span class="num">0.91</span>,
+  <span class="key">"extracted_by"</span>: <span class="str">"garlon-maxwell"</span>,
+  <span class="key">"extracted_at"</span>: <span class="str">"2026-05-06T00:00:00Z"</span>,
+  <span class="key">"contributor"</span>: {
+    <span class="key">"display_name"</span>: <span class="str">"Garlon Maxwell"</span>,
+    <span class="key">"contributor_id"</span>: <span class="str">"gm-001"</span>,
+    <span class="key">"contribution_date"</span>: <span class="str">"2026-05-06"</span>,
+    <span class="key">"verified_by"</span>: <span class="str">"sarah-obrien"</span>,
+    <span class="key">"verification_date"</span>: <span class="str">"2026-05-06"</span>
+  }
+}</pre>
+  </div>
+
+  <!-- CONTRIBUTOR FIELD SPEC -->
+  <div id="contributor" class="spec-section">
+    <h2>5b. Contributor Attribution — Required Field</h2>
+
+    <p>MaxGen has two levels of contributor attribution that work together:</p>
+    <ul style="margin:0.75rem 0 1.25rem 1.5rem;line-height:1.8;">
+      <li><strong>MaxGen Record</strong> — carries a single <code>contributor</code> object: the person who extracted and embedded that specific source document.</li>
+      <li><strong>MaxGen Person</strong> — carries a <code>contributors</code> array: every person who contributed any source record linked to this individual, aggregated automatically. If 15 different contributors each embedded one document about Richard Maxwell, Richard Maxwell's record lists all 15.</li>
+    </ul>
+    <p>This means contributor attribution is <strong>always visible wherever genealogy data is displayed</strong> — not just in a site-wide footer. When a user views any ancestor, a persistent dropdown lists every contributor to that person's data by name. Attribution is permanent and cannot be removed after a record is published.</p>
+
+    <p style="margin-top:1.25rem;font-weight:600;font-family:sans-serif;font-size:0.9rem;color:var(--accent);">Per-Record: <code>contributor</code> object (MaxGen Record)</p>
+    <table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:0.88rem;margin:0.5rem 0 1.5rem;">
+      <thead><tr style="background:#f0ede4;"><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Field</th><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Type</th><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Required</th><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Description</th></tr></thead>
+      <tbody>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><code>display_name</code></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">string</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Yes</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Public name shown in attribution credits</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><code>contributor_id</code></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">string</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Yes</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Unique stable ID for payout tracking</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><code>contribution_date</code></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">ISO 8601 date</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Yes</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Date the record was submitted</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><code>verified_by</code></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">string</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">No</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">contributor_id of the quality checker</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;"><code>verification_date</code></td><td style="padding:0.5rem 0.75rem;">ISO 8601 date</td><td style="padding:0.5rem 0.75rem;">No</td><td style="padding:0.5rem 0.75rem;">Date verification was completed</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-weight:600;font-family:sans-serif;font-size:0.9rem;color:var(--accent);">Per-Person: <code>contributors</code> array (MaxGen Person)</p>
+    <p style="font-size:0.88rem;margin-bottom:0.75rem;">Each entry in the array is a contributor object extended with two additional fields:</p>
+    <table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:0.88rem;margin:0.5rem 0 1rem;">
+      <thead><tr style="background:#f0ede4;"><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Field</th><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Type</th><th style="text-align:left;padding:0.5rem 0.75rem;border-bottom:1px solid #d4c9b0;">Description</th></tr></thead>
+      <tbody>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><em>(all fields above)</em></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">—</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">Inherited from the source record's contributor object</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;"><code>source_record_id</code></td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">string</td><td style="padding:0.5rem 0.75rem;border-bottom:1px solid #e8e0d0;">The MaxGen Record this contributor is credited for</td></tr>
+        <tr><td style="padding:0.5rem 0.75rem;"><code>assertions_contributed</code></td><td style="padding:0.5rem 0.75rem;">string[]</td><td style="padding:0.5rem 0.75rem;">Which fields on this person this record helped establish (e.g. <code>["birth_year","birth_place"]</code>)</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.85rem;background:#f0ede4;border-left:3px solid #b5873d;padding:0.75rem 1rem;border-radius:0 4px 4px 0;line-height:1.7;">
+      <strong>Display rule:</strong> Any interface that renders MaxGen data — a web viewer, a research report, a mobile app — must provide a persistently accessible contributor dropdown for every person displayed. The first row shows the most recent or most prolific contributor. All others are one tap away. This is not optional.
+    </p>
+    <p style="font-size:0.88rem;color:#555;margin-top:0.75rem;">Records without a valid <code>contributor</code> object are rejected by the Layer 0 schema validator and will not be accepted into the database.</p>
+  </div>
+
+  <!-- 6 -->
+  <div id="files" class="spec-section">
+    <h2>6. File Extensions</h2>
+    <p>MAXGEN uses two file extensions to distinguish record types at a glance:</p>
+    <ul>
+      <li><code>.maxgen</code> — MaxGen Person records: <code>william_whitfield_1842.maxgen</code></li>
+      <li><code>.mxrecord</code> — MaxGen Record source documents: <code>1880_census_ohio_p42.mxrecord</code></li>
+    </ul>
+    <p>MaxGen Task records live in the pipeline work queue and are not typically stored as standalone files.</p>
+  </div>
+
+  <!-- 7 -->
+  <div id="versioning" class="spec-section">
+    <h2>7. Versioning</h2>
+    <p>This is <strong>MAXGEN v1.0</strong>. The <code>schema_version</code> field in every record pins the version at write time, ensuring records remain readable as the standard evolves.</p>
+    <ul>
+      <li><strong>Breaking changes</strong> — increment the major version (1.0 → 2.0)</li>
+      <li><strong>Additive changes</strong> — increment the minor version (1.0 → 1.1)</li>
+    </ul>
+    <p>Records written to v1.0 will always be interpretable as v1.0 records. No silent migration.</p>
+  </div>
+
+  <!-- 8 -->
+  <div id="why-json" class="spec-section">
+    <h2>8. Why JSON?</h2>
+    <ul>
+      <li><strong>Human-readable and machine-readable</strong> — no proprietary parser required</li>
+      <li><strong>Natively supported</strong> by every modern programming language</li>
+      <li><strong>Vector-embeddable</strong> — a MAXGEN record can be fed directly to an embedding model without conversion</li>
+      <li><strong>GitHub-friendly</strong> — diff, review, and merge genealogy records exactly like source code</li>
+      <li><strong>Schema validation</strong> — JSON Schema 2020-12 enforces structure at ingest time</li>
+      <li><strong>No lock-in</strong> — export your data at any time with zero data loss</li>
+    </ul>
+  </div>
+
+  <!-- 9 -->
+  <div id="contribute" class="spec-section">
+    <h2>9. How to Contribute to the Standard</h2>
+    <p>The schemas live in the GitHub repository:</p>
+    <pre>https://github.com/opengenealogyai/opengenealogyai/tree/main/schemas/</pre>
+    <p>To propose changes: open an issue or pull request. All changes go through the standard review process before being incorporated into a new version. The standard belongs to everyone.</p>
+    <p>To contribute data to the database — embedding records into the open vector archive — see the <a href="contribute.html" style="color:var(--accent)">Contributor page</a>.</p>
+  </div>
+
+  <div id="governance" class="spec-section">
+    <h2>10. Governance — How the Standard Changes</h2>
+
+    <p>MaxGen is CC0 public domain — anyone can use it. But the canonical version of the standard is stewarded by <strong>Garlon Maxwell</strong>, who holds final approval on all schema changes. This protects the standard from fragmentation while keeping it open to community input.</p>
+
+    <h3>How to Propose a Change</h3>
+    <p>All proposals begin as a GitHub Issue in the <a href="https://github.com/opengenealogyai" style="color:var(--accent)">opengenealogyai repository</a>. Use the <strong>Schema Change Proposal</strong> issue template, which asks for:</p>
+    <ul>
+      <li><strong>Problem</strong> — What real use case does the current schema fail to support?</li>
+      <li><strong>Proposed change</strong> — The new or modified field(s), with type and description.</li>
+      <li><strong>Backward compatibility</strong> — Does this break existing records? How should they be migrated?</li>
+      <li><strong>Examples</strong> — At least one before/after JSON snippet showing the change in practice.</li>
+    </ul>
+
+    <h3>The Review Process</h3>
+    <ol>
+      <li><strong>Community discussion</strong> — Anyone can comment on the issue. Discussion is open for a minimum of 7 days for minor changes, 30 days for breaking changes.</li>
+      <li><strong>Steward review</strong> — Garlon Maxwell reviews the proposal and discussion. He may request changes, ask for more examples, or put the proposal to a broader vote.</li>
+      <li><strong>Approval or rejection</strong> — Garlon posts a final decision with reasoning. Nothing merges without his explicit sign-off.</li>
+      <li><strong>Implementation</strong> — Approved changes are merged into the schema files by the Data Quality Agent or a designated contributor.</li>
+    </ol>
+
+    <h3>Versioning Rules</h3>
+    <table class="compare-table" style="margin-top:1rem;">
+      <tr><th>Change Type</th><th>Version Bump</th><th>Example</th></tr>
+      <tr><td>New optional field</td><td>v1.0 → v1.1</td><td>Adding <code>burial_county</code> to a RawRecord</td></tr>
+      <tr><td>New required field</td><td>v1.0 → v2.0</td><td>Making <code>source_url</code> required</td></tr>
+      <tr><td>Renamed or removed field</td><td>v1.0 → v2.0</td><td>Renaming <code>conf</code> to <code>confidence</code></td></tr>
+      <tr><td>Bug fix with no field change</td><td>v1.0 → v1.0.1</td><td>Fixing a regex in the validator</td></tr>
+    </table>
+    <p style="margin-top:1rem;">Records written to any version of MaxGen remain readable forever. There is no forced migration. A v1.0 record processed by a v2.0 tool must degrade gracefully — never silently fail.</p>
+
+    <div style="background:var(--ink);color:var(--paper);border-radius:6px;padding:1.5rem 2rem;margin:2rem 0;border-left:4px solid var(--gold);">
+      <p style="font-family:sans-serif;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-muted);margin-bottom:0.5rem;">Governance Principle</p>
+      <p style="font-size:1.05rem;line-height:1.65;">"MaxGen is open because anyone can use it and build on it. It is not open to fragmentation. One canonical version. One steward. Every change earns its place in the record."</p>
+      <p style="margin-top:0.75rem;font-family:sans-serif;font-size:0.85rem;opacity:0.6;">— Garlon Maxwell, Steward</p>
+    </div>
+
+    <h3>What Garlon Does Not Control</h3>
+    <p>Garlon controls the <em>canonical schema</em> — the official version. He does not control how you use it. You can:</p>
+    <ul>
+      <li>Fork the schema and add your own fields for private use — no permission needed.</li>
+      <li>Build tools that extend MaxGen with additional metadata.</li>
+      <li>Publish your own MaxGen-compatible records without approval.</li>
+      <li>Propose changes to the canonical standard via GitHub Issues — all proposals are welcome.</li>
+    </ul>
+    <p>What you cannot do is call your fork "MaxGen" if it diverges from the canonical version. The name means something specific.</p>
+
+    <h3>Discussion Forum</h3>
+    <p>For broader discussion about genealogy standards, schema design, and open data — outside of specific change proposals — use the <a href="https://github.com/opengenealogyai/opengenealogyai/discussions" style="color:var(--accent)">GitHub Discussions board</a>. This is where the community debates ideas before they become formal proposals.</p>
+  </div>
+
+  <div style="margin-top:3rem;padding:2rem;background:var(--light);border-radius:8px;text-align:center;font-family:sans-serif;font-size:0.88rem;color:#555;border:1px solid var(--border);">
+    <strong style="color:var(--ink);font-size:1rem;display:block;margin-bottom:0.5rem;">MAXGEN — The Maxwell Genealogy Standard</strong>
+    Named for Garlon Maxwell, founder of OpenGenealogyAI.<br>
+    Version 1.0 · CC0 Public Domain · <a href="https://github.com/opengenealogyai" style="color:var(--accent)">GitHub</a>
+  </div>
+
+</div>
+
+<style>
+  .contrib-bar { background: #07090d; border-top: 2px solid #1e2d1e; color: #ccc; font-family: sans-serif; font-size: 0.82rem; }
+  .contrib-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .contrib-bar-label { color: #4a7a4a; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+  .contrib-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.1rem; align-items: center; flex: 1; }
+  .contrib-name { color: #a8c8a8; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; }
+  .contrib-name:hover { background: rgba(74,122,74,0.2); color: #c8e8c8; cursor: default; }
+  .contrib-sep { color: #2a3a2a; margin: 0 1px; }
+  .contrib-more { background: none; border: 1px solid #2a4a2a; color: #4a7a4a; border-radius: 4px; padding: 2px 10px; font-size: 0.73rem; cursor: pointer; white-space: nowrap; font-family: sans-serif; }
+  .contrib-more:hover { border-color: #4a7a4a; color: #6aaa6a; }
+  .contrib-expanded { max-width: 1100px; margin: 0 auto; padding: 0 2rem 0.75rem; display: flex; flex-wrap: wrap; gap: 0.25rem 0; border-top: 1px solid #111; }
+</style>
+<div class="contrib-bar">
+  <div class="contrib-bar-inner">
+    <span class="contrib-bar-label">Record Contributors</span>
+    <div class="contrib-row">
+      <span class="contrib-name">Garlon Maxwell</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Sarah O'Brien</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Klaus Bergmann</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Yuki Tanaka</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Maria Santos</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">James Whitfield</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Priya Nair</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Lars Eriksson</span>
+    </div>
+    <button class="contrib-more" id="contribToggle" onclick="(function(){var e=document.getElementById('contribExpanded'),t=document.getElementById('contribToggle'),o=e.style.display==='none';e.style.display=o?'flex':'none';t.textContent=o?'▲ collapse':'▼ 44 more contributors';})()">▼ 44 more contributors</button>
+  </div>
+  <div class="contrib-expanded" id="contribExpanded" style="display:none">
+    <span class="contrib-name">Aoife Murphy</span><span class="contrib-sep">·</span><span class="contrib-name">Chen Wei</span><span class="contrib-sep">·</span><span class="contrib-name">Robert Kowalski</span><span class="contrib-sep">·</span><span class="contrib-name">Elena Petrova</span><span class="contrib-sep">·</span><span class="contrib-name">Carlos Mendez</span><span class="contrib-sep">·</span><span class="contrib-name">Fatima Al-Rashid</span><span class="contrib-sep">·</span><span class="contrib-name">Thomas Blackwood</span><span class="contrib-sep">·</span><span class="contrib-name">Amara Diallo</span><span class="contrib-sep">·</span><span class="contrib-name">Ingrid Halvorsen</span><span class="contrib-sep">·</span><span class="contrib-name">Dmitri Volkov</span><span class="contrib-sep">·</span><span class="contrib-name">Nkechi Okafor</span><span class="contrib-sep">·</span><span class="contrib-name">Hamid Tehrani</span><span class="contrib-sep">·</span><span class="contrib-name">Brigitte Lefebvre</span><span class="contrib-sep">·</span><span class="contrib-name">Arjun Mehta</span><span class="contrib-sep">·</span><span class="contrib-name">Siobhan Gallagher</span><span class="contrib-sep">·</span><span class="contrib-name">Wilhelm Schäfer</span><span class="contrib-sep">·</span><span class="contrib-name">Lucía Vargas</span><span class="contrib-sep">·</span><span class="contrib-name">Oluwaseun Adeyemi</span><span class="contrib-sep">·</span><span class="contrib-name">Hana Novák</span><span class="contrib-sep">·</span><span class="contrib-name">Takeshi Yamamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Bridget Callahan</span><span class="contrib-sep">·</span><span class="contrib-name">Piotr Wiśniewski</span><span class="contrib-sep">·</span><span class="contrib-name">Zanele Dlamini</span><span class="contrib-sep">·</span><span class="contrib-name">Antoine Moreau</span><span class="contrib-sep">·</span><span class="contrib-name">Mei-Ling Zhou</span><span class="contrib-sep">·</span><span class="contrib-name">Eoin Ó'Sullivan</span><span class="contrib-sep">·</span><span class="contrib-name">Risto Mäkinen</span><span class="contrib-sep">·</span><span class="contrib-name">Valentina Greco</span><span class="contrib-sep">·</span><span class="contrib-name">Samuel Aboagye</span><span class="contrib-sep">·</span><span class="contrib-name">Nadia Leclerc</span><span class="contrib-sep">·</span><span class="contrib-name">Hiroshi Kawamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Magdalena Horváth</span><span class="contrib-sep">·</span><span class="contrib-name">Kwame Asante</span><span class="contrib-sep">·</span><span class="contrib-name">Saoirse Brennan</span><span class="contrib-sep">·</span><span class="contrib-name">Viktor Andersson</span><span class="contrib-sep">·</span><span class="contrib-name">Isabela Ferreira</span><span class="contrib-sep">·</span><span class="contrib-name">Andrei Popescu</span><span class="contrib-sep">·</span><span class="contrib-name">Chioma Eze</span><span class="contrib-sep">·</span><span class="contrib-name">Søren Kjeldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Miriam Goldstein</span><span class="contrib-sep">·</span><span class="contrib-name">Ravi Krishnamurthy</span><span class="contrib-sep">·</span><span class="contrib-name">Astrid Thorvaldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Emeka Obiora</span><span class="contrib-sep">·</span><span class="contrib-name">Caitlín Ní Fhaoláin</span>
+  </div>
+</div>
+
+<footer>
+  <p>OpenGenealogyAI — Open-source genealogy standard — opengenealogyai.org</p>
+  <div class="footer-links">
+    <a href="index.html">For Users</a>
+    <a href="contribute.html">Contribute Data</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </div>
+  <p style="margin-top:1rem">MAXGEN v1.0 — CC0 Public Domain — Built with agentic AI</p>
+</footer>
+
+</body>
+</html>

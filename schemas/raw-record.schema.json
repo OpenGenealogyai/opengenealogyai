@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opengenealogyai.org/schemas/v0.1/raw-record.schema.json",
-  "title": "RawRecord",
-  "description": "A single original source document exactly as found, with no interpretation added.",
+  "$id": "https://opengenealogyai.org/schemas/maxgen/v1/raw-record.schema.json",
+  "title": "MXRecord",
+  "description": "MAXGEN v1.0 — Maxwell Genealogy Standard. A single original source document exactly as found, with no interpretation added. Every MXPerson assertion traces back to at least one MXRecord.",
   "type": "object",
   "required": [
     "record_id", "record_type", "redistribution_license",
@@ -16,8 +16,8 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "0.1",
-      "description": "Schema version this record conforms to."
+      "const": "1.0",
+      "description": "MAXGEN version this record conforms to."
     },
     "record_type": {
       "type": "string",

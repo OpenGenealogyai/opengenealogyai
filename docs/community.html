@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Trees — OpenGenealogyAI</title>
+<style>
+  :root {
+    --light: #f0ede4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+
+  /* ── Header ── */
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.6rem; }
+  header h1 a { color: var(--paper); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
+  .site-logo { height: 2rem; width: auto; }
+  header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  header nav a:hover { color: #fff; }
+  header nav a.active { color: #fff; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+
+  /* ── Hero ── */
+  .hero { background: linear-gradient(135deg, var(--ink) 60%, var(--ink-soft)); color: var(--paper); padding: 5rem 2rem 4rem; text-align: center; }
+  .hero-eyebrow { display: inline-block; background: rgba(181,135,61,0.18); border: 1px solid rgba(181,135,61,0.4); color: var(--gold); font-family: sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-bottom: 1.4rem; }
+  .hero h2 { font-size: 2.8rem; max-width: 720px; margin: 0 auto 1.2rem; line-height: 1.25; }
+  .hero p { font-size: 1.15rem; max-width: 640px; margin: 0 auto 2.5rem; opacity: 0.82; }
+  .stats-row { display: flex; justify-content: center; gap: 3.5rem; flex-wrap: wrap; margin-top: 1rem; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2.4rem; font-weight: bold; color: var(--gold); font-family: sans-serif; line-height: 1; }
+  .stat-label { font-size: 0.75rem; opacity: 0.55; font-family: sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+
+  /* ── Content wrapper ── */
+  .content-wrap { max-width: 980px; margin: 0 auto; padding: 0 2rem 5rem; }
+  .section-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-family: sans-serif; margin: 3.5rem 0 1rem; }
+
+  /* ── Submit form ── */
+  .submit-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 2.25rem 2.5rem; margin-top: 0.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .submit-card .card-heading { font-size: 1.4rem; margin-bottom: 0.35rem; color: var(--ink); }
+  .submit-card .card-sub { font-size: 0.9rem; color: #666; font-family: sans-serif; margin-bottom: 1.75rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  .form-group label { font-family: sans-serif; font-size: 0.78rem; font-weight: 600; color: #555; letter-spacing: 0.03em; }
+  .form-group label .opt { font-weight: 400; color: #aaa; font-size: 0.72rem; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea { padding: 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.92rem; font-family: sans-serif; color: var(--ink); background: var(--paper); transition: border-color 0.15s; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { outline: none; border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 88px; line-height: 1.55; font-family: Georgia, serif; font-size: 0.92rem; }
+  .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.2rem; }
+  .form-divider { border: none; border-top: 1px solid var(--light); margin: 1.25rem 0; }
+  .consent-row { display: flex; align-items: flex-start; gap: 0.65rem; margin-bottom: 1.25rem; font-family: sans-serif; font-size: 0.85rem; color: #444; line-height: 1.5; }
+  .consent-row input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--accent); width: 15px; height: 15px; }
+  .btn-submit { display: inline-block; background: var(--accent); color: white; font-family: sans-serif; font-weight: 700; font-size: 1rem; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; }
+  .btn-submit:hover { background: var(--gold-deep); }
+  .form-note { font-size: 0.78rem; color: #999; font-family: sans-serif; margin-top: 0.75rem; }
+
+  /* ── Directory table ── */
+  .dir-controls { display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap; }
+  .dir-search { flex: 1; min-width: 220px; padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.92rem; font-family: sans-serif; color: var(--ink); background: var(--paper); }
+  .dir-search:focus { outline: none; border-color: var(--accent); }
+  .dir-filter { padding: 0.6rem 2.2rem 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.88rem; font-family: sans-serif; color: var(--ink); background: var(--paper); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.65rem center; cursor: pointer; }
+  .dir-filter:focus { outline: none; border-color: var(--accent); }
+  .dir-count { font-family: sans-serif; font-size: 0.82rem; color: #888; padding: 0.6rem 0; align-self: center; }
+
+  .dir-table-outer { overflow-x: auto; margin-top: 1.25rem; border: 1px solid var(--border); border-radius: 8px; }
+  .dir-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 0.88rem; min-width: 680px; }
+  .dir-table thead { background: var(--light); }
+  .dir-table th { text-align: left; color: #666; font-weight: 600; padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .dir-table td { padding: 0.8rem 1rem; border-bottom: 1px solid #ece7db; vertical-align: middle; }
+  .dir-table tr:last-child td { border-bottom: none; }
+  .dir-table tbody tr:hover td { background: #f6f3ec; }
+  .tree-name { font-family: Georgia, serif; font-size: 0.95rem; font-weight: bold; color: var(--ink); }
+  .tree-surnames { color: #555; font-size: 0.83rem; }
+  .tree-region { color: #666; font-size: 0.82rem; max-width: 180px; line-height: 1.4; }
+  .tree-records { color: #777; font-size: 0.82rem; white-space: nowrap; }
+  .tree-link { color: var(--accent); text-decoration: none; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+  .tree-link:hover { color: var(--ink); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 0.72rem; font-weight: 700; font-family: sans-serif; white-space: nowrap; }
+  .badge-maxgen { background: #c8e6c9; color: #1a5c2a; }
+  .badge-gedcom { background: #d1e8f8; color: #0d4f7c; }
+  .badge-ancestry { background: #e8d8f8; color: #5a2d82; }
+  .badge-familysearch { background: #fde8c8; color: #7a3d08; }
+  .badge-myheritage { background: #ffd8e0; color: #8c1a2e; }
+  .badge-other { background: #e2e0dc; color: #555; }
+
+  /* ── MaxGen callout ── */
+  .convert-banner { background: #0e1a14; color: var(--paper); padding: 3.5rem 2rem; border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold); margin-top: 4rem; }
+  .convert-inner { max-width: 820px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 2.5rem; align-items: center; }
+  .convert-badge { display: inline-block; background: rgba(181,135,61,0.18); border: 1px solid rgba(181,135,61,0.4); color: var(--gold); font-family: sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; margin-bottom: 1rem; }
+  .convert-banner h3 { font-size: 1.7rem; color: var(--gold); margin-bottom: 0.6rem; }
+  .convert-banner p { font-size: 0.95rem; opacity: 0.82; line-height: 1.7; margin-bottom: 0.5rem; }
+  .convert-banner p strong { color: var(--gold); }
+  .convert-cta { flex-shrink: 0; }
+  .btn-gold { display: inline-block; background: var(--gold); color: var(--ink); font-family: sans-serif; font-weight: 700; font-size: 0.95rem; padding: 0.75rem 1.75rem; border-radius: 4px; text-decoration: none; white-space: nowrap; }
+  .btn-gold:hover { background: #c9973f; }
+
+  /* ── Why share? ── */
+  .benefit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 1.25rem; margin-top: 0.5rem; }
+  .benefit-card { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem 1.5rem 1.4rem; }
+  .benefit-icon { font-size: 1.6rem; margin-bottom: 0.75rem; line-height: 1; }
+  .benefit-card h4 { font-size: 1rem; color: var(--accent); margin-bottom: 0.4rem; }
+  .benefit-card p { font-size: 0.88rem; color: #555; line-height: 1.6; }
+
+  /* ── Footer ── */
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2.5rem 2rem; font-family: sans-serif; }
+  footer p { font-size: 0.85rem; opacity: 0.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+  footer .footer-links a:hover { color: #fff; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .hero h2 { font-size: 2rem; }
+    .stats-row { gap: 2rem; }
+    .submit-card { padding: 1.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .convert-inner { grid-template-columns: 1fr; text-align: center; }
+    .convert-cta { text-align: center; }
+    header { flex-direction: column; gap: 1rem; text-align: center; }
+    header nav a { margin-left: 0.75rem; }
+  }
+</style>
+<link rel="stylesheet" href="css/tokens.css">
+</head>
+<body>
+
+<header>
+  <h1><a href="index.html"><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</a></h1>
+  <nav>
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute</a>
+    <a href="community.html" class="active">Community Trees</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </nav>
+</header>
+
+<!-- ─── HERO ─────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-eyebrow">Global Directory</div>
+  <h2>A World of Open Family Trees</h2>
+  <p>Genealogy has always been a collaborative pursuit. This directory is where individuals who have built their own family trees — hosted anywhere — share them openly so others can find ancestors, verify connections, and help each other fill in the gaps.</p>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">2,847</div>
+      <div class="stat-label">Trees Listed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">61</div>
+      <div class="stat-label">Countries Represented</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">184K</div>
+      <div class="stat-label">Surnames Indexed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3.2M</div>
+      <div class="stat-label">Records Linked</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN CONTENT ──────────────────────────────────── -->
+<div class="content-wrap">
+
+  <!-- Submit Your Tree -->
+  <div class="section-label">Share Your Research</div>
+  <div class="submit-card">
+    <h3 class="card-heading">List Your Family Tree</h3>
+    <p class="card-sub">Your tree stays exactly where it is — we just index it here so others can find it. Takes about two minutes.</p>
+
+    <form onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tree-name">Tree / Family Name <span class="opt">(shown publicly)</span></label>
+          <input type="text" id="tree-name" placeholder='e.g. "The Maxwell Family Tree"'>
+        </div>
+        <div class="form-group">
+          <label for="tree-url">Tree URL</label>
+          <input type="url" id="tree-url" placeholder="https://github.com/yourname/family-tree">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tree-format">Format</label>
+          <select id="tree-format">
+            <option value="">Select a format…</option>
+            <option value="maxgen">MaxGen (.maxgen)</option>
+            <option value="gedcom">GEDCOM (.ged)</option>
+            <option value="ancestry">Ancestry Export</option>
+            <option value="familysearch">FamilySearch GEDCOM</option>
+            <option value="myheritage">My Heritage</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tree-surnames">Primary Surnames <span class="opt">(comma-separated)</span></label>
+          <input type="text" id="tree-surnames" placeholder="Maxwell, Bailey, Wright, Holcomb">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="tree-geo">Geographic Focus &amp; Era</label>
+          <input type="text" id="tree-geo" placeholder="Kentucky, Illinois, Utah — 1780–1920">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="tree-desc">Description</label>
+          <textarea id="tree-desc" placeholder="2–3 sentences about what's in this tree — key surnames, time periods, notable research, or what kinds of connections you're hoping to make."></textarea>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="tree-email">Your Email <span class="opt">(not shown publicly — for contact only)</span></label>
+          <input type="email" id="tree-email" placeholder="you@example.com">
+        </div>
+      </div>
+
+      <hr class="form-divider">
+
+      <div class="consent-row">
+        <input type="checkbox" id="consent">
+        <label for="consent">I confirm this tree contains no living individuals, or all living individuals included have consented to be listed in a public directory.</label>
+      </div>
+
+      <button type="submit" class="btn-submit">List My Tree</button>
+      <p class="form-note">Listings are reviewed within 48 hours. MaxGen trees are automatically indexed for AI search.</p>
+    </form>
+  </div>
+
+  <!-- Browse Directory -->
+  <div class="section-label">Browse the Directory</div>
+
+  <div class="dir-controls">
+    <input class="dir-search" type="text" placeholder="Search by surname, region, or family name…" oninput="filterTable(this.value)">
+    <select class="dir-filter" onchange="filterFormat(this.value)">
+      <option value="">All Formats</option>
+      <option value="maxgen">MaxGen</option>
+      <option value="gedcom">GEDCOM</option>
+      <option value="ancestry">Ancestry</option>
+      <option value="familysearch">FamilySearch</option>
+      <option value="myheritage">My Heritage</option>
+      <option value="other">Other</option>
+    </select>
+    <div class="dir-count" id="dir-count">Showing 10 of 2,847 trees</div>
+  </div>
+
+  <div class="dir-table-outer">
+    <table class="dir-table" id="dir-table">
+      <thead>
+        <tr>
+          <th>Family / Tree Name</th>
+          <th>Primary Surnames</th>
+          <th>Region &amp; Era</th>
+          <th>Format</th>
+          <th>Records</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-format="maxgen">
+          <td><div class="tree-name">The Whitfield–Garrett Tree</div></td>
+          <td><div class="tree-surnames">Whitfield, Garrett, Dunbar, Odom</div></td>
+          <td><div class="tree-region">Virginia &amp; North Carolina, 1740–1900</div></td>
+          <td><span class="badge badge-maxgen">MaxGen</span></td>
+          <td><div class="tree-records">4,312</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="gedcom">
+          <td><div class="tree-name">Kowalski &amp; Nowak Family</div></td>
+          <td><div class="tree-surnames">Kowalski, Nowak, Wiśniewski</div></td>
+          <td><div class="tree-region">Kraków &amp; Łódź, Poland, 1820–1960</div></td>
+          <td><span class="badge badge-gedcom">GEDCOM</span></td>
+          <td><div class="tree-records">2,108</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="maxgen">
+          <td><div class="tree-name">Appalachian Holcombs</div></td>
+          <td><div class="tree-surnames">Holcomb, Prater, Mullins, Combs</div></td>
+          <td><div class="tree-region">Kentucky &amp; West Virginia, 1800–1950</div></td>
+          <td><span class="badge badge-maxgen">MaxGen</span></td>
+          <td><div class="tree-records">7,841</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="ancestry">
+          <td><div class="tree-name">Mackenzie of Sutherland</div></td>
+          <td><div class="tree-surnames">Mackenzie, Ross, Munro, Fraser</div></td>
+          <td><div class="tree-region">Scottish Highlands, 1650–1880</div></td>
+          <td><span class="badge badge-ancestry">Ancestry</span></td>
+          <td><div class="tree-records">1,290</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="familysearch">
+          <td><div class="tree-name">Jørgensen &amp; Hansen Lines</div></td>
+          <td><div class="tree-surnames">Jørgensen, Hansen, Nielsen, Larsen</div></td>
+          <td><div class="tree-region">Jutland, Denmark, 1700–1920</div></td>
+          <td><span class="badge badge-familysearch">FamilySearch</span></td>
+          <td><div class="tree-records">3,550</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="gedcom">
+          <td><div class="tree-name">DeVries Families of New Netherland</div></td>
+          <td><div class="tree-surnames">DeVries, Van Houten, Brinkerhoff</div></td>
+          <td><div class="tree-region">New York &amp; New Jersey, 1625–1850</div></td>
+          <td><span class="badge badge-gedcom">GEDCOM</span></td>
+          <td><div class="tree-records">918</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="maxgen">
+          <td><div class="tree-name">Nakamura &amp; Tanaka Descendants</div></td>
+          <td><div class="tree-surnames">Nakamura, Tanaka, Watanabe, Ito</div></td>
+          <td><div class="tree-region">Kyoto &amp; Osaka, Japan, 1868–1960</div></td>
+          <td><span class="badge badge-maxgen">MaxGen</span></td>
+          <td><div class="tree-records">2,203</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="myheritage">
+          <td><div class="tree-name">Familia Reyes de Jalisco</div></td>
+          <td><div class="tree-surnames">Reyes, Gutiérrez, Moreno, Vega</div></td>
+          <td><div class="tree-region">Jalisco &amp; Zacatecas, Mexico, 1750–1950</div></td>
+          <td><span class="badge badge-myheritage">My Heritage</span></td>
+          <td><div class="tree-records">1,672</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="gedcom">
+          <td><div class="tree-name">Okonkwo &amp; Eze of Enugu State</div></td>
+          <td><div class="tree-surnames">Okonkwo, Eze, Nwachukwu, Obi</div></td>
+          <td><div class="tree-region">Enugu State, Nigeria, 1880–1990</div></td>
+          <td><span class="badge badge-gedcom">GEDCOM</span></td>
+          <td><div class="tree-records">648</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+        <tr data-format="other">
+          <td><div class="tree-name">Beaumont &amp; Thibodeau of Québec</div></td>
+          <td><div class="tree-surnames">Beaumont, Thibodeau, Lafleur, Côté</div></td>
+          <td><div class="tree-region">Québec &amp; Acadie, 1640–1880</div></td>
+          <td><span class="badge badge-other">Other</span></td>
+          <td><div class="tree-records">5,117</div></td>
+          <td><a href="#" class="tree-link">View Tree &rarr;</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /.content-wrap -->
+
+<!-- ─── MAXGEN CONVERSION CALLOUT ─────────────────────── -->
+<div class="convert-banner">
+  <div class="convert-inner">
+    <div class="convert-text">
+      <div class="convert-badge">Free Conversion</div>
+      <h3>Convert Your Tree to MaxGen</h3>
+      <p>If your tree is in GEDCOM, Ancestry, FamilySearch, or another format, we'll convert it to the open MaxGen standard — <strong>free of charge</strong>. AI-assisted conversion preserves every individual, date, and source note, and adds confidence scores to uncertain relationships so nothing gets lost in translation.</p>
+      <p>MaxGen trees are fully indexed by our search engine, making every surname and record discoverable to the community.</p>
+    </div>
+    <div class="convert-cta">
+      <a href="standard.html" class="btn-gold">Learn About MaxGen &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── WHY SHARE ─────────────────────────────────────── -->
+<div class="content-wrap">
+  <div class="section-label">Why Share Your Tree?</div>
+  <div class="benefit-grid">
+    <div class="benefit-card">
+      <div class="benefit-icon">&#128269;</div>
+      <h4>Help Others Find Their Ancestors</h4>
+      <p>Your research may be the missing link for someone else. A name you documented in passing could unlock decades of another family's search.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">&#128172;</div>
+      <h4>Get Feedback &amp; Corrections</h4>
+      <p>Researchers who share their trees consistently report receiving corrections, new sources, and DNA matches they never would have found working alone.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">&#128274;</div>
+      <h4>Your Tree Stays Yours</h4>
+      <p>We don't copy or host your data. Your tree lives wherever you put it — your GitHub, your Dropbox, your own site. We just list the link.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">&#129302;</div>
+      <h4>MaxGen Trees Get AI-Indexed</h4>
+      <p>Trees in MaxGen format are crawled by our AI and become fully searchable by surname, place, date range, and record type across the entire community directory.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contrib-bar { background: #07090d; border-top: 2px solid #1e2d1e; color: #ccc; font-family: sans-serif; font-size: 0.82rem; }
+  .contrib-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .contrib-bar-label { color: #4a7a4a; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+  .contrib-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.1rem; align-items: center; flex: 1; }
+  .contrib-name { color: #a8c8a8; padding: 2px 8px; border-radius: 10px; font-size: 0.78rem; white-space: nowrap; }
+  .contrib-name:hover { background: rgba(74,122,74,0.2); color: #c8e8c8; cursor: default; }
+  .contrib-sep { color: #2a3a2a; margin: 0 1px; }
+  .contrib-more { background: none; border: 1px solid #2a4a2a; color: #4a7a4a; border-radius: 4px; padding: 2px 10px; font-size: 0.73rem; cursor: pointer; white-space: nowrap; font-family: sans-serif; }
+  .contrib-more:hover { border-color: #4a7a4a; color: #6aaa6a; }
+  .contrib-expanded { max-width: 1100px; margin: 0 auto; padding: 0 2rem 0.75rem; display: flex; flex-wrap: wrap; gap: 0.25rem 0; border-top: 1px solid #111; }
+</style>
+<div class="contrib-bar">
+  <div class="contrib-bar-inner">
+    <span class="contrib-bar-label">Record Contributors</span>
+    <div class="contrib-row">
+      <span class="contrib-name">Garlon Maxwell</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Sarah O'Brien</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Klaus Bergmann</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Yuki Tanaka</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Maria Santos</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">James Whitfield</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Priya Nair</span><span class="contrib-sep">·</span>
+      <span class="contrib-name">Lars Eriksson</span>
+    </div>
+    <button class="contrib-more" id="contribToggle" onclick="(function(){var e=document.getElementById('contribExpanded'),t=document.getElementById('contribToggle'),o=e.style.display==='none';e.style.display=o?'flex':'none';t.textContent=o?'▲ collapse':'▼ 44 more contributors';})()">▼ 44 more contributors</button>
+  </div>
+  <div class="contrib-expanded" id="contribExpanded" style="display:none">
+    <span class="contrib-name">Aoife Murphy</span><span class="contrib-sep">·</span><span class="contrib-name">Chen Wei</span><span class="contrib-sep">·</span><span class="contrib-name">Robert Kowalski</span><span class="contrib-sep">·</span><span class="contrib-name">Elena Petrova</span><span class="contrib-sep">·</span><span class="contrib-name">Carlos Mendez</span><span class="contrib-sep">·</span><span class="contrib-name">Fatima Al-Rashid</span><span class="contrib-sep">·</span><span class="contrib-name">Thomas Blackwood</span><span class="contrib-sep">·</span><span class="contrib-name">Amara Diallo</span><span class="contrib-sep">·</span><span class="contrib-name">Ingrid Halvorsen</span><span class="contrib-sep">·</span><span class="contrib-name">Dmitri Volkov</span><span class="contrib-sep">·</span><span class="contrib-name">Nkechi Okafor</span><span class="contrib-sep">·</span><span class="contrib-name">Hamid Tehrani</span><span class="contrib-sep">·</span><span class="contrib-name">Brigitte Lefebvre</span><span class="contrib-sep">·</span><span class="contrib-name">Arjun Mehta</span><span class="contrib-sep">·</span><span class="contrib-name">Siobhan Gallagher</span><span class="contrib-sep">·</span><span class="contrib-name">Wilhelm Schäfer</span><span class="contrib-sep">·</span><span class="contrib-name">Lucía Vargas</span><span class="contrib-sep">·</span><span class="contrib-name">Oluwaseun Adeyemi</span><span class="contrib-sep">·</span><span class="contrib-name">Hana Novák</span><span class="contrib-sep">·</span><span class="contrib-name">Takeshi Yamamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Bridget Callahan</span><span class="contrib-sep">·</span><span class="contrib-name">Piotr Wiśniewski</span><span class="contrib-sep">·</span><span class="contrib-name">Zanele Dlamini</span><span class="contrib-sep">·</span><span class="contrib-name">Antoine Moreau</span><span class="contrib-sep">·</span><span class="contrib-name">Mei-Ling Zhou</span><span class="contrib-sep">·</span><span class="contrib-name">Eoin Ó'Sullivan</span><span class="contrib-sep">·</span><span class="contrib-name">Risto Mäkinen</span><span class="contrib-sep">·</span><span class="contrib-name">Valentina Greco</span><span class="contrib-sep">·</span><span class="contrib-name">Samuel Aboagye</span><span class="contrib-sep">·</span><span class="contrib-name">Nadia Leclerc</span><span class="contrib-sep">·</span><span class="contrib-name">Hiroshi Kawamoto</span><span class="contrib-sep">·</span><span class="contrib-name">Magdalena Horváth</span><span class="contrib-sep">·</span><span class="contrib-name">Kwame Asante</span><span class="contrib-sep">·</span><span class="contrib-name">Saoirse Brennan</span><span class="contrib-sep">·</span><span class="contrib-name">Viktor Andersson</span><span class="contrib-sep">·</span><span class="contrib-name">Isabela Ferreira</span><span class="contrib-sep">·</span><span class="contrib-name">Andrei Popescu</span><span class="contrib-sep">·</span><span class="contrib-name">Chioma Eze</span><span class="contrib-sep">·</span><span class="contrib-name">Søren Kjeldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Miriam Goldstein</span><span class="contrib-sep">·</span><span class="contrib-name">Ravi Krishnamurthy</span><span class="contrib-sep">·</span><span class="contrib-name">Astrid Thorvaldsen</span><span class="contrib-sep">·</span><span class="contrib-name">Emeka Obiora</span><span class="contrib-sep">·</span><span class="contrib-name">Caitlín Ní Fhaoláin</span>
+  </div>
+</div>
+
+<!-- ─── FOOTER ────────────────────────────────────────── -->
+<footer>
+  <p>OpenGenealogyAI — Probabilistic genealogy for everyone.</p>
+  <div class="footer-links">
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute Data</a>
+    <a href="community.html">Community Trees</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  // Simple client-side filter for the directory table
+  function filterTable(query) {
+    var rows = document.querySelectorAll('#dir-table tbody tr');
+    var q = query.toLowerCase();
+    var shown = 0;
+    rows.forEach(function(row) {
+      var text = row.textContent.toLowerCase();
+      var visible = !q || text.includes(q);
+      row.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    updateCount(shown);
+  }
+
+  function filterFormat(fmt) {
+    var rows = document.querySelectorAll('#dir-table tbody tr');
+    var shown = 0;
+    rows.forEach(function(row) {
+      var visible = !fmt || row.dataset.format === fmt;
+      row.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    updateCount(shown);
+  }
+
+  function updateCount(n) {
+    document.getElementById('dir-count').textContent = 'Showing ' + n + ' of 2,847 trees';
+  }
+</script>
+
+<div class="contrib-bar">
+  <span class="contrib-bar-inner">
+    <span class="contrib-label">Record Contributors</span>
+    <span class="contrib-name">Garlon Maxwell</span>
+    <span class="contrib-name">Sarah O'Brien</span>
+    <span class="contrib-name">Klaus Bergmann</span>
+    <span class="contrib-name">Yuki Tanaka</span>
+    <span class="contrib-name">Maria Santos</span>
+    <span class="contrib-name">James Whitfield</span>
+    <span class="contrib-name">Priya Nair</span>
+    <span class="contrib-name">Lars Eriksson</span>
+    <button class="contrib-more" onclick="this.previousElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('▼')?'▲ collapse':'▼ 44 more contributors'">▼ 44 more contributors</button>
+  </span>
+</div>
+
+<footer>
+  <p>OpenGenealogyAI — Open-source genealogy standard — opengenealogyai.org</p>
+  <div class="footer-links">
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute Data</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </div>
+  <p style="margin-top:1rem">MAXGEN v1.0 — CC0 Public Domain — Built with agentic AI</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+/* OpenGenealogyAI — Design Tokens
+   Logo-derived palette. Import on every page.
+   Company Design Agent — 2026-05-07 */
+
+:root {
+  /* ── Core palette (logo-derived) ─────────────────── */
+  --ink:            #1a1a2e;
+  --ink-deep:       #0d0d1a;
+  --ink-soft:       #2a2542;
+
+  --gold:           #d4a018;
+  --gold-bright:    #ffe070;
+  --gold-muted:     #b89020;
+  --gold-deep:      #7a4800;
+
+  --paper:          #faf7f0;
+  --paper-warm:     #f0ede4;
+  --border:         #d4c9b0;
+
+  /* ── Semantic tokens ─────────────────────────────── */
+  --accent:         var(--gold);
+  --accent-hover:   var(--gold-bright);
+  --accent-on:      var(--ink);
+
+  --success:        #5a8f5a;
+  --warning:        #c97a3a;
+  --danger:         #b04a3a;
+
+  --link:           #8a6420;
+  --link-hover:     var(--gold-deep);
+
+  /* ── Typography ──────────────────────────────────── */
+  --font-serif:     Georgia, 'Times New Roman', serif;
+  --font-sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono:      'SF Mono', Menlo, Consolas, monospace;
+  --font-display:   'Impact', 'Arial Black', sans-serif;
+
+  --fs-hero:        2.8rem;
+  --fs-h2:          1.8rem;
+  --fs-h3:          1.15rem;
+  --fs-body:        1rem;
+  --fs-small:       0.88rem;
+  --fs-eyebrow:     0.75rem;
+
+  --lh-body:        1.7;
+  --lh-tight:       1.25;
+
+  /* ── Spacing ─────────────────────────────────────── */
+  --space-section:  4rem;
+  --content-max:    960px;
+  --reading-max:    720px;
+
+  /* ── Components ──────────────────────────────────── */
+  --radius-sm:      4px;
+  --radius:         6px;
+  --radius-lg:      8px;
+  --shadow-card:    0 2px 12px rgba(0,0,0,0.06);
+  --shadow-pop:     0 8px 32px rgba(13,13,26,0.25);
+}
+
+/* ── Shared header ───────────────────────────────────── */
+header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 {
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+header h1 a {
+  color: var(--paper);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.site-logo {
+  height: 2.75rem;
+  width: auto;
+}
+header nav a {
+  color: var(--gold-muted);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+header nav a:hover { color: var(--paper); }
+header nav a.active {
+  color: var(--paper);
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 2px;
+}
+
+/* ── Shared contributor bar ──────────────────────────── */
+.contrib-bar {
+  background: var(--ink-deep);
+  border-top: 1px solid #1e2d1e;
+  padding: 0.6rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: #7a9a7a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.contrib-bar .contrib-label {
+  color: #4a7a4a;
+  font-weight: 600;
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+.contrib-bar .contrib-name {
+  color: #a8c8a8;
+  margin-right: 0.35rem;
+}
+.contrib-bar .contrib-more {
+  color: var(--gold-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 0.78rem;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+.contrib-bar .contrib-more:hover { color: var(--gold); }
+.contrib-extra { display: none; }
+.contrib-extra.open { display: contents; }

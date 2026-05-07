@@ -41,9 +41,12 @@ except ImportError:
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 COLLECTIONS_FILE = REPO_ROOT / "agents" / "ia-fetcher" / "ia_collections.json"
+sys.path.insert(0, str(REPO_ROOT))
+from pipeline.paths import QDRANT_PATH as _QDRANT_PATH, LOGS as _LOGS_DIR
+
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
-QDRANT_PATH = os.environ.get("QDRANT_PATH", "")  # set to use embedded mode without Docker
+QDRANT_PATH = str(_QDRANT_PATH) if _QDRANT_PATH.exists() else os.environ.get("QDRANT_PATH", "")
 COLLECTION_NAME = "raw_records_v01"
 VECTOR_DIM = 1536
 OPENAI_EMBED_MODEL = "text-embedding-3-small"
@@ -51,7 +54,7 @@ MAX_EMBED_CHARS = 1000   # truncate text before embedding
 COST_PER_1K_TOKENS = 0.00002   # text-embedding-3-small price
 APPROX_TOKENS_PER_RECORD = 150
 
-LOG_FILE = REPO_ROOT / "logs" / "ia_batch_ingest.jsonl"
+LOG_FILE = _LOGS_DIR / "ia_batch_ingest.jsonl"
 
 # ── Soundex ────────────────────────────────────────────────────────────────────
 def soundex(name: str) -> str:
