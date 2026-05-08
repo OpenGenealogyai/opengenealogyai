@@ -1,4 +1,4 @@
-# OpenGenealogyAI — 20 Big Goals (Version C: Platform Play)
+# OpenGenealogyAI — 22 Big Goals (Version C: Platform Play)
 *Approved by Garlon Maxwell — 2026-05-07*
 *Steward: Garlon Maxwell | Reviewed daily by Big Goal Skill agent*
 
@@ -83,16 +83,6 @@ The Big Goal Skill is the system that keeps everything on track. It reads the go
 ### 20. Build a Brand Worth Following
 OpenGenealogyAI is recognized and respected by genealogists, developers, institutions, and donors. The MaxGen name means something. The contributor model is talked about as a new way to fund open data. The free ancestor report is what people tell their family about. People refer others without being asked. The brand grows the mission, and the mission grows the brand.
 
----
-
-## How Goals Become Tasks
-Each goal is broken into tasks by the Big Goal Skill agent. Tasks are tracked in `.flow/`. No task is started without a spec. No spec is written without a goal to reference. The chain is: Mission → Goals → Tasks → Agent Actions → Results → Goal Review.
-
-## Review Cadence
-- **Daily**: Slack message from Big Goal Skill agent with progress + questions + recommendations
-- **Weekly**: Goal health check — are we moving? What's blocked?
-- **Monthly**: Full goal review — do any goals need to change? Are the agents performing?
-
 ### 21. Build the Paid User Portal
 When someone pays for Research Actions or document storage, they get more than a service — they get a home for their family history. The paid portal is a private, secure dashboard where users can log in and see everything we've built for them.
 
@@ -111,6 +101,22 @@ The portal has six components:
 **Tree Sharing** — Generate a private shareable link for family members. Viewers can browse but not edit. Invite specific people as collaborators.
 
 This is the product paying customers are actually buying. Everything else — free reports, Research Actions, document storage, contributor attribution — feeds into this portal as the destination where it all comes together.
+
+### 22. Build the Genealogy Expert Chat Widget (RAG Chatbot)
+A chat widget lives on the homepage and every public page. The AI persona is named **Ada** — a friendly, knowledgeable genealogy expert. Ada greets every visitor with sample questions to lead them in, answers from a curated genealogy knowledge base (RAG), and converts curious visitors into paying Research Action buyers.
+
+**Free tier:** 2 questions answered from the knowledge base — no account, no email required.
+**Email gate:** After question 2: "Give us your email and get 3 more free questions." Lead capture even from users who never pay.
+**Paywall:** After the email questions: "Ready to search our 50 million records for your specific ancestor? Research Actions start at $10."
+
+Ada knows: research methodology, record sources by era and location, famous ancestry (Abraham Lincoln, George Washington, British royalty, US presidents), genealogy terminology, and the MaxGen standard. She leads visitors with sample questions displayed as clickable chips:
+- "What are the best sources for finding my grandfather born in 1812 in Kentucky?"
+- "Who was Abraham Lincoln's great-grandfather?"
+- "How do I find immigration records for a German ancestor who arrived in the 1880s?"
+- "What's the difference between a census record and a vital record?"
+- "Can you trace British royal family ancestry back 500 years?"
+
+Ada is wired for upgrade: when the Qdrant database has records, she switches from knowledge-base answers to live record search with one config change.
 
 ---
 
