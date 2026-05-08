@@ -1,11 +1,16 @@
 """
-CLI throttle control for OpenGenealogyAI pipeline.
+CLI throttle control for OpenGenealogyAI pipeline (v3, 0-10 scale).
 
 Usage:
-    python scripts/throttle.py status
-    python scripts/throttle.py gpu 6
-    python scripts/throttle.py internet 1
-    python scripts/throttle.py gpu 10 internet 8
+    python scripts/throttle.py gpu 0              # pause GPU
+    python scripts/throttle.py internet 0         # pause internet
+    python scripts/throttle.py cpu 3              # set cpu to 3
+    python scripts/throttle.py claude 0           # no API spend
+    python scripts/throttle.py gpu 10 internet 8  # set multiple
+    python scripts/throttle.py status             # show all 4 dials
+    python scripts/throttle.py let-it-rip         # all to 10
+    python scripts/throttle.py zoom               # internet=0,gpu=2,cpu=0,claude=0
+    python scripts/throttle.py off                # all to 0
 """
 
 import sys
@@ -14,116 +19,137 @@ from pathlib import Path
 # Make sure pipeline package is importable when run directly
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from pipeline.throttle import (
-    write_throttle,
-    status_line,
-    read_throttle,
-    _GPU_SLEEP,
-    _INTERNET_SLEEP,
-    _INTERNET_CONCURRENCY,
-)
+from pipeline.throttle import write_throttle, read_throttle, status_line
 
-# ── human-readable descriptions ──────────────────────────────────────────────
+DIALS = ("internet", "gpu", "cpu", "claude")
 
-def _gpu_desc(level: int) -> str:
-    sleep = _GPU_SLEEP.get(level, 3.0)
-    if sleep == -1:
-        return "PAUSED — no batches will run"
-    if sleep == 0.0:
-        return "no sleep between embedding batches (full speed)"
-    return f"{sleep}s sleep between embedding batches"
+# ── level descriptions ─────────────────────────────────────────────────────────
+
+def _level_label(level: int) -> str:
+    if level == 0:
+        return "PAUSED"
+    if level <= 3:
+        return "slow"
+    if level <= 6:
+        return "medium"
+    if level <= 9:
+        return "fast"
+    return "full speed"
 
 
-def _internet_desc(level: int) -> str:
-    sleep = _INTERNET_SLEEP.get(level, 1.5)
-    conc = _INTERNET_CONCURRENCY.get(level, 2)
-    if sleep == -1:
-        return "PAUSED — no downloads will run"
-    conc_str = "unlimited" if conc == 999 else str(conc)
-    if sleep == 0.0:
-        return f"no sleep between requests, up to {conc_str} concurrent fetchers"
-    return f"{sleep}s between requests, up to {conc_str} concurrent fetchers"
+def _dial_desc(dial: str, level: int) -> str:
+    """Human-readable description for a dial at a given level."""
+    if dial == "internet":
+        if level == 0:
+            return "PAUSED — no downloads or web fetches"
+        if level <= 3:
+            return f"slow — {_level_label(level)} (long delays between requests)"
+        if level <= 6:
+            return f"medium — moderate request rate"
+        if level <= 9:
+            return f"fast — short delays between requests"
+        return "full speed — no delay between requests"
+
+    if dial == "gpu":
+        if level == 0:
+            return "PAUSED — GPU workers blocked"
+        if level <= 3:
+            return f"slow — {_level_label(level)} (long sleep between batches)"
+        if level <= 6:
+            return f"medium — moderate batch rate"
+        if level <= 9:
+            return f"fast — short sleep between batches"
+        return "full speed — no sleep between batches"
+
+    if dial == "cpu":
+        if level == 0:
+            return "idle priority — background processes throttled to minimum"
+        if level <= 1:
+            return "idle priority — background processes throttled to minimum"
+        if level <= 3:
+            return "below-normal priority — reduced CPU scheduling"
+        return "normal process priority"
+
+    if dial == "claude":
+        if level == 0:
+            return "OFF — no API calls"
+        if level <= 3:
+            return "minimal — no councils or subagents"
+        if level <= 6:
+            return "normal — councils allowed"
+        if level <= 9:
+            return "high — councils and subagents enabled"
+        return "full API access (councils, subagents enabled)"
+
+    return _level_label(level)
 
 
-# ── status command ────────────────────────────────────────────────────────────
+# ── status command ─────────────────────────────────────────────────────────────
 
 def cmd_status() -> None:
     t = read_throttle()
-    g = t["gpu"]
-    i = t["internet"]
-
-    g_sleep = _GPU_SLEEP.get(g, 3.0)
-    i_sleep = _INTERNET_SLEEP.get(i, 1.5)
-    i_conc = _INTERNET_CONCURRENCY.get(i, 2)
-
-    if g_sleep == -1:
-        g_detail = "PAUSED"
-    else:
-        g_detail = f"{g_sleep}s sleep between embedding batches"
-
-    if i_sleep == -1:
-        i_detail = "PAUSED"
-    else:
-        i_conc_str = "unlimited" if i_conc == 999 else str(i_conc)
-        i_detail = f"{i_sleep}s between requests, up to {i_conc_str} concurrent fetchers"
-
     print("=== Pipeline Throttle Status ===")
-    print(f"GPU:      {g}/10  — {g_detail}")
-    print(f"Internet: {i}/10  — {i_detail}")
+    for dial in DIALS:
+        lvl = t.get(dial, 10)
+        desc = _dial_desc(dial, lvl)
+        print(f"  {dial:<8} : {lvl:>2}/10  {desc}")
     print()
-    print("GPU levels:")
-    print("  1 = PAUSED (use for local model work)")
-    print("  5 = half speed (default)")
-    print("  10 = full speed")
+    print("Shortcuts:")
+    print("  let-it-rip  -> all 10    zoom -> internet=0,gpu=2,cpu=0,claude=0")
+    print("  off         -> all 0")
     print()
-    print("Internet levels:")
-    print("  1 = PAUSED (use for Skype / AnyDesk / screen sharing)")
-    print("  5 = half speed")
-    print("  10 = full speed")
+    print("Set: python scripts/throttle.py <dial> <0-10>  [<dial> <0-10> ...]")
 
 
-# ── set command ───────────────────────────────────────────────────────────────
+# ── set command ────────────────────────────────────────────────────────────────
 
-def cmd_set(gpu: int | None, internet: int | None) -> None:
-    write_throttle(gpu=gpu, internet=internet)
-    if gpu is not None:
-        sleep = _GPU_SLEEP.get(gpu, 3.0)
-        if sleep == -1:
-            desc = "PAUSED — no batches will run"
-        elif sleep == 0.0:
-            desc = "full speed, no sleep between batches"
-        else:
-            desc = f"{sleep}s between batches"
-        print(f"GPU throttle set to {gpu} — {desc}")
-    if internet is not None:
-        sleep = _INTERNET_SLEEP.get(internet, 1.5)
-        conc = _INTERNET_CONCURRENCY.get(internet, 2)
-        if sleep == -1:
-            desc = "PAUSED — no downloads will run"
-        else:
-            conc_str = "unlimited" if conc == 999 else str(conc)
-            if sleep == 0.0:
-                desc = f"full speed, no sleep between requests, {conc_str} concurrent"
-            else:
-                desc = f"{sleep}s between requests, {conc_str} concurrent"
-        print(f"Internet throttle set to {internet} — {desc}")
+def cmd_set(values: dict) -> None:
+    """Write dial values and print confirmation."""
+    write_throttle(**values)
+    for dial, lvl in values.items():
+        desc = _dial_desc(dial, lvl)
+        print(f"{dial} set to {lvl}/10 — {desc}")
 
 
-# ── parse args ────────────────────────────────────────────────────────────────
+# ── parse args ─────────────────────────────────────────────────────────────────
 
-def parse_args(argv: list[str]) -> tuple[str, int | None, int | None]:
-    """Returns (command, gpu_level, internet_level)."""
-    if not argv or argv[0] == "status":
-        return ("status", None, None)
+PRESET_ALIASES = {
+    "zoom", "skype", "anydesk", "screenshare",
+}
+RESUME_ALIASES = {
+    "let-it-rip", "resume",
+}
+PAUSE_ALIASES = {
+    "off", "pause", "sleep",
+}
 
-    gpu_val: int | None = None
-    internet_val: int | None = None
+
+def parse_args(argv: list) -> tuple:
+    """Returns (command, values_dict).
+    command is one of: 'status', 'preset', 'set'
+    values_dict: keys are dial names, values are int levels (for 'set'/'preset')
+    """
+    if not argv or argv[0].lower() == "status":
+        return ("status", {})
+
+    first = argv[0].lower()
+
+    if first in RESUME_ALIASES:
+        return ("set", {"internet": 10, "gpu": 10, "cpu": 10, "claude": 10})
+
+    if first in PAUSE_ALIASES:
+        return ("set", {"internet": 0, "gpu": 0, "cpu": 0, "claude": 0})
+
+    if first in PRESET_ALIASES:
+        return ("set", {"internet": 0, "gpu": 2, "cpu": 0, "claude": 0})
+
+    # Pair-based parsing: dial value [dial value ...]
+    values = {}
     errors = []
-
     i = 0
     while i < len(argv):
         token = argv[i].lower()
-        if token in ("gpu", "internet"):
+        if token in DIALS:
             if i + 1 >= len(argv):
                 errors.append(f"Missing value after '{token}'")
                 i += 1
@@ -132,20 +158,19 @@ def parse_args(argv: list[str]) -> tuple[str, int | None, int | None]:
             try:
                 val = int(raw)
             except ValueError:
-                errors.append(f"Invalid value for {token}: '{raw}' — must be 1-10")
+                errors.append(f"Invalid value for {token}: '{raw}' — must be 0-10")
                 i += 2
                 continue
-            if not (1 <= val <= 10):
-                errors.append(f"Invalid value for {token}: {val} — must be 1-10")
+            if not (0 <= val <= 10):
+                errors.append(f"Value out of range for {token}: {val} — must be 0-10")
                 i += 2
                 continue
-            if token == "gpu":
-                gpu_val = val
-            else:
-                internet_val = val
+            values[token] = val
             i += 2
         else:
-            errors.append(f"Unknown argument: '{argv[i]}'")
+            errors.append(
+                f"Unknown argument: '{argv[i]}' — valid dials: {', '.join(DIALS)}"
+            )
             i += 1
 
     if errors:
@@ -153,11 +178,17 @@ def parse_args(argv: list[str]) -> tuple[str, int | None, int | None]:
             print(f"ERROR: {e}", file=sys.stderr)
         sys.exit(1)
 
-    if gpu_val is None and internet_val is None:
-        print("ERROR: No valid settings provided. Use: gpu N, internet N, or status", file=sys.stderr)
+    if not values:
+        print(
+            "ERROR: No valid settings provided.\n"
+            f"  Usage: python scripts/throttle.py <dial> <0-10>\n"
+            f"  Dials: {', '.join(DIALS)}\n"
+            f"  Or: status | let-it-rip | off | zoom",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    return ("set", gpu_val, internet_val)
+    return ("set", values)
 
 
 def main() -> None:
@@ -166,11 +197,11 @@ def main() -> None:
         cmd_status()
         return
 
-    command, gpu_val, internet_val = parse_args(argv)
+    command, values = parse_args(argv)
     if command == "status":
         cmd_status()
     else:
-        cmd_set(gpu_val, internet_val)
+        cmd_set(values)
 
 
 if __name__ == "__main__":
