@@ -16,6 +16,7 @@ from pathlib import Path
 import requests
 
 from pipeline.paths import RAW, LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_internet
 
 IA_SEARCH_URL   = "https://archive.org/advancedsearch.php"
 IA_METADATA_URL = "https://archive.org/metadata"
@@ -61,6 +62,7 @@ def _already_done(con: sqlite3.Connection, url: str) -> bool:
 def _get(session: requests.Session, url: str, params=None) -> requests.Response | None:
     for attempt in range(3):
         try:
+            wait_for_internet()
             r = session.get(url, params=params, timeout=30)
             if r.status_code == 429:
                 print("[IA] 429 — backing off 30 min")
@@ -94,6 +96,7 @@ def _search_collection(session: requests.Session, collection_id: str, page: int)
 
 def _fetch_metadata(session: requests.Session, identifier: str) -> dict:
     try:
+        wait_for_internet()
         r = session.get(f"{IA_METADATA_URL}/{identifier}", timeout=15)
         if r.status_code == 200:
             return r.json().get("metadata", {})

@@ -14,6 +14,7 @@ from pathlib import Path
 import requests
 
 from pipeline.paths import RAW, LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_internet
 
 SEARCH_URL = "https://www.loc.gov/search/"
 OUT_DIR    = RAW.chronicling / "pages"
@@ -57,6 +58,7 @@ def _already_done(con: sqlite3.Connection, url: str) -> bool:
 def _get(session: requests.Session, url: str, params=None) -> requests.Response | None:
     for attempt in range(3):
         try:
+            wait_for_internet()
             r = session.get(url, params=params, timeout=30)
             if r.status_code == 429:
                 print("[CHRONICLING] 429 — backing off 30 min")

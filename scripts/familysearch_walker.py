@@ -10,6 +10,7 @@ Credentials: set FS_USERNAME and FS_PASSWORD in .env
 """
 
 import os
+import sys
 import json
 import time
 import uuid
@@ -21,6 +22,9 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from pipeline.throttle import wait_for_internet  # noqa: E402
 
 # ── Config ────────────────────────────────────────────────────────────────────
 FS_USERNAME = os.getenv("FS_USERNAME", "")
@@ -53,6 +57,7 @@ def get_access_token(username: str, password: str) -> str:
         )
 
     log.info("Authenticating with FamilySearch...")
+    wait_for_internet()
     resp = requests.post(
         FS_AUTH_URL,
         data={
@@ -82,6 +87,7 @@ def fs_get(session: requests.Session, path: str) -> dict | None:
     """
     url = f"{FS_BASE}{path}"
     try:
+        wait_for_internet()
         resp = session.get(url, timeout=30)
         if resp.status_code in (404, 410):
             log.debug("Person not found: %s", path)
@@ -274,6 +280,7 @@ def walk_ancestors(
 
         # ── Fetch person ──────────────────────────────────────────────────────
         log.debug("Fetching person %s (gen %d)", person_id, generation)
+        wait_for_internet()
         person = fetch_person(session, person_id)
         time.sleep(RATE_LIMIT_DELAY)
 
@@ -309,6 +316,7 @@ def walk_ancestors(
 
         # ── Queue parents ─────────────────────────────────────────────────────
         if generation < max_generations:
+            wait_for_internet()
             parents = fetch_parents(session, person_id)
             time.sleep(RATE_LIMIT_DELAY)
 

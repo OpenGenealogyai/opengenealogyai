@@ -17,6 +17,7 @@ from pathlib import Path
 import requests
 
 from pipeline.paths import RAW, LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_internet
 
 TROVE_API_URL = "https://api.trove.nla.gov.au/v3"
 OUT_DIR       = RAW.trove
@@ -85,6 +86,7 @@ def _search_page(session: requests.Session, year_start: int, year_end: int,
     url = f"{TROVE_API_URL}/result"
     for attempt in range(3):
         try:
+            wait_for_internet()
             r = session.get(url, params=params, timeout=30)
             if r.status_code == 429:
                 print("[TROVE] 429 — backing off 5 min")

@@ -1,6 +1,6 @@
 """
 FamousPeopleFetcher — Downloads genealogy data from Wikidata for famous people.
-NO embedding, NO GPU, NO Ollama. Pure HTTP requests → JSON files on disk.
+NO embedding, NO GPU, NO Ollama. Pure HTTP requests -> JSON files on disk.
 
 Usage:
     python scripts/famous_people_fetcher.py
@@ -20,6 +20,8 @@ import requests
 # Paths
 # ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+from pipeline.throttle import wait_for_internet, internet_level, internet_concurrency  # noqa: E402
 DATA_DIR = BASE_DIR / "data" / "famous_people"
 SEED_FILE = BASE_DIR / "data" / "famous" / "seed_list.json"
 PROGRESS_FILE = DATA_DIR / "_progress.json"
@@ -114,6 +116,7 @@ def sparql_query(qid: str) -> dict | None:
 
     while True:
         try:
+            wait_for_internet()
             resp = requests.get(
                 WIKIDATA_SPARQL,
                 params=params,
@@ -231,7 +234,7 @@ def fetch_and_save(
     if generation > MAX_GENERATIONS:
         return 0
 
-    time.sleep(RATE_LIMIT_SLEEP)
+    wait_for_internet()
     row = sparql_query(qid)
 
     if row is None:
@@ -275,6 +278,7 @@ def main() -> None:
     log.info("=" * 60)
     log.info("FamousPeopleFetcher starting — NO GPU / NO embedding")
     log.info("Output: %s", DATA_DIR)
+    log.info("Throttle: level=%d  max_concurrency=%d", internet_level(), internet_concurrency())
     log.info("=" * 60)
 
     # Load seed list
@@ -303,10 +307,10 @@ def main() -> None:
         label = f"[{idx}/{total_people}] {name} ({qid})"
 
         if qid in done:
-            log.info("%s → already downloaded, skipping", label)
+            log.info("%s -> already downloaded, skipping", label)
             continue
 
-        log.info("%s → fetching ...", label)
+        log.info("%s -> fetching ...", label)
 
         try:
             if is_living:
@@ -342,7 +346,7 @@ def main() -> None:
                     )
 
                 log.info(
-                    "%s → %d ancestors found → saved  (anchor: %s)",
+                    "%s -> %d ancestors found -> saved  (anchor: %s)",
                     label, ancestor_count, anchor or "n/a",
                 )
                 total_saved += ancestor_count
@@ -356,11 +360,11 @@ def main() -> None:
                     famous_descendant=None,
                 )
                 ancestors = max(0, saved - 1)
-                log.info("%s → %d ancestors found → saved", label, ancestors)
+                log.info("%s -> %d ancestors found -> saved", label, ancestors)
                 total_saved += saved
 
         except Exception as exc:
-            log.error("%s → UNEXPECTED ERROR: %s", label, exc, exc_info=True)
+            log.error("%s -> UNEXPECTED ERROR: %s", label, exc, exc_info=True)
             failures.append({"qid": qid, "name": name, "error": str(exc)})
 
     # Final summary

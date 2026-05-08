@@ -24,6 +24,7 @@ from pathlib import Path
 import requests
 
 from pipeline.paths import RAW, LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_internet
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
@@ -286,6 +287,7 @@ def _fetch_page(session: requests.Session, state: str, surname: str, page: int) 
 
     for attempt in range(MAX_RETRIES):
         try:
+            wait_for_internet()
             r = session.get(url, timeout=30)
 
             if r.status_code == 429:

@@ -19,9 +19,10 @@ import torch                                  # imported at top so empty_cache i
 from sentence_transformers import SentenceTransformer
 
 from pipeline.paths import LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_gpu, gpu_level, status_line
 
 # Build sentinel — printed at startup so we can confirm new code is running after a restart
-BUILD_TAG = "2026-05-07-trunc1000-emptycache-safeunlink"
+BUILD_TAG = "2026-05-08-trace-upsert-error"
 
 
 def _safe_unlink(p: Path) -> bool:
@@ -157,12 +158,14 @@ def _mark_embedded(con: sqlite3.Connection, records: list[dict]):
 def _write_heartbeat(total_embedded: int, rate_per_min: float):
     LOGS.mkdir(parents=True, exist_ok=True)
     HEARTBEAT_FILE.write_text(json.dumps({
-        "last_embed":     datetime.datetime.utcnow().isoformat(),
-        "total_embedded": total_embedded,
-        "rate_per_min":   round(rate_per_min, 1),
-        "engine":         "sentence-transformers",
-        "model":          EMBED_MODEL,
-        "batch_size":     BATCH_SIZE,
+        "last_embed":       datetime.datetime.utcnow().isoformat(),
+        "total_embedded":   total_embedded,
+        "rate_per_min":     round(rate_per_min, 1),
+        "engine":           "sentence-transformers",
+        "model":            EMBED_MODEL,
+        "batch_size":       BATCH_SIZE,
+        "throttle_gpu":     gpu_level(),
+        "throttle_status":  status_line(),
     }))
 
 
@@ -257,6 +260,8 @@ def run_loop():
     # Warm up: encode a dummy text to load weights onto GPU
     model.encode(["warmup"], batch_size=1, show_progress_bar=False)
     print(f"[GPU] Model loaded")
+    print(f"[GPU] {status_line()}")
+    print("[GPU] Change throttle: python scripts/throttle.py gpu N  (1=pause, 10=full)")
 
     con = _init_db()
     _ensure_collection(dim=768)
@@ -302,8 +307,13 @@ def run_loop():
             _mark_embedded(con, records)
             for p in paths:
                 _safe_unlink(p)   # Tolerate transient Windows file lock
+            # Throttle — respects GPU level set by: python scripts/throttle.py gpu N
+            wait_for_gpu()
         except Exception as e:
-            print(f"[GPU] Upsert failed: {e} — records stay in queue")
+            import traceback
+            tb = traceback.format_exc()
+            print(f"[GPU] Upsert failed: {type(e).__name__}: {e} -- records stay in queue", flush=True)
+            print(f"[GPU] Traceback (one-time per error type):\n{tb}", flush=True)
             time.sleep(5)
             continue
         finally:

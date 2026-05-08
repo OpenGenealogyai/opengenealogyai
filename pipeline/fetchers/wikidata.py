@@ -14,6 +14,7 @@ import bz2, json, time, sqlite3, urllib.request
 from pathlib import Path
 
 from pipeline.paths import RAW, LOGS, CHECKPOINTS
+from pipeline.throttle import wait_for_internet
 
 DUMP_URL  = "https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2"
 DUMP_FILE = RAW.wikidata / "latest-all.json.bz2"
@@ -75,6 +76,7 @@ def _download_dump():
     print(f"[WIKIDATA] Downloading dump — this is 80+ GB and will take several hours")
     req = urllib.request.Request(DUMP_URL, headers={"User-Agent": USER_AGENT})
 
+    wait_for_internet()
     with urllib.request.urlopen(req, timeout=3600) as resp, open(DUMP_FILE, "wb") as out:
         downloaded = 0
         last_log   = time.time()
