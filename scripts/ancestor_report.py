@@ -19,6 +19,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from openai import OpenAI
 
+import crm
+
 # ── Load environment ──────────────────────────────────────────────────────────
 ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(ENV_PATH)
@@ -267,11 +269,18 @@ def api_report():
         if not ancestor_name:
             return jsonify({"error": "Ancestor name is required."}), 400
 
+        # Log to CRM before generating (captures every submission attempt)
+        requester_name = (data.get("requester_name") or "").strip()
+        crm_request_id = crm.log_report_request(email, requester_name, ancestor_name)
+
         # Generate report
         report_text = generate_report(data)
 
         # Send email
         send_email(email, ancestor_name, report_text)
+
+        # Mark delivered in CRM
+        crm.mark_report_delivered(crm_request_id)
 
         # Log success
         log_submission(data, success=True)

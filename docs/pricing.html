@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Research Credits — OpenGenealogyAI</title>
+<style>
+  :root {
+    --light: #f0ede4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 1.4rem; letter-spacing: 0.02em; display: flex; align-items: center; gap: 0.6rem; }
+  header h1 a { color: var(--paper); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
+  .site-logo { height: 2rem; width: auto; }
+  header nav a { color: var(--gold); text-decoration: none; margin-left: 1.5rem; font-family: sans-serif; font-size: 0.9rem; }
+  header nav a:hover { color: #fff; }
+  header nav a.active { color: #fff; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+
+  /* Hero */
+  .pricing-hero { background: linear-gradient(135deg, var(--ink) 60%, var(--ink-soft)); color: var(--paper); padding: 4.5rem 2rem 3.5rem; text-align: center; }
+  .pricing-hero h2 { font-size: 2.6rem; max-width: 680px; margin: 0 auto 1rem; line-height: 1.25; }
+  .pricing-hero p { font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.85; }
+
+  /* Pricing section */
+  .pricing-section { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+  .pricing-section > h3 { font-size: 1.6rem; text-align: center; margin-bottom: 0.5rem; color: var(--ink); }
+  .pricing-section > .sub { text-align: center; font-family: sans-serif; font-size: 0.97rem; color: #666; max-width: 620px; margin: 0 auto 2.5rem; }
+
+  /* Cards */
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+  .plan-card { border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem 1.75rem; background: #fff; display: flex; flex-direction: column; position: relative; }
+  .plan-card.featured { border-color: var(--gold); }
+  .plan-card.featured::before {
+    content: "Most Popular";
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--ink);
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .plan-name { font-family: sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--ink); margin-bottom: 0.2rem; }
+  .plan-actions { font-size: 0.88rem; font-family: sans-serif; color: var(--gold-deep); font-weight: 600; margin-bottom: 0.5rem; }
+  .plan-price { font-size: 2.4rem; font-weight: bold; font-family: sans-serif; color: var(--ink); line-height: 1; margin-bottom: 0.25rem; }
+  .plan-price span { font-size: 1rem; font-weight: normal; color: #888; }
+  .plan-tagline { font-size: 0.82rem; font-family: sans-serif; color: #777; margin-bottom: 1.25rem; min-height: 2.4rem; }
+
+  .plan-features { list-style: none; margin-bottom: 1.5rem; flex: 1; }
+  .plan-features li { font-family: sans-serif; font-size: 0.9rem; padding: 0.3rem 0; border-bottom: 1px solid var(--light); display: flex; gap: 0.5rem; align-items: flex-start; }
+  .plan-features li:last-child { border-bottom: none; }
+  .plan-features li::before { content: "✓"; color: var(--gold); font-weight: bold; flex-shrink: 0; margin-top: 0.05rem; }
+
+  /* Buy Now button */
+  .btn-buy {
+    display: block;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-family: sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    text-decoration: none;
+    background: var(--ink);
+    color: var(--paper);
+    transition: background 0.15s;
+    margin-top: auto;
+  }
+  .btn-buy:hover { background: var(--ink-soft); }
+  .plan-card.featured .btn-buy { background: var(--gold); color: var(--ink); }
+  .plan-card.featured .btn-buy:hover { background: #c9973f; }
+
+  /* Free tier note */
+  .free-note { text-align: center; font-family: sans-serif; font-size: 0.88rem; color: #666; margin-top: 2rem; }
+  .free-note a { color: var(--gold-deep); text-decoration: underline; }
+
+  /* FAQ strip */
+  .faq { max-width: 680px; margin: 0 auto 4rem; padding: 0 2rem; }
+  .faq h3 { font-size: 1.3rem; margin-bottom: 1.5rem; }
+  .faq-item { margin-bottom: 1.25rem; }
+  .faq-item strong { font-family: sans-serif; font-size: 0.95rem; }
+  .faq-item p { font-size: 0.92rem; color: #555; margin-top: 0.25rem; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* Footer */
+  footer { background: var(--ink); color: var(--paper); text-align: center; padding: 2.5rem 2rem; font-family: sans-serif; }
+  footer p { font-size: 0.85rem; opacity: 0.7; }
+  footer .footer-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+  footer .footer-links a { color: var(--gold); text-decoration: none; font-size: 0.85rem; }
+
+  @media (max-width: 600px) {
+    .plans { grid-template-columns: 1fr; }
+    .pricing-hero h2 { font-size: 2rem; }
+  }
+</style>
+<link rel="stylesheet" href="css/tokens.css">
+</head>
+<body>
+
+<header>
+  <h1><a href="index.html"><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</a></h1>
+  <nav>
+    <a href="index.html">For Users</a>
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute</a>
+    <a href="community.html">Community Trees</a>
+    <a href="pricing.html" class="active">Buy Credits</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+  </nav>
+</header>
+
+<div class="pricing-hero">
+  <h2>Research Action Bundles</h2>
+  <p>A <em>research action</em> is one agent step: search a collection, score a candidate, cross-check a date. Buy a bundle and use your actions whenever you need them.</p>
+</div>
+
+<section class="pricing-section">
+  <h3>Choose Your Bundle</h3>
+  <p class="sub">All bundles are monthly subscriptions. Unused actions roll over for one billing cycle. Cancel any time — no lock-in.</p>
+
+  <!-- Replace PLACEHOLDER_* with real Stripe Payment Link URLs from dashboard.stripe.com -->
+  <div class="plans">
+
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-actions">100 research actions / month</div>
+      <div class="plan-price">$10<span> / mo</span></div>
+      <div class="plan-tagline">One family line, steady progress</div>
+      <ul class="plan-features">
+        <li>100 research actions per month</li>
+        <li>Monthly report: discoveries + task log</li>
+        <li>Confidence Map — grows each month</li>
+        <li>50 actions roll over if unused</li>
+        <li>One family line tracked</li>
+        <li>Email + PDF delivery</li>
+        <li>Next Month's Plan included</li>
+      </ul>
+      <a href="https://buy.stripe.com/PLACEHOLDER_STARTER" class="btn-buy">Buy Now — $10/mo</a>
+    </div>
+
+    <div class="plan-card featured">
+      <div class="plan-name">Researcher</div>
+      <div class="plan-actions">350 research actions / month</div>
+      <div class="plan-price">$29<span> / mo</span></div>
+      <div class="plan-tagline">Multiple lines, real depth</div>
+      <ul class="plan-features">
+        <li>350 research actions per month</li>
+        <li>Everything in Starter</li>
+        <li>Three family lines tracked</li>
+        <li>175 actions roll over</li>
+        <li>DNA match cross-reference (coming Q3)</li>
+        <li>Priority indexing queue</li>
+      </ul>
+      <a href="https://buy.stripe.com/PLACEHOLDER_RESEARCHER" class="btn-buy">Buy Now — $29/mo</a>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-name">Pro</div>
+      <div class="plan-actions">1,250 research actions / month</div>
+      <div class="plan-price">$100<span> / mo</span></div>
+      <div class="plan-tagline">Full tree, maximum depth</div>
+      <ul class="plan-features">
+        <li>1,250 research actions per month</li>
+        <li>Everything in Researcher</li>
+        <li>All family lines, no limit</li>
+        <li>625 actions roll over</li>
+        <li>Living Memory voice attachment (Q4)</li>
+        <li>Early access to new features</li>
+      </ul>
+      <a href="https://buy.stripe.com/PLACEHOLDER_PRO" class="btn-buy">Buy Now — $100/mo</a>
+    </div>
+
+  </div>
+
+  <p class="free-note">Not ready to subscribe? <a href="index.html#free-report">Get one free ancestor report</a> — no credit card required.</p>
+
+</section>
+
+<hr class="divider">
+
+<div class="faq">
+  <h3>Common Questions</h3>
+
+  <div class="faq-item">
+    <strong>What is a research action?</strong>
+    <p>One agent step: searching a record collection, scoring a candidate match, cross-checking a date, or pulling a church record. A typical ancestor investigation uses 10–30 actions. Your free report uses about 14.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Do unused actions expire?</strong>
+    <p>Half of your unused monthly actions roll over to the next billing cycle. They expire after 60 days.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Can I cancel any time?</strong>
+    <p>Yes. Cancel from your Stripe billing portal before your next renewal and you will not be charged again. Actions you have already purchased remain usable through the end of your billing period.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>What payment methods are accepted?</strong>
+    <p>All major credit and debit cards via Stripe. No PayPal or crypto at this time.</p>
+  </div>
+
+  <div class="faq-item">
+    <strong>Can I add private document storage?</strong>
+    <p>Yes — add it separately for $2/month (up to 1,000 documents), $5/month (up to 5,000), or $12/month (up to 20,000 items). Contact us after purchasing a bundle.</p>
+  </div>
+</div>
+
+<footer>
+  <p>OpenGenealogyAI — Open-source genealogy standard — opengenealogyai.org</p>
+  <div class="footer-links">
+    <a href="standard.html">MaxGen Standard</a>
+    <a href="contribute.html">Contribute Data</a>
+    <a href="https://github.com/opengenealogyai">GitHub</a>
+    <a href="https://github.com/opengenealogyai/opengenealogyai/blob/main/docs/AGENT_EXTRACTION_RULES.md">Extraction Rules</a>
+  </div>
+  <p style="margin-top:1rem">All public data is CC0. Built with agentic AI. Named for Garlon Maxwell.</p>
+</footer>
+
+</body>
+</html>

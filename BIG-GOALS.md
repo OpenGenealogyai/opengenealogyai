@@ -93,6 +93,35 @@ Each goal is broken into tasks by the Big Goal Skill agent. Tasks are tracked in
 - **Weekly**: Goal health check — are we moving? What's blocked?
 - **Monthly**: Full goal review — do any goals need to change? Are the agents performing?
 
+### 21. Build the Paid User Portal
+When someone pays for Research Actions or document storage, they get more than a service — they get a home for their family history. The paid portal is a private, secure dashboard where users can log in and see everything we've built for them.
+
+The portal has six components:
+
+**User Accounts** — Email + password login, or Google/Apple sign-in. A free-report user who upgrades gets their existing data automatically pulled into their account. No re-entry.
+
+**Private Dashboard** — After login, the user lands on their tree overview: how many generations found, how many documents attached, last updated date, and one-click access to all views.
+
+**Interactive Pedigree Chart** — A clickable, zoomable ancestor tree built with D3.js. Each person is a card showing name, birth year, and death year. Confidence scores display as color intensity — deep gold for high confidence, faded for uncertain or inferred. Clicking any person opens their detail panel.
+
+**Family Group Sheets** — Auto-generated from the person's data: one sheet per family unit (parents + children), with all dates, places, and source citations listed. Printable. Downloadable as PDF.
+
+**Document Library** — Every photo, certificate, letter, or recording the user uploads is stored here, linked to specific people in the tree. Organized by person and document type. This is Goal #5 made real and visible.
+
+**Tree Sharing** — Generate a private shareable link for family members. Viewers can browse but not edit. Invite specific people as collaborators.
+
+This is the product paying customers are actually buying. Everything else — free reports, Research Actions, document storage, contributor attribution — feeds into this portal as the destination where it all comes together.
+
 ---
-*Last updated: 2026-05-07*
-*Next review: 2026-05-08 (daily)*
+
+## How Goals Become Tasks
+Each goal is broken into tasks by the Big Goal Skill agent. Tasks are tracked in `.flow/`. No task is started without a spec. No spec is written without a goal to reference. The chain is: Mission → Goals → Tasks → Agent Actions → Results → Goal Review.
+
+## Review Cadence
+- **Daily**: Slack message from Big Goal Skill agent with progress + questions + recommendations
+- **Weekly**: Goal health check — are we moving? What's blocked?
+- **Monthly**: Full goal review — do any goals need to change? Are the agents performing?
+
+---
+*Last updated: 2026-05-08*
+*Next review: 2026-05-09 (daily)*
