@@ -1,0 +1,37 @@
+{
+  "session_name": "pipeline-monitor",
+  "session_role": "Operates the live embedding pipeline. Diagnoses + fixes runtime issues. Manages bulk dump downloads and ingest. Tracks misdiagnoses + errors. Runs Deon (private genealogy research for client Garlon Maxwell).",
+  "claimed_at": "2026-05-08T16:10:00Z",
+  "ttl_minutes": 480,
+  "owns": [
+    "pipeline/bulk/**",
+    "pipeline/monitor.py",
+    "pipeline/workers/gpu_worker.py (write access — coordinate via this lock; other session reads only)",
+    "diagnostics/**",
+    "_session_notes/pipeline-monitor/**",
+    "D:/AI/Companies/open-genealogical-ai/rawdata/_logs/**",
+    "D:/AI/Companies/open-genealogical-ai/rawdata/bulk_downloads/**",
+    "D:/AI/Companies/open-genealogical-ai/rawdata/_checkpoints/embed_queue/**",
+    "C:/Users/stock/Documents/maxwell_genealogy/**",
+    "C:/Users/stock/.claude/skills/agent-deon/**"
+  ],
+  "reads_only_doesnt_modify": [
+    "pipeline/throttle.py (canonical — owned by build-genealogy-open-source-ai)",
+    "pipeline/orchestrator.py (restart impacts every session)",
+    "pipeline/fetchers/** (owned by build-genealogy-open-source-ai)",
+    "scripts/** (owned by build-genealogy-open-source-ai)",
+    "data/** (owned by build-genealogy-open-source-ai)",
+    "agents/** (owned by build-genealogy-open-source-ai)",
+    "BIG-GOALS.md",
+    "_throttle/throttle.json (control file — read by all, written by user)"
+  ],
+  "active_tasks": [
+    "Running pipeline + monitoring throughput",
+    "OpenLibrary authors-dump ingest paused (~1M records pre-loaded into queue)",
+    "Logging Maxwell genealogy research for Garlon (Deon agent)",
+    "Tracking misdiagnoses (count: 2) and errors (count: 3)",
+    "Coordinating with build-genealogy-open-source-ai session"
+  ],
+  "session_notes_path": "_session_notes/pipeline-monitor/",
+  "contact": "Read _session_notes/pipeline-monitor/STATUS.md for current state."
+}
