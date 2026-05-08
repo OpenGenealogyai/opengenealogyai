@@ -19,10 +19,10 @@ import torch                                  # imported at top so empty_cache i
 from sentence_transformers import SentenceTransformer
 
 from pipeline.paths import LOGS, CHECKPOINTS
-from pipeline.throttle import wait_for_gpu, gpu_level, status_line
+from pipeline.bulk.throttle import wait_for_gpu, gpu_level, status_line
 
 # Build sentinel — printed at startup so we can confirm new code is running after a restart
-BUILD_TAG = "2026-05-08-trace-upsert-error"
+BUILD_TAG = "2026-05-08-own-throttle-pipeline-monitor"
 
 
 def _safe_unlink(p: Path) -> bool:
