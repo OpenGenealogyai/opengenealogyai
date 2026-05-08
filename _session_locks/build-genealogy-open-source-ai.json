@@ -1,0 +1,39 @@
+{
+  "session_name": "build-genealogy-open-source-ai",
+  "session_role": "Builds the public-facing platform: website, Ada chatbot, famous people genealogy KB, Stripe payments, CRM, agent specs, and throttle system",
+  "claimed_at": "2026-05-08T15:34:18.672732Z",
+  "ttl_minutes": 120,
+  "owns": [
+    "pipeline/throttle.py",
+    "_throttle/",
+    "scripts/throttle.py",
+    "scripts/famous_people_fetcher.py",
+    "scripts/famous_people_bulk_expander.py",
+    "scripts/familysearch_walker.py",
+    "scripts/chat_api.py",
+    "scripts/ancestor_report.py",
+    "scripts/crm.py",
+    "scripts/crm_dashboard.py",
+    "scripts/daily_goal_reporter.py",
+    "scripts/brainstorm_runner.py",
+    "data/famous/**",
+    "data/famous_people/**",
+    "data/kb/**",
+    "docs/**",
+    "agents/**",
+    "BIG-GOALS.md",
+    "docs/HUMAN_GATES.md"
+  ],
+  "reads_only_doesnt_modify": [
+    "pipeline/workers/gpu_worker.py",
+    "pipeline/fetchers/**",
+    "pipeline/orchestrator.py",
+    "RESUME.md"
+  ],
+  "active_tasks": [
+    "Famous people genealogy bulk download \u2014 9,956 people queued, running at internet=10",
+    "Ada RAG chatbot \u2014 KB built, chat_api.py live on port 8081",
+    "Throttle system \u2014 pipeline/throttle.py canonical, all fetchers integrated"
+  ],
+  "contact": "Owns throttle.py schema \u2014 coordinate before changing function signatures. Famous people download writes to data/famous_people/ only."
+}
