@@ -274,13 +274,25 @@ These are baked into the schema and the API. None can be turned off.
 1. **No raw genotype data is ever stored.** Not in the database, not on disk,
    not in cache. Raw FASTQ, VCF, 23andMe raw export — stays with the user or
    the test provider. MaxDNA stores derived metadata only.
-2. **Kit IDs are SHA-256 hashed before storage.** The schema's regex enforces
-   64-hex-character format. Anyone seeing a `kit_id_hash` cannot recover the
-   original.
+2. **Kit IDs are HMAC-SHA-256 hashed before storage.** The schema's regex
+   enforces 64-hex-character format. The hash function is HMAC-SHA-256 with a
+   **system-wide salt held in a secrets vault**, not plain SHA-256. This matters
+   because vendor kit number spaces are small enough to brute-force (AncestryDNA
+   kit numbers are ~12 digits ≈ 10^12 → seconds on a GPU against plain SHA-256).
+   HMAC with a secret salt closes that attack. The same salt is used for
+   `external_ids.*` cross-service alias hashes. Salt rotation requires
+   re-hashing all stored kit IDs; treat as a major operational event.
 3. **All DNA records are `tier2-private`.** The schema locks
    `redistribution_license` to that exact value. No CC0 path for DNA. Ever.
 4. **Living-subject lock.** If `is_living_flag` is true, all open endpoints
    return 404. Access requires authenticated, consented access by the subject.
+   **Default policy for the flag** (applied at ingest time, not stored as
+   schema default — the flag is required and must be explicit):
+   - If subject's linked MaxPerson has `birth_year_max ≥ (current_year − 100)`
+     AND no death record exists in MaxPerson `death_assertions` → ingest agent
+     MUST set `is_living_flag: true`.
+   - Manual override requires documented evidence of death (obituary, death
+     certificate, gravestone with date) attached as a MaxRecord source.
 5. **Explicit consent required.** `consent_status` must be one of:
    `subject_explicit_opt_in`, `guardian_consent`, `public_dataset_redistribution_allowed`,
    or `deceased_pre_2000`. Anything else (`pending`, `withdrawn`) blocks reads.

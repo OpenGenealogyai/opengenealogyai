@@ -205,6 +205,50 @@
       "description": "Known identifiers for this person in external systems. Used for cross-source deduplication. Keys are system names (e.g. wikidata_qid, familysearch_pid, findagrave_id, ia_id, ssdi_id); values are the identifier strings. Open-ended to accommodate future sources.",
       "additionalProperties": { "type": "string" }
     },
+    "dna_evidence": {
+      "type": "array",
+      "description": "MAXGEN v1.2 — DNA chains that touch this person as a candidate MRCA or direct subject. Each entry is independent evidence that other assertions about this person (parents, birth dates) can use for Bayesian confidence boosting via noisy-OR. SYNC WARNING: each entry corresponds to a row in dna_evidence_chains (Postgres derived table). Updates here must keep dna_id references valid; cascades on consent withdrawal.",
+      "items": {
+        "type": "object",
+        "required": ["dna_id_a", "dna_id_b", "shared_cm", "path_length_generations", "likelihood"],
+        "properties": {
+          "dna_id_a": {
+            "type": "string",
+            "format": "uuid",
+            "description": "First MaxDNA record in the matching pair."
+          },
+          "dna_id_b": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Second MaxDNA record in the matching pair."
+          },
+          "shared_cm": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 7000
+          },
+          "path_length_generations": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 12,
+            "description": "Number of generations between the two living testers, summed through this MRCA."
+          },
+          "likelihood": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "P(observed shared_cm | this person is the MRCA at this path length)."
+          },
+          "confidence_delta": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 0.5,
+            "description": "Per-chain boost applied via noisy-OR. Capped at 0.5 to prevent single-chain overconfidence."
+          },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
     "source_record_ids": {
       "type": "array",
       "description": "All RawRecord UUIDs that contributed evidence to this Person entity.",

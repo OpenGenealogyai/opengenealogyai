@@ -177,7 +177,7 @@ Breaking changes require a Human Gate (HG-6) approval and a new major version.
 |---|---|---|
 | v1.0 | MaxRecord, MaxPerson, MaxTask | Initial release |
 | v1.1 | (all three) | Added `child_assertions`, `occupation_assertions`, `external_ids` to MaxPerson; added `land_patent`, `wikidata_entity`, `open_library_work`, `dpla_item` to MaxRecord types |
-| v1.2 | + MaxDNA | New schema. MaxPerson gains optional `dna_evidence[]` field for tracking DNA chains that touch a person |
+| v1.2 | + MaxDNA | New schema. MaxPerson gains `dna_evidence[]` array for tracking DNA chains that touch a person. MaxDNA matches carry `cm_map_version` (HapMap/deCODE/AABB) and `phasing_status` (maternal/paternal) for cross-provider reconciliation. `common_ancestor_candidates[]` replaces the singular field — real DNA matches often have multiple plausible MRCAs and we don't force one answer. Kit ID hashing uses HMAC-SHA-256 with system salt, not plain SHA-256 (six-brain review 2026-05-15). |
 
 ---
 
