@@ -2,7 +2,7 @@
 
 **The first genealogy standard that models uncertainty honestly.**
 
-[![Schema v0.1](https://img.shields.io/badge/Schema-v0.1-2d6a4f)](schemas/raw-record.schema.json)
+[![Schema MAXGEN v1.2](https://img.shields.io/badge/Schema-MAXGEN_v1.2-2d6a4f)](docs/schemas-README.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-b5873d)](LICENSE)
 [![Data: CC0](https://img.shields.io/badge/Public_Data-CC0-1a1a2e)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![Tests](https://img.shields.io/badge/Tests-passing-2d6a4f)](#testing)
@@ -21,15 +21,20 @@ OpenGenealogyAI treats uncertainty as a first-class citizen.
 
 ---
 
-## Schemas (v0.1)
+## Schemas (MAXGEN v1.2)
 
-All schemas use JSON Schema 2020-12 with permanent `$id` URLs at `https://opengenealogyai.org/schemas/v0.1/`.
+All schemas use JSON Schema 2020-12 with permanent `$id` URLs at `https://opengenealogyai.org/schemas/maxgen/v1/`.
 
 | Schema | Purpose | Validator |
 |--------|---------|-----------|
-| [RawRecord](schemas/raw-record.schema.json) | Source documents exactly as found | [validate-raw-record.js](schemas/validators/validate-raw-record.js) |
-| [Person](schemas/person.schema.json) | Probabilistic identity with confidence-scored assertions | [validate-person.js](schemas/validators/validate-person.js) |
-| [TaskQueue](schemas/task-queue.schema.json) | Distributed agent work queue | [validate-task-queue.js](schemas/validators/validate-task-queue.js) |
+| [MaxRecord](schemas/raw-record.schema.json) | Source documents exactly as found | [validate-raw-record.js](schemas/validators/validate-raw-record.js) |
+| [MaxPerson](schemas/person.schema.json) | Probabilistic identity with confidence-scored assertions | [validate-person.js](schemas/validators/validate-person.js) |
+| [MaxTask](schemas/task-queue.schema.json) | Distributed agent work queue | [validate-task-queue.js](schemas/validators/validate-task-queue.js) |
+| [MaxDNA](schemas/dna.schema.json) | DNA test metadata + match assertions (always tier2-private) | (planned) |
+
+**Schema reference:** [`docs/schemas-README.md`](docs/schemas-README.md) — what each schema represents and how they link.
+**DNA architecture:** [`docs/DNA_ARCHITECTURE.md`](docs/DNA_ARCHITECTURE.md) — storage, search, and how DNA strengthens ancestor confidence.
+**Standard philosophy:** [`docs/MAXGEN.md`](docs/MAXGEN.md) — why uncertainty is first-class.
 
 ### Quick Example
 

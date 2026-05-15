@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/raw-record.schema.json",
-  "title": "MXRecord",
-  "description": "MAXGEN v1.0 — Maxwell Genealogy Standard. A single original source document exactly as found, with no interpretation added. Every MXPerson assertion traces back to at least one MXRecord.",
+  "title": "MaxRecord",
+  "description": "MAXGEN v1.1 — Maxwell Genealogy Standard. A single original source document exactly as found, with no interpretation added. Every MaxPerson assertion traces back to at least one MaxRecord.",
   "type": "object",
   "required": [
     "record_id", "record_type", "redistribution_license",
@@ -16,7 +16,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.0",
+      "const": "1.1",
       "description": "MAXGEN version this record conforms to."
     },
     "record_type": {
@@ -25,8 +25,9 @@
         "birth_certificate", "death_certificate", "marriage_certificate",
         "census_row", "parish_register", "probate_record", "military_record",
         "immigration_record", "naturalization_record", "land_deed",
-        "gravestone", "obituary", "newspaper_article", "photograph",
-        "family_bible", "court_record", "tax_record", "other"
+        "land_patent", "gravestone", "obituary", "newspaper_article",
+        "photograph", "family_bible", "court_record", "tax_record",
+        "wikidata_entity", "open_library_work", "dpla_item", "other"
       ],
       "description": "The type of source document."
     },

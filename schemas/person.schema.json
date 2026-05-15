@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
-  "title": "MXPerson",
-  "description": "MAXGEN v1.0 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MXRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores.",
+  "title": "MaxPerson",
+  "description": "MAXGEN v1.1 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.0",
+      "const": "1.1",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -157,6 +157,53 @@
           "asserted_at": { "type": "string", "format": "date-time" }
         }
       }
+    },
+    "child_assertions": {
+      "type": "array",
+      "description": "All claimed child relationships. BIDIRECTIONAL SYNC REQUIRED — when a child_assertion is added here, the corresponding parent_assertion must be written to the child's Person record atomically. Both writes must succeed or neither should persist.",
+      "items": {
+        "type": "object",
+        "required": ["child_person_id", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "child_person_id": { "type": "string", "format": "uuid" },
+          "relationship_type": {
+            "type": "string",
+            "enum": ["biological", "adoptive", "step", "foster", "unknown"]
+          },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" },
+          "conflict_flag": {
+            "type": "boolean",
+            "description": "True if this assertion conflicts with another assertion for this child.",
+            "default": false
+          }
+        }
+      }
+    },
+    "occupation_assertions": {
+      "type": "array",
+      "description": "All known occupations for this person with confidence scores. Used for disambiguation when name and date are insufficient.",
+      "items": {
+        "type": "object",
+        "required": ["occupation_as_written", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "occupation_as_written": { "type": "string" },
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "place_as_written": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "external_ids": {
+      "type": "object",
+      "description": "Known identifiers for this person in external systems. Used for cross-source deduplication. Keys are system names (e.g. wikidata_qid, familysearch_pid, findagrave_id, ia_id, ssdi_id); values are the identifier strings. Open-ended to accommodate future sources.",
+      "additionalProperties": { "type": "string" }
     },
     "source_record_ids": {
       "type": "array",

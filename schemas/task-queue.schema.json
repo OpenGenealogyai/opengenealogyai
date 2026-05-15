@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://opengenealogyai.org/schemas/v0.1/task-queue.schema.json",
-  "title": "TaskQueue",
-  "description": "A unit of distributed work dispatched by the Orchestrator agent and consumed by worker agents.",
+  "$id": "https://opengenealogyai.org/schemas/maxgen/v1/task-queue.schema.json",
+  "title": "MaxTask",
+  "description": "MAXGEN v1.1 — Maxwell Genealogy Standard. A unit of distributed work dispatched by the Orchestrator agent and consumed by worker agents. Every MaxPerson and MaxRecord assertion can spawn MaxTask items for verification, re-extraction, or downstream embedding.",
   "type": "object",
   "required": ["task_id", "task_type", "status", "created_at", "created_by"],
   "properties": {
