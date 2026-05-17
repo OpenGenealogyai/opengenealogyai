@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
   "title": "MaxPerson",
-  "description": "MAXGEN v1.1 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores.",
+  "description": "MAXGEN v1.2 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations on parent_assertions, child_assertions, and spouse_assertions.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.1",
+      "const": "1.2",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -101,7 +101,7 @@
     },
     "parent_assertions": {
       "type": "array",
-      "description": "All claimed parent relationships. Multiple entries are normal — confidence scores express certainty, never forcing a single correct answer.",
+      "description": "All claimed parent relationships. Multiple entries are normal — confidence scores express certainty, never forcing a single correct answer. BIDIRECTIONAL SYNC REQUIRED — when a parent_assertion is added here referencing parent P, the corresponding child_assertion must be written to P's MaxPerson record atomically. Both writes must succeed or neither should persist.",
       "items": {
         "type": "object",
         "required": ["parent_person_id", "relationship_type", "confidence", "source_record_id", "asserted_by", "asserted_at"],
@@ -129,7 +129,7 @@
     },
     "spouse_assertions": {
       "type": "array",
-      "description": "All claimed spouse relationships.",
+      "description": "All claimed spouse relationships. Multiple entries are normal — handles serial marriages, polygamy, and conflicting documentary claims. BIDIRECTIONAL SYNC REQUIRED — marriage is inherently symmetric: when a spouse_assertion is added to person A referencing spouse B, the matching spouse_assertion must be added to B's MaxPerson record atomically (same marriage_year_min/max, same source_record_id). Both writes must succeed or neither should persist. To represent end of marriage (divorce, annulment, death), add an end_year_min/end_year_max to BOTH sides.",
       "items": {
         "type": "object",
         "required": ["spouse_person_id", "confidence", "source_record_id", "asserted_by", "asserted_at"],
@@ -137,10 +137,30 @@
           "spouse_person_id": { "type": "string", "format": "uuid" },
           "marriage_year_min": { "type": "integer" },
           "marriage_year_max": { "type": "integer" },
+          "marriage_place_as_written": { "type": "string" },
+          "end_year_min": {
+            "type": "integer",
+            "description": "Year marriage ended (divorce, annulment, or death of spouse). Omit if marriage still in effect at time of last known evidence."
+          },
+          "end_year_max": { "type": "integer" },
+          "end_reason": {
+            "type": "string",
+            "enum": ["divorce", "annulment", "death_of_spouse", "separation", "unknown"]
+          },
+          "relationship_type": {
+            "type": "string",
+            "enum": ["marriage", "civil_union", "domestic_partnership", "common_law", "unknown"],
+            "default": "marriage"
+          },
           "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
           "source_record_id": { "type": "string", "format": "uuid" },
           "asserted_by": { "type": "string" },
-          "asserted_at": { "type": "string", "format": "date-time" }
+          "asserted_at": { "type": "string", "format": "date-time" },
+          "conflict_flag": {
+            "type": "boolean",
+            "description": "True if this assertion conflicts with another assertion for this spouse pair.",
+            "default": false
+          }
         }
       }
     },
