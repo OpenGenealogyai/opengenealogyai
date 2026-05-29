@@ -65,9 +65,14 @@ versioning. All additive — no breaking changes. Approved via six-brain review
 ### Tooling
 - All 62 fixtures re-stamped to `1.3` and re-validated (62 PASS / 0 FAIL).
 
+### Companion docs
+- ✅ **[`CONFIDENCE_CALIBRATION.md`](CONFIDENCE_CALIBRATION.md)** — defines the
+  anchored confidence scale, per-assertion scoring procedure, noisy-OR
+  corroboration (+ independence rule), conflict handling, the
+  `composite_confidence` formula, and cross-agent calibration via a gold set.
+  (Completed 2026-05-17.)
+
 ### Deferred to later work (not in v1.3)
-- `CONFIDENCE_CALIBRATION.md` — define what a 0.x confidence means and how
-  `composite_confidence` aggregates (noisy-OR is currently defined for DNA only).
 - Atomicity enforcement for bidirectional-sync — an implementation task in the
   Postgres `persons`-mirror transaction layer, not a schema change.
 - Gazetteer integration — populating `place_registry` from GeoNames / Wikidata
