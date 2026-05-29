@@ -17,6 +17,14 @@ plenty of Claude tokens is acceptable when it improves quality.
 
 ---
 
+## Client tiers (storage + service policy)
+
+| Tier | Photo storage | Document storage | DNA storage | Notes |
+|---|---|---|---|---|
+| **Paying** | Unlimited on our infra (`D:\photos\`) | Unlimited tier2-private | Unlimited tier2-private | Garlon Maxwell = first paying client. All photos of Garlon and all photos in his trees stored. |
+| **Free** | Link-only by default; paid upgrade unlocks our-infra storage | Public-domain only | Not offered | Future tier — schema/portal will need a `subscription_tier` field on users. |
+| **Contributor (open-data)** | CC0/public-domain photos → Internet Archive on our dime | Per CC0 contribution to open dataset | n/a | Photos contributed to the open standard get durable IA hosting at our cost. |
+
 ## Standing expectations (apply to every turn)
 
 1. **Confidence ratings everywhere.** Every fact, every relationship, every
@@ -60,6 +68,9 @@ plenty of Claude tokens is acceptable when it improves quality.
 | 2026-05-17 | **Frontend framework** | **C — Lit web components** (six-brain, Pass 2 flipped B→C; doc: `docs/decisions/2026-05-17-frontend-framework.md`) |
 | 2026-05-17 | **Designer lens in council** | **A — Judge-Designer added to council (four-brain) for UI/UX decisions** (council-protocol skill updated) |
 | 2026-05-17 | **MAXGEN v1.4 — photos** | `photo_assertions[]` on MaxPerson as first-class field; lockstep bump all 4 schemas to 1.4 |
+| 2026-05-17 | **Photo storage** | A — Hybrid: CC0/public-domain → Internet Archive (durable URL); everything else → `D:\photos\<person_id>\`; portal serves thumbnails |
+| 2026-05-17 | **Component naming** | A — `<maxgen-…>` prefix for every Lit component (names the open standard, encourages reuse) |
+| 2026-05-17 | **Paying-client photo policy** | Any paying client gets unlimited photo storage on our infrastructure (no quota). Garlon Maxwell is the first paying client — every photo in his trees / of his ancestors gets stored. |
 
 ---
 
