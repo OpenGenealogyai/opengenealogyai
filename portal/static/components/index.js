@@ -8,6 +8,8 @@ import './states.js';
 import './photo.js';
 import './fact.js';
 import './person-card.js';
+import './possibility-expander.js';
+import './conflict-view.js';
 import './family-group-sheet.js';
 
 // Inform pages the component bundle is ready.

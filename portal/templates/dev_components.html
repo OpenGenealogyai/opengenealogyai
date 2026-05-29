@@ -108,7 +108,71 @@
   <maxgen-fact label="Father" value="Richard Maxwell" confidence="0.55"></maxgen-fact>
 </div>
 
+<h2>maxgen-possibility-expander (the "10 leads, click to open")</h2>
+<div class="card" style="max-width:720px">
+  <maxgen-possibility-expander id="expdemo" label="Father"></maxgen-possibility-expander>
+  <p style="font-family:var(--font-ui); font-size:var(--text-sm); color:var(--muted); margin-top:12px">
+    Demo with 4 placeholder candidates. Production data comes from Deon's research per
+    <code>maxwell_family_findagrave_handoff.md</code>. Garlon's instruction: cap at 10.
+  </p>
+</div>
+
+<h2>maxgen-conflict-view</h2>
+<div class="card" style="max-width:720px">
+  <maxgen-conflict-view id="cvdemo" label="Wife of William Maxwell (1740)"></maxgen-conflict-view>
+  <p style="font-family:var(--font-ui); font-size:var(--text-sm); color:var(--muted); margin-top:12px">
+    Real conflict from the handoff: the patriline narrative said Elizabeth McCutcheon was Richard 1774's
+    wife; the FAG JSON says she was William 1740's. MAXGEN keeps both.
+  </p>
+</div>
+
 <script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+function _setDemoData() {
+  document.getElementById('expdemo').candidates = [
+    {
+      name: "Joseph Maxwell of Augusta Co.",
+      birth: { year_min: 1710, year_max: 1715, date_type: "estimated" },
+      death: { year_min: 1785, year_max: 1790 },
+      confidence: 0.42,
+      reasoning: "Scottish immigrant to Augusta County VA, Maxwell surname, right generation. Plausible father of William (1740).",
+      source: { label: "FamilySearch Scotland", url: "#", kind: "other" }
+    },
+    {
+      name: "William Maxwell, Sr.",
+      birth: { year_min: 1705, year_max: 1710, date_type: "estimated" },
+      death: { year_min: 1775, year_max: 1782 },
+      confidence: 0.38,
+      reasoning: "Naming convention match (William named for father). Located in Indiana frontier era.",
+      source: { label: "USGenWeb Indiana", url: "#", kind: "other" }
+    },
+    {
+      name: "John Maxwell of Bourbon Co.",
+      birth: { year_min: 1715, year_max: 1720, date_type: "estimated" },
+      confidence: 0.28,
+      reasoning: "Bourbon County KY Maxwells appear by 1770s. Geographic match but generational fit is loose.",
+      source: { label: "Bourbon Co. records", url: "#", kind: "other" }
+    },
+    {
+      name: "Andrew Maxwell of Ulster",
+      birth: { year_min: 1700, year_max: 1715, date_type: "estimated" },
+      confidence: 0.18,
+      reasoning: "Scots-Irish migration pattern; possible Ulster emigrant. Weakest of the four.",
+      source: { label: "Ulster emigration index", url: "#", kind: "other" }
+    },
+  ];
+  document.getElementById('cvdemo').assertions = [
+    { value: "Elizabeth McCutcheon (d. 1839) — wife of William Maxwell 1740",
+      confidence: 0.85,
+      source: { label: "FAG memorial 161271377 JSON", url: "https://www.findagrave.com/memorial/161271377", kind: "findagrave" } },
+    { value: "Elizabeth McCutcheon (d. 1839) — wife of Richard Maxwell 1774",
+      confidence: 0.55,
+      source: { label: "Patriline summary narrative", url: "#", kind: "other" } },
+  ];
+}
+if (window.__maxgenReady) { _setDemoData(); }
+else { window.addEventListener('maxgen-ready', _setDemoData); }
+</script>
 
 </body>
 </html>
