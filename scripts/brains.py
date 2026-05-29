@@ -153,11 +153,13 @@ def council(question: str, options: str, designer: bool = False) -> dict:
     """Three-brain panel (optionally +designer = four-brain). One pass."""
     full = f"DECISION: {question}\n\nOPTIONS:\n{options}\n"
     out = {}
-    out["engineer"]   = ask_gpt(full,    system=_ENGINEER_SYS,   max_tokens=400)
-    out["strategist"] = ask_gemini(full, system=_STRATEGIST_SYS, max_tokens=400)
-    out["operator"]   = ask_claude(full, system=_OPERATOR_SYS,   max_tokens=400)
+    # Gemini 2.5 Pro burns ~1000 tokens on internal "thinking" before output —
+    # generous budget keeps visible reply from being truncated.
+    out["engineer"]   = ask_gpt(full,    system=_ENGINEER_SYS,   max_tokens=600)
+    out["strategist"] = ask_gemini(full, system=_STRATEGIST_SYS, max_tokens=2048)
+    out["operator"]   = ask_claude(full, system=_OPERATOR_SYS,   max_tokens=600)
     if designer:
-        out["designer"] = ask_gpt(full, system=_DESIGNER_SYS, max_tokens=400)
+        out["designer"] = ask_gpt(full, system=_DESIGNER_SYS, max_tokens=600)
     return out
 
 
