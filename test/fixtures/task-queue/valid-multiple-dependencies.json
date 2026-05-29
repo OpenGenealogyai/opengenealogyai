@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0014-4000-8000-000000000014",
-  "schema_version": "0.1",
+  "schema_version": "1.3",
   "task_type": "merge_person",
   "status": "pending",
   "priority": 6,

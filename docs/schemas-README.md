@@ -10,10 +10,11 @@ Everything in OpenGenealogyAI is built on these four files.
 | **MaxTask** | `schemas/task-queue.schema.json` | A unit of distributed work for contributor agents | n/a (internal) |
 | **MaxDNA** | `schemas/dna.schema.json` | DNA test metadata and match assertions linked to a MaxPerson | **always tier2-private** |
 
-**Standard version:** MAXGEN v1.2
+**Standard version:** MAXGEN v1.3 (lockstep — all four schemas carry the same version)
 **Schema namespace:** `https://opengenealogyai.org/schemas/maxgen/v1/`
 **Author:** Garlon Maxwell
 **License of the standard itself:** CC0 (public domain)
+**Full version history:** [`SCHEMA_CHANGELOG.md`](SCHEMA_CHANGELOG.md)
 
 ---
 
@@ -173,11 +174,16 @@ Breaking changes require a Human Gate (HG-6) approval and a new major version.
 
 ## Versioning
 
-| Version | Schemas | Notes |
-|---|---|---|
-| v1.0 | MaxRecord, MaxPerson, MaxTask | Initial release |
-| v1.1 | (all three) | Added `child_assertions`, `occupation_assertions`, `external_ids` to MaxPerson; added `land_patent`, `wikidata_entity`, `open_library_work`, `dpla_item` to MaxRecord types |
-| v1.2 | + MaxDNA | New schema. MaxPerson gains `dna_evidence[]` array for tracking DNA chains that touch a person. MaxDNA matches carry `cm_map_version` (HapMap/deCODE/AABB) and `phasing_status` (maternal/paternal) for cross-provider reconciliation. `common_ancestor_candidates[]` replaces the singular field — real DNA matches often have multiple plausible MRCAs and we don't force one answer. Kit ID hashing uses HMAC-SHA-256 with system salt, not plain SHA-256 (six-brain review 2026-05-15). MaxPerson `spouse_assertions` expanded: bidirectional sync requirement made explicit (same as parent↔child), plus new fields `end_year_min/max`, `end_reason` (divorce/annulment/death_of_spouse/separation), `marriage_place_as_written`, `relationship_type` (marriage/civil_union/domestic_partnership/common_law), and `conflict_flag`. `parent_assertions` now carries an explicit bidirectional-sync warning (was only documented on `child_assertions` side). |
+**Lockstep** as of v1.3 — all four schemas carry the same `schema_version`.
+Full per-release history lives in **[`SCHEMA_CHANGELOG.md`](SCHEMA_CHANGELOG.md)**
+(single source of truth). Summary:
+
+| Version | Highlight |
+|---|---|
+| v1.0 | Initial: MaxRecord, MaxPerson, MaxTask. Uncertainty-as-data. |
+| v1.1 | MaxPerson: child/occupation assertions, external_ids. MaxRecord: +4 record types. |
+| v1.2 | MaxDNA added; Max* renaming; dna_evidence + spouse bidirectional-sync. |
+| v1.3 | Merge/dedup provenance, event_assertions, place_registry, extensions; lockstep versioning adopted. |
 
 ---
 
@@ -186,8 +192,12 @@ Breaking changes require a Human Gate (HG-6) approval and a new major version.
 1. Open an issue describing the field you want to add or change
 2. Justify the change against the **uncertainty-as-data** philosophy
 3. Provide at least one realistic fixture that exercises the new field
-4. Bump `schema_version` and update this README
-5. Submit PR — review goes through the schema maintainers and one Human Gate
+4. Bump the MAXGEN version across **all** schemas (lockstep), re-stamp fixtures
+5. Add a dated entry to `SCHEMA_CHANGELOG.md`
+6. Submit PR — review goes through the schema maintainers and one Human Gate
+
+The schemas are the foundation of the entire stack. They get changed slowly,
+deliberately, and with public review.
 
 The schemas are the foundation of the entire stack. They get changed slowly,
 deliberately, and with public review.

@@ -1,6 +1,6 @@
 {
   "record_id": "a1b2c3d4-0001-4000-8000-000000000001",
-  "schema_version": "0.1",
+  "schema_version": "1.3",
   "record_type": "birth_certificate",
   "redistribution_license": "public-domain",
   "is_living_flag": false,

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
   "title": "MaxPerson",
-  "description": "MAXGEN v1.2 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations on parent_assertions, child_assertions, and spouse_assertions.",
+  "description": "MAXGEN v1.3 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations. v1.3 adds: merge/dedup provenance (merge_history, duplicate_of, merge_status — a merge is a reversible assertion, never a deletion), event_assertions[] for long-tail life events, place_registry[] for gazetteer normalization, and an extensions object for experimental fields.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.2",
+      "const": "1.3",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -56,8 +56,8 @@
         "type": "object",
         "required": ["confidence", "source_record_id", "asserted_by", "asserted_at"],
         "properties": {
-          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
-          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2100 },
           "month": { "type": "integer", "minimum": 1, "maximum": 12 },
           "day": { "type": "integer", "minimum": 1, "maximum": 31 },
           "date_type": {
@@ -81,8 +81,8 @@
         "type": "object",
         "required": ["confidence", "source_record_id", "asserted_by", "asserted_at"],
         "properties": {
-          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
-          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2100 },
           "month": { "type": "integer", "minimum": 1, "maximum": 12 },
           "day": { "type": "integer", "minimum": 1, "maximum": 31 },
           "date_type": {
@@ -210,8 +210,8 @@
         "required": ["occupation_as_written", "confidence", "source_record_id", "asserted_by", "asserted_at"],
         "properties": {
           "occupation_as_written": { "type": "string" },
-          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
-          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2100 },
           "place_as_written": { "type": "string" },
           "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
           "source_record_id": { "type": "string", "format": "uuid" },
@@ -269,10 +269,122 @@
         }
       }
     },
+    "event_assertions": {
+      "type": "array",
+      "description": "MAXGEN v1.3 — Long-tail life events beyond the first-class birth/death/marriage assertions. Add a new event_type here rather than bumping the schema for each new event kind. First-class birth/death remain separate because they are the most queried.",
+      "items": {
+        "type": "object",
+        "required": ["event_type", "confidence", "source_record_id", "asserted_by", "asserted_at"],
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "baptism", "christening", "confirmation", "bar_bat_mitzvah",
+              "immigration", "emigration", "naturalization", "residence",
+              "census_enumeration", "burial", "cremation", "military_service",
+              "will", "probate", "land_grant", "education", "ordination",
+              "divorce", "other"
+            ]
+          },
+          "event_type_other": {
+            "type": "string",
+            "description": "Free-text label when event_type is 'other'."
+          },
+          "year_min": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "year_max": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "day": { "type": "integer", "minimum": 1, "maximum": 31 },
+          "date_type": {
+            "type": "string",
+            "enum": ["exact", "estimated", "calculated", "range"]
+          },
+          "place_as_written": { "type": "string" },
+          "description": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_record_id": { "type": "string", "format": "uuid" },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "place_registry": {
+      "type": "array",
+      "description": "MAXGEN v1.3 — Normalized gazetteer links for places referenced anywhere in this record's assertions. Resolves free-text place_as_written strings to stable IDs WITHOUT modifying each assertion (avoids a mass backfill when gazetteer integration runs later). Handles historical polities ('Austria-Hungary 1880') via historical_polity + valid-year range. Populated during/after gazetteer integration; may be empty.",
+      "items": {
+        "type": "object",
+        "required": ["place_as_written"],
+        "properties": {
+          "place_as_written": {
+            "type": "string",
+            "description": "The exact place string as it appears in assertions; the join key."
+          },
+          "geonames_id": { "type": "string" },
+          "wikidata_qid": { "type": "string", "pattern": "^Q[0-9]+$" },
+          "historical_polity": {
+            "type": "string",
+            "description": "Sovereign entity at the relevant time (e.g. 'Austria-Hungary', 'Kingdom of Prussia', 'Ottoman Empire')."
+          },
+          "modern_country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "valid_from_year": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "valid_to_year": { "type": "integer", "minimum": 1000, "maximum": 2100 },
+          "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+          "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+        }
+      }
+    },
+    "merge_status": {
+      "type": "string",
+      "enum": ["active", "merged_away", "split_pending"],
+      "default": "active",
+      "description": "MAXGEN v1.3 — Lifecycle state. 'active' = a live distinct entity. 'merged_away' = absorbed into another entity (see duplicate_of); the row is NEVER deleted, preserving append-only history and reversibility. 'split_pending' = flagged for splitting back apart."
+    },
+    "duplicate_of": {
+      "type": "string",
+      "format": "uuid",
+      "description": "MAXGEN v1.3 — When merge_status is 'merged_away', the person_id of the surviving entity this one was absorbed into. Null/absent otherwise. Lets queries follow a merged entity to its survivor and lets a merge be reversed."
+    },
+    "merge_history": {
+      "type": "array",
+      "description": "MAXGEN v1.3 — Record of entities absorbed INTO this one. A merge is itself a probabilistic assertion: it has confidence, method, author, and timestamp, and is fully reversible. Nothing is destroyed on merge — the absorbed entity persists with merge_status='merged_away' and duplicate_of pointing here.",
+      "items": {
+        "type": "object",
+        "required": ["merged_person_id", "merge_confidence", "merge_method", "merged_by", "merged_at"],
+        "properties": {
+          "merged_person_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The entity that was absorbed into this one."
+          },
+          "merge_confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "merge_method": {
+            "type": "string",
+            "enum": ["exact_external_id", "probabilistic_match", "manual", "dna_confirmed"]
+          },
+          "match_signals": {
+            "type": "object",
+            "description": "What drove the match — e.g. name_similarity, year_overlap, place_match, shared_external_id. Open-ended for scorer flexibility.",
+            "additionalProperties": true
+          },
+          "merged_by": { "type": "string" },
+          "merged_at": { "type": "string", "format": "date-time" },
+          "reverted_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Set when this merge was undone. Presence means the merge is no longer in effect but the history is retained for audit."
+          }
+        }
+      }
+    },
     "source_record_ids": {
       "type": "array",
       "description": "All RawRecord UUIDs that contributed evidence to this Person entity.",
       "items": { "type": "string", "format": "uuid" }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "MAXGEN v1.3 — Designated namespace for experimental or contributor-specific fields. Because the rest of the schema is additionalProperties:false (strict validation), new ideas go here first without a schema bump or Human Gate. Promote proven fields into the formal schema later.",
+      "additionalProperties": true
     },
     "redistribution_license": {
       "type": "string",

@@ -1,6 +1,6 @@
 {
   "record_id": "a1b2c3d4-0017-4000-8000-000000000017",
-  "schema_version": "0.1",
+  "schema_version": "1.3",
   "record_type": "court_record",
   "redistribution_license": "tier2-private",
   "is_living_flag": true,
