@@ -1,0 +1,121 @@
+/* MAXGEN Design Tokens
+ * Foundation for every <maxgen-*> component.
+ * Source of truth — never hardcode hex values in component CSS.
+ * Brand: docs/brand.md  •  A11y: docs/a11y.md
+ */
+
+:root {
+  /* ─── Base palette ───────────────────────────────────────── */
+  --ink:        #1a1209;
+  --ink-deep:   #0e0905;
+  --paper:      #f7f4ee;
+  --paper-text: #e6e1d3;
+  --gold:       #d4a843;
+  --gold-dark:  #b8902d;
+  --accent:     #6b3a2a;
+  --border:     #ddd8cc;
+  --muted:      #6b6458;
+
+  /* ─── Confidence color scale (the cross-cutting visual) ──── */
+  --conf-near-certain: #d4a843;  /* 0.95–1.00  gold       */
+  --conf-strong:       #c19233;  /* 0.85–0.95             */
+  --conf-good:         #a17822;  /* 0.70–0.85             */
+  --conf-moderate:     #8a7b5e;  /* 0.50–0.70  warm silver*/
+  --conf-weak:         #a8a094;  /* 0.30–0.50  silver     */
+  --conf-speculative:  #c8c2b3;  /* 0.00–0.30  faded paper*/
+
+  /* ─── Semantic colors ────────────────────────────────────── */
+  --success: #2d6a4f;
+  --warn:    #e0a83b;
+  --error:   #a73d3d;
+  --info:    #3b6cb3;
+
+  --success-bg: #e8f5e9;
+  --warn-bg:    #fff3e0;
+  --error-bg:   #fde8e8;
+  --info-bg:    #e3f2fd;
+
+  /* ─── Typography ─────────────────────────────────────────── */
+  --font-body:   Georgia, "Times New Roman", serif;
+  --font-ui:     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:   ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --text-xs:   0.72rem;
+  --text-sm:   0.85rem;
+  --text-base: 1rem;
+  --text-md:   1.15rem;
+  --text-lg:   1.4rem;
+  --text-xl:   1.9rem;
+
+  --line-body:    1.55;
+  --line-heading: 1.25;
+
+  /* ─── Spacing (4pt grid) ─────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+
+  /* ─── Radii ──────────────────────────────────────────────── */
+  --radius-sm:  4px;
+  --radius:     6px;
+  --radius-lg:  12px;
+  --radius-pill: 999px;
+
+  /* ─── Focus ring (a11y non-negotiable) ───────────────────── */
+  --focus-ring:        0 0 0 2px var(--gold);
+  --focus-ring-offset: 2px;
+
+  /* ─── Motion ─────────────────────────────────────────────── */
+  --dur-fast:   120ms;
+  --dur-base:   220ms;
+  --dur-slow:   380ms;
+  --ease-out:   cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in:    cubic-bezier(0.4, 0, 1, 1);
+
+  /* ─── Shadows ────────────────────────────────────────────── */
+  --shadow-card:  0 2px 8px rgba(26, 18, 9, 0.08);
+  --shadow-pop:   0 6px 24px rgba(26, 18, 9, 0.14);
+
+  /* ─── Z-layers ───────────────────────────────────────────── */
+  --z-base:    0;
+  --z-sticky:  10;
+  --z-pop:     50;
+  --z-modal:   100;
+  --z-toast:   200;
+}
+
+/* ─── Dark mode (auto + token override) ───────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink:    var(--paper-text);
+    --paper:  var(--ink-deep);
+    --border: #3a342a;
+    --muted:  #a8a094;
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-pop:  0 6px 24px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ─── Reduced motion (a11y non-negotiable) ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Confidence -> band class helper ─────────────────────── */
+/* Components can do: <span class="conf-band-${band}"></span> */
+.conf-band-near-certain { background: var(--conf-near-certain); color: var(--ink); }
+.conf-band-strong       { background: var(--conf-strong);       color: var(--ink); }
+.conf-band-good         { background: var(--conf-good);         color: var(--paper); }
+.conf-band-moderate     { background: var(--conf-moderate);     color: var(--paper); }
+.conf-band-weak         { background: var(--conf-weak);         color: var(--ink); }
+.conf-band-speculative  { background: var(--conf-speculative);  color: var(--ink); }

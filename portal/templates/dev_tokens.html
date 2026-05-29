@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Design Tokens — OpenGenealogyAI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { background: var(--paper); color: var(--ink); font-family: Georgia, serif; padding: 32px; margin: 0; }
+  h1 { font-size: var(--text-xl); margin-bottom: 4px; }
+  .sub { font-family: var(--font-ui); color: var(--muted); font-size: var(--text-sm); margin-bottom: 32px; }
+  h2 { font-family: var(--font-body); font-size: var(--text-lg); margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .swatch {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; background: white;
+    font-family: var(--font-ui); font-size: var(--text-sm);
+  }
+  .swatch .color { height: 80px; }
+  .swatch .meta { padding: 8px 10px; }
+  .swatch .name { font-weight: 600; }
+  .swatch .hex { color: var(--muted); font-family: var(--font-mono); font-size: var(--text-xs); }
+  .conf-row { display: grid; grid-template-columns: 200px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; font-family: var(--font-ui); font-size: var(--text-sm); }
+  .conf-row .bar { height: 24px; border-radius: var(--radius); }
+  .type-row { margin-bottom: 8px; }
+  .type-row .label { font-family: var(--font-ui); font-size: var(--text-xs); color: var(--muted); }
+  .grid-spacing { display: flex; gap: 8px; align-items: flex-end; }
+  .grid-spacing .b { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<h1>OpenGenealogyAI — Design Tokens</h1>
+<div class="sub">Source of truth: <code>portal/static/css/tokens.css</code>. Every component imports from here.</div>
+
+<h2>Base palette</h2>
+<div class="swatches">
+  <div class="swatch"><div class="color" style="background:var(--ink)"></div><div class="meta"><div class="name">--ink</div><div class="hex">#1a1209</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--paper)"></div><div class="meta"><div class="name">--paper</div><div class="hex">#f7f4ee</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--gold)"></div><div class="meta"><div class="name">--gold</div><div class="hex">#d4a843</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--gold-dark)"></div><div class="meta"><div class="name">--gold-dark</div><div class="hex">#b8902d</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--accent)"></div><div class="meta"><div class="name">--accent</div><div class="hex">#6b3a2a</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--border)"></div><div class="meta"><div class="name">--border</div><div class="hex">#ddd8cc</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--muted)"></div><div class="meta"><div class="name">--muted</div><div class="hex">#6b6458</div></div></div>
+</div>
+
+<h2>Confidence scale</h2>
+<div class="conf-row"><span>Near-certain (0.95–1.00)</span><div class="bar" style="background:var(--conf-near-certain)"></div></div>
+<div class="conf-row"><span>Strong (0.85–0.95)</span><div class="bar" style="background:var(--conf-strong)"></div></div>
+<div class="conf-row"><span>Good (0.70–0.85)</span><div class="bar" style="background:var(--conf-good)"></div></div>
+<div class="conf-row"><span>Moderate (0.50–0.70)</span><div class="bar" style="background:var(--conf-moderate)"></div></div>
+<div class="conf-row"><span>Weak (0.30–0.50)</span><div class="bar" style="background:var(--conf-weak)"></div></div>
+<div class="conf-row"><span>Speculative (0.00–0.30)</span><div class="bar" style="background:var(--conf-speculative)"></div></div>
+
+<h2>Semantic colors</h2>
+<div class="swatches">
+  <div class="swatch"><div class="color" style="background:var(--success)"></div><div class="meta"><div class="name">--success</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--warn)"></div><div class="meta"><div class="name">--warn</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--error)"></div><div class="meta"><div class="name">--error</div></div></div>
+  <div class="swatch"><div class="color" style="background:var(--info)"></div><div class="meta"><div class="name">--info</div></div></div>
+</div>
+
+<h2>Typography</h2>
+<div class="type-row"><div class="label">--text-xs</div><span style="font-size:var(--text-xs)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row"><div class="label">--text-sm</div><span style="font-size:var(--text-sm)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row"><div class="label">--text-base</div><span style="font-size:var(--text-base)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row"><div class="label">--text-md</div><span style="font-size:var(--text-md)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row"><div class="label">--text-lg</div><span style="font-size:var(--text-lg)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row"><div class="label">--text-xl</div><span style="font-size:var(--text-xl)">The quick brown fox jumps over the lazy dog.</span></div>
+<div class="type-row" style="margin-top:16px"><div class="label">UI font (system sans)</div><span style="font-family:var(--font-ui)">Navigation, buttons, captions, dense data.</span></div>
+<div class="type-row"><div class="label">Mono</div><span style="font-family:var(--font-mono)">8a3f72b1-4e6c-4d29-9c84-7e3b1ad0c4f2</span></div>
+
+<h2>Spacing (4pt grid)</h2>
+<div class="grid-spacing">
+  <div class="b" style="width:var(--space-1);height:32px"></div>
+  <div class="b" style="width:var(--space-2);height:32px"></div>
+  <div class="b" style="width:var(--space-3);height:32px"></div>
+  <div class="b" style="width:var(--space-4);height:32px"></div>
+  <div class="b" style="width:var(--space-5);height:32px"></div>
+  <div class="b" style="width:var(--space-6);height:32px"></div>
+  <div class="b" style="width:var(--space-7);height:32px"></div>
+  <div class="b" style="width:var(--space-8);height:32px"></div>
+</div>
+
+</body>
+</html>

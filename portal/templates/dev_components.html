@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Components — OpenGenealogyAI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { background: var(--paper); color: var(--ink); font-family: Georgia, serif; padding: 32px; margin: 0; }
+  h1 { font-size: var(--text-xl); margin-bottom: 4px; }
+  h2 { font-family: var(--font-body); font-size: var(--text-lg); margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+  .card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+  .sub { font-family: var(--font-ui); color: var(--muted); font-size: var(--text-sm); margin-bottom: 32px; }
+  code { font-family: var(--font-mono); background: #efeae0; padding: 0 4px; border-radius: 3px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<h1>OpenGenealogyAI — Components</h1>
+<div class="sub">Storybook-lite. Every <code>&lt;maxgen-*&gt;</code> rendered with example data.</div>
+
+<h2>maxgen-confidence-chip</h2>
+<div class="card">
+  <div class="row">
+    <maxgen-confidence-chip confidence="0.97"></maxgen-confidence-chip>
+    <maxgen-confidence-chip confidence="0.89"></maxgen-confidence-chip>
+    <maxgen-confidence-chip confidence="0.75"></maxgen-confidence-chip>
+    <maxgen-confidence-chip confidence="0.6"></maxgen-confidence-chip>
+    <maxgen-confidence-chip confidence="0.4"></maxgen-confidence-chip>
+    <maxgen-confidence-chip confidence="0.15"></maxgen-confidence-chip>
+  </div>
+  <div class="row">
+    Compact:
+    <maxgen-confidence-chip compact confidence="0.97"></maxgen-confidence-chip>
+    <maxgen-confidence-chip compact confidence="0.6"></maxgen-confidence-chip>
+    <maxgen-confidence-chip compact confidence="0.15"></maxgen-confidence-chip>
+  </div>
+</div>
+
+<h2>maxgen-confidence-bar</h2>
+<div class="card">
+  <div class="row">
+    <maxgen-confidence-bar confidence="0.97"></maxgen-confidence-bar>
+    <maxgen-confidence-bar confidence="0.89"></maxgen-confidence-bar>
+    <maxgen-confidence-bar confidence="0.75"></maxgen-confidence-bar>
+    <maxgen-confidence-bar confidence="0.6"></maxgen-confidence-bar>
+    <maxgen-confidence-bar confidence="0.4"></maxgen-confidence-bar>
+    <maxgen-confidence-bar confidence="0.15"></maxgen-confidence-bar>
+  </div>
+</div>
+
+<h2>maxgen-source-chip</h2>
+<div class="card">
+  <div class="row">
+    <maxgen-source-chip label="Find A Grave 35124852" url="https://findagrave.com/memorial/35124852" kind="findagrave"></maxgen-source-chip>
+    <maxgen-source-chip label="Wikidata Q42" url="https://www.wikidata.org/wiki/Q42" kind="wikidata"></maxgen-source-chip>
+    <maxgen-source-chip label="Internet Archive" url="https://archive.org" kind="internet_archive"></maxgen-source-chip>
+    <maxgen-source-chip label="Census 1860"></maxgen-source-chip>
+  </div>
+</div>
+
+<h2>maxgen-license-badge</h2>
+<div class="card">
+  <div class="row">
+    <maxgen-license-badge license="CC0"></maxgen-license-badge>
+    <maxgen-license-badge license="CC-BY"></maxgen-license-badge>
+    <maxgen-license-badge license="CC-BY-SA"></maxgen-license-badge>
+    <maxgen-license-badge license="public-domain"></maxgen-license-badge>
+    <maxgen-license-badge license="tier2-private"></maxgen-license-badge>
+    <maxgen-license-badge license="fair-use"></maxgen-license-badge>
+    <maxgen-license-badge license="unknown"></maxgen-license-badge>
+  </div>
+</div>
+
+<h2>maxgen-photo (silhouette fallback)</h2>
+<div class="card">
+  <div class="row">
+    <maxgen-photo size="sm"></maxgen-photo>
+    <maxgen-photo size="md"></maxgen-photo>
+    <maxgen-photo size="lg"></maxgen-photo>
+    <maxgen-photo size="xl"></maxgen-photo>
+  </div>
+</div>
+
+<h2>maxgen-empty</h2>
+<div class="card">
+  <maxgen-empty message="No photos of this person yet." cta="Add a photo" href="#"></maxgen-empty>
+</div>
+
+<h2>maxgen-skeleton (shimmer)</h2>
+<div class="card">
+  <maxgen-skeleton w="60%"></maxgen-skeleton><br>
+  <maxgen-skeleton w="40%"></maxgen-skeleton><br>
+  <maxgen-skeleton w="80%"></maxgen-skeleton>
+  <div class="row" style="margin-top:12px">
+    <maxgen-skeleton shape="circle" w="64px" h="64px"></maxgen-skeleton>
+    <maxgen-skeleton shape="rect" w="220px" h="32px"></maxgen-skeleton>
+  </div>
+</div>
+
+<h2>maxgen-fact</h2>
+<div class="card" style="max-width:600px">
+  <maxgen-fact label="Born" value="14 Mar 1821, Shawneetown, IL" confidence="0.92"
+               sources='[{"label":"FAG 35124852","url":"https://findagrave.com/memorial/35124852","kind":"findagrave"}]'>
+  </maxgen-fact>
+  <maxgen-fact label="Died" value="26 Aug 1895, Mesa, AZ" confidence="0.89"></maxgen-fact>
+  <maxgen-fact label="Occupation" value="Mormon Battalion Co. D" confidence="0.78"></maxgen-fact>
+  <maxgen-fact label="Father" value="Richard Maxwell" confidence="0.55"></maxgen-fact>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+
+</body>
+</html>
