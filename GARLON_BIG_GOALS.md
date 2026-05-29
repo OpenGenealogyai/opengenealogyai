@@ -57,6 +57,9 @@ plenty of Claude tokens is acceptable when it improves quality.
 | 2026-05-17 | `CONFIDENCE_CALIBRATION.md` standard | ✅ Anchored bands, noisy-OR, composite formula, gold-set calibration |
 | 2026-05-17 | **Gramps reuse** | **A — design-only copy; build fresh; stay MIT/CC0** |
 | 2026-05-17 | **Lead-research routing** | **A — Deon does leads (wives' lines + Scotland); OMEN keeps canonical data; this session builds the platform** |
+| 2026-05-17 | **Frontend framework** | **C — Lit web components** (six-brain, Pass 2 flipped B→C; doc: `docs/decisions/2026-05-17-frontend-framework.md`) |
+| 2026-05-17 | **Designer lens in council** | **A — Judge-Designer added to council (four-brain) for UI/UX decisions** (council-protocol skill updated) |
+| 2026-05-17 | **MAXGEN v1.4 — photos** | `photo_assertions[]` on MaxPerson as first-class field; lockstep bump all 4 schemas to 1.4 |
 
 ---
 
@@ -114,17 +117,18 @@ actual external models, not internal synthesis.
 
 ---
 
-## Open framing decisions (need closure before 50 UI tasks)
+## Open framing decisions (remaining before 50 UI tasks)
 
-1. **Frontend framework** — vanilla JS on the current Flask+Jinja portal, or
-   introduce htmx / Alpine.js / Lit / a SPA framework? Shapes every UI task.
-   Six-brain candidate.
-2. **Designer lens in council** — formally add Judge-Designer to the panel
-   (making four-brain), or run UX as a separate review pass? Three-brain
-   candidate.
-3. **GEDCOM scope for v1** — import + export, or export-only?
+1. ~~Frontend framework~~ ✅ Locked: **Lit web components** (six-brain 2026-05-17)
+2. ~~Designer lens in council~~ ✅ Locked: **A — Judge-Designer added** (four-brain on UI work)
+3. **GEDCOM scope for v1** — import + export, or export-only? (small four-brain)
 4. **Map provider** — MapLibre GL (what Gramps uses), Leaflet, or defer
    entirely until gazetteer integration?
+5. **Storage of photos** — where does the photo binary actually live? Internet
+   Archive item per ancestor, or local D:\\photos with thumbnails served by
+   portal, or both? (Small architecture decision; affects ingest agent shape.)
+6. **Component naming convention** — `<og-confidence-chip>` vs `<maxgen-chip>`
+   vs `<oga-chip>`. Small but locks-in once we ship the first component.
 
 ---
 

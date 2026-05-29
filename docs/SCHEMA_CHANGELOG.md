@@ -27,6 +27,44 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.4 — 2026-05-17
+
+**Theme:** Photos as a first-class field. A face transforms genealogy from data
+to story; previous versions had no model for portraits and that was a real gap
+for end-user engagement. Garlon-requested.
+
+### MaxPerson
+- **`photo_assertions[]`** — portraits and snapshots OF this person (NOT
+  gravestones or documents — those stay on MaxRecord). Each photo carries:
+  - `photo_id`, `url`, `thumbnail_url`, `storage_tier`
+    (internet_archive / local_private / contributor_upload / external)
+  - `caption`, `year_min/max`, `place_as_written`, `photographer`, `license`
+  - `is_primary` — designate ONE photo as the profile image (ties broken by
+    confidence then most-recent `asserted_at`)
+  - `confidence` — is this actually this person? (same scale as other
+    assertions; see CONFIDENCE_CALIBRATION.md)
+  - `subject_role` enum (solo / group / wedding / family / military /
+    occupational / unknown) so UI knows whether to auto-crop
+  - `face_bounding_box` (normalized 0–1 coords) — optional, for auto-cropping
+    group photos to the subject's face in cards and pedigree nodes
+  - `alt_text` — accessibility (screen-reader description)
+  - `ia_id` — Internet Archive identifier when stored there
+  - `source_record_id` — optional link back to a MaxRecord (e.g. obituary with
+    a portrait)
+- Living-subject photos inherit `tier2-private` regardless of declared
+  `license`, per the existing privacy gate.
+- Photography min year set to 1839 (invention of the technology).
+
+### Lockstep version bump (no content change)
+- MaxRecord, MaxTask, MaxDNA all bumped to `schema_version: "1.4"` per the
+  lockstep policy. Their descriptions now note "schema content stable since
+  vX.X; version stamp follows lockstep MAXGEN release versioning."
+
+### Fixtures
+- 58 fixtures re-stamped to v1.4; 62/62 validate against new schemas.
+
+---
+
 ## v1.3 — 2026-05-17
 
 **Theme:** Scale-readiness for the 1.5B-person dedup roadmap, plus lockstep

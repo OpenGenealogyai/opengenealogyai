@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
   "title": "MaxPerson",
-  "description": "MAXGEN v1.3 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations. v1.3 adds: merge/dedup provenance (merge_history, duplicate_of, merge_status — a merge is a reversible assertion, never a deletion), event_assertions[] for long-tail life events, place_registry[] for gazetteer normalization, and an extensions object for experimental fields.",
+  "description": "MAXGEN v1.4 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations. v1.4 adds photo_assertions[] (first-class portraits of the person — because a face transforms genealogy from data to story). v1.3 added: merge/dedup provenance (merge_history, duplicate_of, merge_status), event_assertions[], place_registry[], extensions object.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.3",
+      "const": "1.4",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -385,6 +385,99 @@
       "type": "object",
       "description": "MAXGEN v1.3 — Designated namespace for experimental or contributor-specific fields. Because the rest of the schema is additionalProperties:false (strict validation), new ideas go here first without a schema bump or Human Gate. Promote proven fields into the formal schema later.",
       "additionalProperties": true
+    },
+    "photo_assertions": {
+      "type": "array",
+      "description": "MAXGEN v1.4 — Photographs OF this person (portraits, snapshots, family photos). NOT photos of gravestones, documents, or records — those belong on the relevant MaxRecord. A face makes genealogy come alive, so this is treated as a first-class field, not metadata. Multiple photos allowed; one designated is_primary for chip/card display. Living-person photos inherit tier2-private regardless of declared license. Photo storage follows redistribution_license: CC0/public-domain go to Internet Archive (durable, free); tier2-private stays in the user's private vault.",
+      "items": {
+        "type": "object",
+        "required": ["photo_id", "url", "confidence", "asserted_by", "asserted_at"],
+        "properties": {
+          "photo_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical location of the full-resolution image."
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional smaller version for cards, chips, pedigree nodes."
+          },
+          "storage_tier": {
+            "type": "string",
+            "enum": ["internet_archive", "local_private", "contributor_upload", "external"],
+            "description": "Where the image physically lives. internet_archive = public + durable; local_private = tier2-private vault on this user's storage; contributor_upload = user-hosted; external = third-party URL (volatile — copy to durable storage when possible)."
+          },
+          "caption": {
+            "type": "string",
+            "description": "Free-text caption ('Horace at the Glendale homestead, c. 1955')."
+          },
+          "year_min": {
+            "type": "integer",
+            "minimum": 1839,
+            "maximum": 2100,
+            "description": "Earliest plausible year the photo was taken. 1839 = invention of photography."
+          },
+          "year_max": {
+            "type": "integer",
+            "minimum": 1839,
+            "maximum": 2100
+          },
+          "place_as_written": { "type": "string" },
+          "photographer": { "type": "string" },
+          "license": {
+            "type": "string",
+            "enum": ["CC0", "CC-BY", "CC-BY-SA", "public-domain", "tier2-private", "fair-use", "unknown"],
+            "default": "unknown"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "default": false,
+            "description": "Designate ONE photo as the primary profile image. If multiple are set, viewer renders the highest-confidence; tied confidences break by most recent asserted_at."
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "Confidence this is actually a photo of THIS person (not a misidentified cousin, not the wrong John Smith). Same scale as other assertions — see CONFIDENCE_CALIBRATION.md."
+          },
+          "subject_role": {
+            "type": "string",
+            "enum": ["solo", "group", "wedding", "family", "military", "occupational", "unknown"],
+            "description": "Photo type. 'group' or 'family' means this person is one of several; UI may auto-crop to face_bounding_box."
+          },
+          "face_bounding_box": {
+            "type": "object",
+            "description": "Optional rectangle around this person's face within the image (normalized 0–1 coords). Used for auto-cropping group photos to the subject in cards and pedigree nodes.",
+            "properties": {
+              "x":      { "type": "number", "minimum": 0, "maximum": 1 },
+              "y":      { "type": "number", "minimum": 0, "maximum": 1 },
+              "width":  { "type": "number", "minimum": 0, "maximum": 1 },
+              "height": { "type": "number", "minimum": 0, "maximum": 1 }
+            },
+            "required": ["x", "y", "width", "height"]
+          },
+          "alt_text": {
+            "type": "string",
+            "description": "Accessibility — screen-reader description (e.g. 'Black-and-white portrait of an elderly man with a white beard, c. 1890')."
+          },
+          "ia_id": {
+            "type": "string",
+            "description": "Internet Archive identifier when storage_tier=internet_archive (for the canonical, durable URL)."
+          },
+          "source_record_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optional MaxRecord this photo came from (e.g. an obituary that included a portrait)."
+          },
+          "asserted_by": { "type": "string" },
+          "asserted_at": { "type": "string", "format": "date-time" }
+        }
+      }
     },
     "redistribution_license": {
       "type": "string",

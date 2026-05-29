@@ -10,7 +10,7 @@ Everything in OpenGenealogyAI is built on these four files.
 | **MaxTask** | `schemas/task-queue.schema.json` | A unit of distributed work for contributor agents | n/a (internal) |
 | **MaxDNA** | `schemas/dna.schema.json` | DNA test metadata and match assertions linked to a MaxPerson | **always tier2-private** |
 
-**Standard version:** MAXGEN v1.3 (lockstep — all four schemas carry the same version)
+**Standard version:** MAXGEN v1.4 (lockstep — all four schemas carry the same version)
 **Schema namespace:** `https://opengenealogyai.org/schemas/maxgen/v1/`
 **Author:** Garlon Maxwell
 **License of the standard itself:** CC0 (public domain)
@@ -184,6 +184,7 @@ Full per-release history lives in **[`SCHEMA_CHANGELOG.md`](SCHEMA_CHANGELOG.md)
 | v1.1 | MaxPerson: child/occupation assertions, external_ids. MaxRecord: +4 record types. |
 | v1.2 | MaxDNA added; Max* renaming; dna_evidence + spouse bidirectional-sync. |
 | v1.3 | Merge/dedup provenance, event_assertions, place_registry, extensions; lockstep versioning adopted. |
+| v1.4 | photo_assertions[] on MaxPerson (portraits as first-class — face_bounding_box for auto-crop in group photos, primary-photo designation, accessibility alt_text). |
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "record_id": "a1b2c3d4-0003-4000-8000-000000000003",
-  "schema_version": "1.3",
+  "schema_version": "1.4",
   "record_type": "marriage_certificate",
   "redistribution_license": "CC0",
   "is_living_flag": false,
