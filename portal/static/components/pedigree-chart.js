@@ -22,6 +22,40 @@ class MaxgenPedigreeChart extends MaxgenElement {
     this._pan = { x: 0, y: 0 };
     this._dragging = false;
     this._dragStart = null;
+    this._fitted = false;
+  }
+
+  firstUpdated() {
+    // Run once after first render; never re-runs.
+    this._fitOnce();
+  }
+  updated(changedProps) {
+    // Re-fit only if the pedigree CHANGED and we haven't yet fitted to it
+    if (changedProps.has('pedigree') && this.pedigree && !this._fitted && !this._fitting) {
+      this._fitOnce();
+    }
+  }
+  _fitOnce() {
+    if (this._fitting || this._fitted) return;
+    this._fitting = true;
+    requestAnimationFrame(() => {
+      const wrap = this.shadowRoot && this.shadowRoot.querySelector('.chart');
+      if (!wrap) { this._fitting = false; return; }
+      const layout = this._layout();
+      const viewW = wrap.clientWidth || 1000;
+      const viewH = wrap.clientHeight || 600;
+      const padding = 40;
+      const zx = (viewW - padding) / Math.max(1, layout.totalWidth);
+      const zy = (viewH - padding) / Math.max(1, layout.totalHeight);
+      this._zoom = Math.min(1, Math.max(0.35, Math.min(zx, zy)));
+      this._pan = {
+        x: (viewW - layout.totalWidth * this._zoom) / 2,
+        y: (viewH - layout.totalHeight * this._zoom) / 2
+      };
+      this._fitted = true;
+      this._fitting = false;
+      this.requestUpdate();
+    });
   }
 
   static styles = [MaxgenElement.styles, css`
@@ -29,7 +63,7 @@ class MaxgenPedigreeChart extends MaxgenElement {
     .chart {
       position: relative;
       width: 100%;
-      height: 600px;
+      height: 820px;
       background: var(--paper, #f7f4ee);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
