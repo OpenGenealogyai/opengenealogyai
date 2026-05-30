@@ -929,6 +929,12 @@ def dev_tokens():
     return render_template("dev_tokens.html")
 
 
+@app.route("/dev/person")
+def dev_person():
+    """Live demo: William Bailey Maxwell's profile page."""
+    return render_template("dev_person_profile.html")
+
+
 # ── run ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     init_db()

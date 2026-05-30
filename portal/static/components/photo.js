@@ -96,11 +96,13 @@ class MaxgenPhoto extends MaxgenElement {
 
     const src = p.thumbnail_url || p.url;
     const style = this._faceCropStyle(p);
+    // Note: lazy loading inside Shadow DOM is unreliable in Chromium; load eagerly.
+    // For dense chart views (pedigree with 200+ nodes) we'll add an explicit
+    // `lazy` property later that does its own IntersectionObserver.
     return html`
       <div class="${cls}">
         <img src="${src}"
              alt="${p.alt_text || 'Photograph'}"
-             loading="lazy"
              style="${style}">
       </div>
     `;

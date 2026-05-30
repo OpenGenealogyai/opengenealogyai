@@ -11,6 +11,8 @@ import './person-card.js';
 import './possibility-expander.js';
 import './conflict-view.js';
 import './family-group-sheet.js';
+import './external-search.js';
+import './person-profile.js';
 
 // Inform pages the component bundle is ready.
 window.__maxgenReady = true;
