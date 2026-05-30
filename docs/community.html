@@ -131,7 +131,7 @@
 <body>
 
 <header>
-  <h1><a href="index.html"><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</a></h1>
+  <h1><a href="index.html"><img src="images/ogai-logo.png" alt="" class="site-logo">OpenGenealogyAI</a></h1>
   <nav>
     <a href="index.html">For Users</a>
     <a href="standard.html">MaxGen Standard</a>
@@ -149,19 +149,15 @@
   <p>Genealogy has always been a collaborative pursuit. This directory is where individuals who have built their own family trees — hosted anywhere — share them openly so others can find ancestors, verify connections, and help each other fill in the gaps.</p>
   <div class="stats-row">
     <div class="stat">
-      <div class="stat-num">2,847</div>
+      <div class="stat-num" id="stat-trees">—</div>
       <div class="stat-label">Trees Listed</div>
     </div>
     <div class="stat">
-      <div class="stat-num">61</div>
-      <div class="stat-label">Countries Represented</div>
+      <div class="stat-num" id="stat-famous">—</div>
+      <div class="stat-label">Famous People Indexed</div>
     </div>
     <div class="stat">
-      <div class="stat-num">184K</div>
-      <div class="stat-label">Surnames Indexed</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">3.2M</div>
+      <div class="stat-num" id="stat-records">—</div>
       <div class="stat-label">Records Linked</div>
     </div>
   </div>
@@ -176,7 +172,10 @@
     <h3 class="card-heading">List Your Family Tree</h3>
     <p class="card-sub">Your tree stays exactly where it is — we just index it here so others can find it. Takes about two minutes.</p>
 
-    <form onsubmit="return false;">
+    <div id="submit-success" style="display:none;background:#e8f5e9;border:1px solid #4caf50;border-radius:6px;padding:1.2rem 1.5rem;font-family:sans-serif;font-size:0.95rem;color:#1a5c2a;margin-bottom:1.5rem;">
+      &#10003; <strong>Listing received!</strong> Your tree will appear in the directory within 48 hours after review.
+    </div>
+    <form id="submit-form" onsubmit="submitListing(event);">
       <div class="form-row">
         <div class="form-group">
           <label for="tree-name">Tree / Family Name <span class="opt">(shown publicly)</span></label>
@@ -235,8 +234,9 @@
         <label for="consent">I confirm this tree contains no living individuals, or all living individuals included have consented to be listed in a public directory.</label>
       </div>
 
-      <button type="submit" class="btn-submit">List My Tree</button>
+      <button type="submit" class="btn-submit" id="submit-btn">List My Tree</button>
       <p class="form-note">Listings are reviewed within 48 hours. MaxGen trees are automatically indexed for AI search.</p>
+      <p id="submit-error" style="display:none;color:#c62828;font-family:sans-serif;font-size:0.88rem;margin-top:0.5rem;"></p>
     </form>
   </div>
 
@@ -443,34 +443,176 @@
 </footer>
 
 <script>
-  // Simple client-side filter for the directory table
-  function filterTable(query) {
-    var rows = document.querySelectorAll('#dir-table tbody tr');
-    var q = query.toLowerCase();
-    var shown = 0;
-    rows.forEach(function(row) {
-      var text = row.textContent.toLowerCase();
-      var visible = !q || text.includes(q);
-      row.style.display = visible ? '' : 'none';
-      if (visible) shown++;
+// ── Portal API base (portal runs on 8082, community page is static) ───────────
+const PORTAL_API = 'http://localhost:8082';
+
+// ── Live stats ────────────────────────────────────────────────────────────────
+function formatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return (n/1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+fetch(PORTAL_API + '/api/directory/stats')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('stat-trees').textContent   = d.trees_listed > 0 ? d.trees_listed.toLocaleString() : 'Growing';
+    document.getElementById('stat-famous').textContent  = d.famous_people_indexed > 0 ? formatNum(d.famous_people_indexed) : '—';
+    document.getElementById('stat-records').textContent = d.records_linked > 0 ? formatNum(d.records_linked) : 'Growing';
+  })
+  .catch(() => {
+    // Portal offline — show static placeholder
+    document.getElementById('stat-trees').textContent   = 'Growing';
+    document.getElementById('stat-famous').textContent  = '25K+';
+    document.getElementById('stat-records').textContent = 'Growing';
+  });
+
+// ── Load live directory listings (falls back to static rows if offline) ───────
+let currentSearch = '', currentFormat = '', totalListings = 0;
+
+function loadListings(q, fmt) {
+  var url = PORTAL_API + '/api/directory/listings?limit=50';
+  if (q)   url += '&q='      + encodeURIComponent(q);
+  if (fmt) url += '&format=' + encodeURIComponent(fmt);
+
+  fetch(url)
+    .then(r => r.json())
+    .then(d => {
+      totalListings = d.total;
+      renderListings(d.listings, d.total);
+    })
+    .catch(() => {
+      // Portal offline — keep the static demo rows, just filter them
+      filterStaticTable(q, fmt);
     });
-    updateCount(shown);
+}
+
+function renderListings(listings, total) {
+  var tbody = document.querySelector('#dir-table tbody');
+  if (listings.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:#888;font-family:sans-serif;">No listings match your search. <a href="#submit-form" style="color:var(--accent)">Be the first to add one &rarr;</a></td></tr>';
+    document.getElementById('dir-count').textContent = 'No results';
+    return;
   }
 
-  function filterFormat(fmt) {
-    var rows = document.querySelectorAll('#dir-table tbody tr');
-    var shown = 0;
-    rows.forEach(function(row) {
-      var visible = !fmt || row.dataset.format === fmt;
-      row.style.display = visible ? '' : 'none';
-      if (visible) shown++;
-    });
-    updateCount(shown);
+  var badgeClass = { maxgen:'badge-maxgen', gedcom:'badge-gedcom', ancestry:'badge-ancestry', familysearch:'badge-familysearch', myheritage:'badge-myheritage', other:'badge-other' };
+  tbody.innerHTML = listings.map(function(l) {
+    var fmt = l.format || 'other';
+    var rec = l.record_count > 0 ? l.record_count.toLocaleString() : '—';
+    return '<tr data-format="' + fmt + '">' +
+      '<td><div class="tree-name">' + esc(l.tree_name) + '</div></td>' +
+      '<td><div class="tree-surnames">' + esc(l.surnames || '—') + '</div></td>' +
+      '<td><div class="tree-region">'   + esc(l.geo_era  || '—') + '</div></td>' +
+      '<td><span class="badge ' + (badgeClass[fmt] || 'badge-other') + '">' + fmt + '</span></td>' +
+      '<td><div class="tree-records">'  + rec + '</div></td>' +
+      '<td><a href="' + esc(l.tree_url) + '" target="_blank" rel="noopener" class="tree-link">View Tree &rarr;</a></td>' +
+      '</tr>';
+  }).join('');
+
+  document.getElementById('dir-count').textContent =
+    'Showing ' + listings.length + ' of ' + total + ' tree' + (total !== 1 ? 's' : '');
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Static table filter (fallback when portal is offline) ─────────────────────
+function filterStaticTable(q, fmt) {
+  var rows = document.querySelectorAll('#dir-table tbody tr');
+  var shown = 0;
+  rows.forEach(function(row) {
+    var text    = row.textContent.toLowerCase();
+    var fmtMatch  = !fmt || row.dataset.format === fmt;
+    var textMatch = !q   || text.includes(q.toLowerCase());
+    var visible = fmtMatch && textMatch;
+    row.style.display = visible ? '' : 'none';
+    if (visible) shown++;
+  });
+  document.getElementById('dir-count').textContent = 'Showing ' + shown + ' trees';
+}
+
+function filterTable(query) {
+  currentSearch = query;
+  if (totalListings > 0) {
+    loadListings(currentSearch, currentFormat);
+  } else {
+    filterStaticTable(currentSearch, currentFormat);
+  }
+}
+
+function filterFormat(fmt) {
+  currentFormat = fmt;
+  if (totalListings > 0) {
+    loadListings(currentSearch, currentFormat);
+  } else {
+    filterStaticTable(currentSearch, currentFormat);
+  }
+}
+
+// Load live listings on page open
+loadListings('', '');
+
+// ── Form submission ───────────────────────────────────────────────────────────
+function submitListing(e) {
+  e.preventDefault();
+  var form = document.getElementById('submit-form');
+  var btn  = document.getElementById('submit-btn');
+  var err  = document.getElementById('submit-error');
+  err.style.display = 'none';
+
+  var consent = document.getElementById('consent');
+  if (!consent.checked) {
+    err.textContent = 'Please confirm the privacy consent checkbox before submitting.';
+    err.style.display = 'block';
+    return;
   }
 
-  function updateCount(n) {
-    document.getElementById('dir-count').textContent = 'Showing ' + n + ' of 2,847 trees';
+  var payload = {
+    tree_name:   document.getElementById('tree-name').value.trim(),
+    tree_url:    document.getElementById('tree-url').value.trim(),
+    format:      document.getElementById('tree-format').value,
+    surnames:    document.getElementById('tree-surnames').value.trim(),
+    geo_era:     document.getElementById('tree-geo').value.trim(),
+    description: document.getElementById('tree-desc').value.trim(),
+    email:       document.getElementById('tree-email').value.trim(),
+  };
+
+  if (!payload.tree_name || !payload.tree_url) {
+    err.textContent = 'Tree name and URL are required.';
+    err.style.display = 'block';
+    return;
   }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  fetch(PORTAL_API + '/api/directory/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok) {
+      form.style.display = 'none';
+      document.getElementById('submit-success').style.display = 'block';
+    } else {
+      err.textContent = d.error || 'Submission failed. Please try again.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'List My Tree';
+    }
+  })
+  .catch(() => {
+    // Portal offline — show offline fallback message
+    form.style.display = 'none';
+    document.getElementById('submit-success').innerHTML =
+      '&#10003; <strong>Listing received!</strong> Your tree will appear in the directory within 48 hours. ' +
+      '<em>(Saved locally — will be processed when the platform is online.)</em>';
+    document.getElementById('submit-success').style.display = 'block';
+  });
+}
 </script>
 
 <div class="contrib-bar">

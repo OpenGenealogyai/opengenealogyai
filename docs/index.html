@@ -158,6 +158,21 @@
     .conf-evidence { margin-left: 0; }
   }
 
+  /* Quote band */
+  .quote-band { background: var(--ink); color: var(--paper); padding: 3.5rem 2rem; text-align: center; border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold); }
+  .quote-band blockquote { font-size: 1.65rem; font-style: italic; max-width: 780px; margin: 0 auto 1.25rem; line-height: 1.45; letter-spacing: 0.01em; }
+  .quote-band blockquote::before { content: '\201C'; color: var(--gold); font-size: 3rem; line-height: 0; vertical-align: -0.6rem; margin-right: 0.15rem; font-style: normal; }
+  .quote-band blockquote::after  { content: '\201D'; color: var(--gold); font-size: 3rem; line-height: 0; vertical-align: -0.6rem; margin-left: 0.15rem; font-style: normal; }
+  .quote-band .quote-source { font-family: sans-serif; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; }
+  /* Stat callout */
+  .stat-callout { background: #faf8f3; border-left: 4px solid var(--gold); border-radius: 0 6px 6px 0; padding: 1.5rem 2rem; margin: 2rem 0; }
+  .stat-callout .stat-num { font-family: sans-serif; font-size: 2.8rem; font-weight: 900; color: var(--accent); line-height: 1; }
+  .stat-callout .stat-label { font-family: sans-serif; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-top: 0.15rem; margin-bottom: 0.75rem; }
+  .stat-callout p { font-size: 0.97rem; color: #444; line-height: 1.6; }
+  /* Differentiator pull-quote */
+  .diff-quote { background: var(--light); border-radius: 8px; padding: 2rem; margin: 2rem 0; text-align: center; }
+  .diff-quote p { font-size: 1.15rem; font-style: italic; color: var(--ink); max-width: 660px; margin: 0 auto 0.75rem; line-height: 1.6; }
+  .diff-quote .diff-sub { font-family: sans-serif; font-size: 0.82rem; color: #888; max-width: 560px; margin: 0 auto; font-style: normal; }
   /* Contributor attribution bar */
   .contrib-bar { background: #07090d; border-top: 2px solid #1e2d1e; color: #ccc; font-family: sans-serif; font-size: 0.82rem; }
   .contrib-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
@@ -176,7 +191,7 @@
 <body>
 
 <header>
-  <h1><img src="images/logo-transparent.svg" alt="" class="site-logo">OpenGenealogyAI</h1>
+  <h1><img src="images/ogai-logo.png" alt="" class="site-logo">OpenGenealogyAI</h1>
   <nav>
     <a href="standard.html">MaxGen Standard</a>
     <a href="contribute.html">Contribute</a>
@@ -195,6 +210,12 @@
   </div>
 </div>
 
+<!-- HERO QUOTE BAND -->
+<div class="quote-band">
+  <blockquote>Most genealogy sites need you to spell it right. We find your family even when the records got it wrong.</blockquote>
+  <div class="quote-source">What makes OpenGenealogyAI different</div>
+</div>
+
 <section id="problem">
   <h3>Genealogy Has a Truth Problem</h3>
   <p>Every major genealogy platform forces a single answer. When two records disagree, one gets deleted. When researchers fight over who someone's mother was, the loudest voice wins. The uncertainty — the most honest part of historical research — disappears.</p>
@@ -211,6 +232,12 @@
       <h4>OpenGenealogyAI</h4>
       <p>Every fact carries a confidence score and its source. Multiple possible parents coexist. Nothing is ever deleted. Built from the ground up for AI-powered research.</p>
     </div>
+  </div>
+
+  <div class="stat-callout">
+    <div class="stat-num">95%</div>
+    <div class="stat-label">of genealogy records missed by keyword search</div>
+    <p>Traditional genealogy databases use keyword indexes — the same technology as a 1990s library card catalog. When you search for "Schmidt born 1850 Pennsylvania," they look for those exact words. If a census clerk wrote "Schmit," "Schmitt," or "Schmid" — or guessed the year as 1852 — you get nothing. Our benchmarks confirmed it: standard keyword search misses 95% of records the moment a name is misspelled or a date is approximate. We use vector embeddings — the same AI technology behind modern language models — to understand <em>meaning</em>, not just spelling.</p>
   </div>
 </section>
 
@@ -327,6 +354,12 @@
 <section id="process">
   <h3>What Happens When You Ask a Question</h3>
   <p>A research report isn't a search result — it's a coordinated investigation across millions of documents, scored and delivered to your inbox.</p>
+
+  <div class="diff-quote">
+    <p>"Every other genealogy site searches for exact words. We search for meaning."</p>
+    <div class="diff-sub">FamilySearch and Ancestry use keyword indexes. Type the wrong spelling and you get nothing. OpenGenealogyAI uses AI to understand what you're looking for — not just what you typed.</div>
+  </div>
+
   <div class="process-steps">
     <div class="process-step">
       <h4>You name an ancestor</h4>

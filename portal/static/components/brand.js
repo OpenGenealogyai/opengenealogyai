@@ -57,15 +57,14 @@ class MaxgenLogo extends MaxgenElement {
   `];
 
   _renderMark(sz = 36) {
-    // The official OpenGenealogyAI star-tree logo: a radiant central star
-    // (the root of a family line) with gold branches reaching upward through
-    // tiers of smaller stars (the ancestors). Sourced from docs/images/logo.svg.
-    // For dark headers, use the transparent variant (no black background).
-    const src = this.invert ? '/static/logo-transparent.svg' : '/static/logo.svg';
-    return html`<img class="mark" src="${src}"
-                     width="${Math.round(sz * 1.6)}" height="${sz}"
-                     alt="OpenGenealogyAI star-tree logo"
-                     style="object-fit: contain;">`;
+    // Garlon's canonical OGAI logo (May 2026): a deep-navy starfield with a
+    // glowing root star and a gold-branched constellation tree. The PNG
+    // already carries its own background, so the same asset works on light
+    // and dark pages — we just contain it in a rounded frame.
+    return html`<img class="mark" src="/static/ogai-logo.png"
+                     width="${Math.round(sz * 1.78)}" height="${sz}"
+                     alt="OpenGenealogyAI logo — a gold star-tree on a navy starfield"
+                     style="object-fit: cover; border-radius: 4px;">`;
   }
 
   render() {
