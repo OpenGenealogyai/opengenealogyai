@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools — Relationship & Merge</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 1100px; margin: 0 auto; }
+  section { margin-bottom: 32px; }
+  h2 { font-family: var(--font-body); font-size: var(--text-lg); margin: 0 0 12px; }
+  .demo-note { margin: 0 0 16px; padding: 10px 16px; background: rgba(212, 168, 67, 0.12); border-left: 3px solid var(--gold); border-radius: var(--radius); font-family: var(--font-ui); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span class="title">OpenGenealogyAI · Tools</span>
+  <a href="/dev/pedigree">→ Pedigree</a>
+</header>
+
+<main>
+
+<section>
+  <h2>Relationship calculator</h2>
+  <div class="demo-note">
+    Walks your real Maxwell pedigree to find the most-recent common ancestor of any two
+    people, then labels the relationship. Confidence composes along the path
+    (parent-edge confidences multiply).
+  </div>
+  <maxgen-relationship-calc id="relcalc"></maxgen-relationship-calc>
+</section>
+
+<section>
+  <h2>Merge / dedup review</h2>
+  <div class="demo-note">
+    Side-by-side merge UI. Demo shows two plausibly-the-same Richard Maxwells (one
+    born 1796, one born 1774 — these are actually different people but the UI shows
+    how a merge candidate would be reviewed). Pick which assertions to keep on the
+    survivor; the absorbed entity persists via <code>merge_status='merged_away'</code>.
+  </div>
+  <maxgen-merge-ui id="merge"></maxgen-merge-ui>
+</section>
+
+<section>
+  <h2>GEDCOM export</h2>
+  <div class="demo-note">
+    Download your tree as a GEDCOM 5.5.1 file. Privacy gate: living persons
+    excluded by default. Tier-2 private records skipped unless you're the owner.
+  </div>
+  <a href="/dev/gedcom-export" style="display:inline-block; padding: 10px 20px; background: var(--gold); color: var(--ink); border-radius: var(--radius); text-decoration: none; font-family: var(--font-ui); font-weight: 600;">
+    Download GEDCOM (maxwell-line.ged)
+  </a>
+</section>
+
+</main>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+const NOW = "2026-05-17T00:00:00Z";
+function mkP(opts) {
+  return {
+    person_id: opts.id, schema_version:"1.4", is_living:false,
+    composite_confidence: opts.conf || 0.85,
+    name_assertions: [{ name_as_written:opts.name, given_name:opts.given||opts.name.split(' ')[0], surname:opts.surname||"Maxwell", name_type:"birth", confidence:opts.conf||0.85, source_record_id:"fag-"+opts.id, asserted_by:"omen", asserted_at:NOW }],
+    birth_assertions: opts.by ? [{ year_min:opts.by, year_max:opts.by, date_type:"exact", place_as_written:opts.bp, confidence:opts.conf||0.85, source_record_id:"fag-"+opts.id, asserted_by:"omen", asserted_at:NOW }] : [],
+    death_assertions: opts.dy ? [{ year_min:opts.dy, year_max:opts.dy, date_type:"exact", confidence:opts.conf||0.85, source_record_id:"fag-"+opts.id, asserted_by:"omen", asserted_at:NOW }] : [],
+    parent_assertions: opts.parents || [],
+    source_record_ids: opts.sources || [],
+    photo_assertions: [],
+    asserted_by:"omen", asserted_at:NOW
+  };
+}
+
+// Build the same patriline used in the pedigree page
+const horace = mkP({id:"horace", name:"Horace William Maxwell", by:1898, dy:1980, conf:0.95});
+const james1870 = mkP({id:"j1870", name:"James Bailey Maxwell (Jr.)", by:1870, dy:1942, conf:0.92});
+const james1843 = mkP({id:"j1843", name:"James Bailey Maxwell", by:1843, dy:1876, conf:0.95});
+const williamBailey = mkP({id:"wbm", name:"William Bailey Maxwell", by:1821, dy:1895, conf:0.95, bp:"Shawneetown IL"});
+const lucretia = mkP({id:"lcb", name:"Lucretia Charlotte Bracken", surname:"Bracken", by:1823, dy:1893, conf:0.85});
+const richard1796 = mkP({id:"r1796", name:"Richard Maxwell", by:1796, dy:1821, conf:0.90, bp:"Shawneetown IL"});
+const ruthHodge = mkP({id:"ruth", name:"Ruth Hodge Barnett", surname:"Hodge Barnett", by:1800, dy:1875, conf:0.82});
+const richard1774 = mkP({id:"r1774", name:"Richard Maxwell", by:1774, dy:1845, conf:0.88, bp:"Bourbon Co KY"});
+const william1740 = mkP({id:"w1740", name:"William Maxwell (Scottish immigrant)", by:1740, dy:1810, conf:0.85});
+
+const pedigree = {
+  person: horace,
+  father: {
+    person: james1870,
+    father: {
+      person: james1843,
+      father: {
+        person: williamBailey,
+        father: { person: richard1796, father: { person: richard1774, father: { person: william1740 } }, mother: { person: ruthHodge } },
+        mother: { person: lucretia }
+      }
+    }
+  }
+};
+
+// Merge demo: two "Richard Maxwell" records that might be the same person
+const richardA = {
+  ...richard1796,
+  person_id: "richard-a",
+  source_record_ids: ["fag-156944159", "census-1820-IL"],
+};
+const richardB = {
+  person_id: "richard-b",
+  schema_version: "1.4", is_living: false,
+  composite_confidence: 0.72,
+  name_assertions: [{ name_as_written: "Richard Maxwell", given_name: "Richard", surname: "Maxwell", name_type:"birth", confidence: 0.72, source_record_id:"online-tree-2024", asserted_by:"contrib-9", asserted_at:NOW }],
+  birth_assertions: [{ year_min:1795, year_max:1797, date_type:"estimated", place_as_written:"Illinois", confidence:0.65, source_record_id:"online-tree-2024", asserted_by:"contrib-9", asserted_at:NOW }],
+  death_assertions: [{ year_min:1821, year_max:1821, date_type:"exact", confidence:0.78, source_record_id:"online-tree-2024", asserted_by:"contrib-9", asserted_at:NOW }],
+  parent_assertions: [
+    { parent_role: "father", parent_name: "Richard Maxwell (older)", confidence: 0.6, source_record_id: "online-tree-2024", asserted_by: "contrib-9", asserted_at: NOW },
+  ],
+  source_record_ids: ["online-tree-2024"],
+  photo_assertions: [],
+  asserted_by:"contrib-9", asserted_at:NOW
+};
+
+function setAll() {
+  document.getElementById('relcalc').pedigree = pedigree;
+  document.getElementById('relcalc').personA = "horace";
+  document.getElementById('relcalc').personB = "wbm";
+  const m = document.getElementById('merge');
+  m.personA = richardA;
+  m.personB = richardB;
+  m.matchSignals = { combined: 0.78, name_similarity: 0.95, year_overlap: 0.85, place_match: true };
+
+  // Listen for merge events
+  m.addEventListener('maxgen-merge', (e) => {
+    console.log('MERGE accepted:', e.detail);
+    alert('Merge accepted: ' + JSON.stringify(e.detail, null, 2));
+  });
+}
+if (window.__maxgenReady) setAll();
+else window.addEventListener('maxgen-ready', setAll);
+</script>
+</body>
+</html>

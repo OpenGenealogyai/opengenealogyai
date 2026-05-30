@@ -947,6 +947,82 @@ def dev_fan():
     return render_template("dev_fan.html")
 
 
+@app.route("/dev/tools")
+def dev_tools():
+    """Live demo: relationship calculator + merge UI + GEDCOM export."""
+    return render_template("dev_tools.html")
+
+
+@app.route("/dev/gedcom-export")
+def dev_gedcom_export():
+    """Export Garlon's Maxwell patriline as GEDCOM 5.5.1."""
+    from maxgen_to_gedcom import maxperson_to_gedcom
+    from flask import Response
+
+    # Real patriline data (matching the pedigree demo)
+    NOW = "2026-05-17T00:00:00Z"
+    def mkP(pid, name, given, surname, by=None, dy=None, bp=None, parents=None, conf=0.85):
+        p = {
+            "person_id": pid, "schema_version": "1.4", "is_living": False,
+            "composite_confidence": conf,
+            "name_assertions": [{
+                "name_as_written": name, "given_name": given, "surname": surname,
+                "name_type": "birth", "confidence": conf,
+                "source_record_id": f"fag-{pid}", "asserted_by": "omen", "asserted_at": NOW,
+            }],
+            "birth_assertions": [], "death_assertions": [],
+            "parent_assertions": parents or [],
+            "asserted_by": "omen", "asserted_at": NOW,
+        }
+        if by:
+            p["birth_assertions"].append({
+                "year_min": by, "year_max": by, "date_type": "exact",
+                "place_as_written": bp,
+                "confidence": conf, "source_record_id": f"fag-{pid}",
+                "asserted_by": "omen", "asserted_at": NOW,
+            })
+        if dy:
+            p["death_assertions"].append({
+                "year_min": dy, "year_max": dy, "date_type": "exact",
+                "confidence": conf, "source_record_id": f"fag-{pid}",
+                "asserted_by": "omen", "asserted_at": NOW,
+            })
+        return p
+
+    persons = [
+        mkP("william-1740", "William Maxwell (Scottish immigrant)", "William", "Maxwell", 1740, 1810, conf=0.85),
+        mkP("richard-1774", "Richard Maxwell", "Richard", "Maxwell", 1774, 1845, "Bourbon Co KY",
+            parents=[{"parent_role":"father", "parent_person_id":"william-1740", "parent_name":"William Maxwell", "confidence":0.88, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW}],
+            conf=0.88),
+        mkP("richard-1796", "Richard Maxwell", "Richard", "Maxwell", 1796, 1821, "Shawneetown IL",
+            parents=[{"parent_role":"father", "parent_person_id":"richard-1774", "parent_name":"Richard Maxwell", "confidence":0.90, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW}],
+            conf=0.90),
+        mkP("ruth-hodge", "Ruth Hodge Barnett", "Ruth", "Hodge Barnett", 1800, 1875, conf=0.82),
+        mkP("lucretia", "Lucretia Charlotte Bracken", "Lucretia Charlotte", "Bracken", 1823, 1893, conf=0.85),
+        mkP("william-bailey-1821", "William Bailey Maxwell", "William Bailey", "Maxwell", 1821, 1895, "Shawneetown IL",
+            parents=[
+                {"parent_role":"father", "parent_person_id":"richard-1796", "parent_name":"Richard Maxwell", "confidence":0.88, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW},
+                {"parent_role":"mother", "parent_person_id":"ruth-hodge", "parent_name":"Ruth Hodge Barnett", "confidence":0.85, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW},
+            ], conf=0.95),
+        mkP("james-1843", "James Bailey Maxwell", "James Bailey", "Maxwell", 1843, 1876, "Lee Co IA",
+            parents=[
+                {"parent_role":"father", "parent_person_id":"william-bailey-1821", "parent_name":"William Bailey Maxwell", "confidence":0.95, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW},
+                {"parent_role":"mother", "parent_person_id":"lucretia", "parent_name":"Lucretia Charlotte Bracken", "confidence":0.95, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW},
+            ], conf=0.95),
+        mkP("james-1870", "James Bailey Maxwell (Jr.)", "James Bailey", "Maxwell", 1870, 1942, "Lincoln Co NV",
+            parents=[{"parent_role":"father", "parent_person_id":"james-1843", "parent_name":"James Bailey Maxwell", "confidence":0.92, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW}],
+            conf=0.92),
+        mkP("horace", "Horace William Maxwell", "Horace William", "Maxwell", 1898, 1980, "Glendale UT",
+            parents=[{"parent_role":"father", "parent_person_id":"james-1870", "parent_name":"James Bailey Maxwell (Jr.)", "confidence":0.95, "relationship_type":"biological", "source_record_id":"fag", "asserted_by":"omen", "asserted_at":NOW}],
+            conf=0.95),
+    ]
+
+    ged = maxperson_to_gedcom(persons, include_living=False, caller_is_owner=True,
+                              submitter_name="Garlon Maxwell")
+    return Response(ged, mimetype="application/x-gedcom",
+                    headers={"Content-Disposition": "attachment; filename=maxwell-line.ged"})
+
+
 # ── run ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     init_db()

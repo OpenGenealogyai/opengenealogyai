@@ -17,6 +17,8 @@ import './pedigree-chart.js';
 import './fan-chart.js';
 import './dna-evidence.js';
 import './timeline.js';
+import './relationship-calc.js';
+import './merge-ui.js';
 
 // Inform pages the component bundle is ready.
 window.__maxgenReady = true;
