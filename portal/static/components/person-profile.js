@@ -6,11 +6,12 @@ import { html, css } from 'https://esm.sh/lit@3';
 import { MaxgenElement, defineOnce, bestOf, formatDate } from './_base.js';
 
 const TABS = [
-  { key: 'facts',   label: 'Facts' },
-  { key: 'family',  label: 'Family' },
-  { key: 'photos',  label: 'Photos' },
-  { key: 'dna',     label: 'DNA' },
-  { key: 'sources', label: 'Sources' },
+  { key: 'facts',    label: 'Facts' },
+  { key: 'timeline', label: 'Timeline' },
+  { key: 'family',   label: 'Family' },
+  { key: 'photos',   label: 'Photos' },
+  { key: 'dna',      label: 'DNA' },
+  { key: 'sources',  label: 'Sources' },
 ];
 
 class MaxgenPersonProfile extends MaxgenElement {
@@ -224,11 +225,12 @@ class MaxgenPersonProfile extends MaxgenElement {
   }
 
   _renderPanel() {
-    if (this.activeTab === 'facts')   return this._panelFacts();
-    if (this.activeTab === 'family')  return this._panelFamily();
-    if (this.activeTab === 'photos')  return this._panelPhotos();
-    if (this.activeTab === 'dna')     return this._panelDna();
-    if (this.activeTab === 'sources') return this._panelSources();
+    if (this.activeTab === 'facts')    return this._panelFacts();
+    if (this.activeTab === 'timeline') return html`<h3 class="section-h">Life events</h3><maxgen-timeline .person=${this.person}></maxgen-timeline>`;
+    if (this.activeTab === 'family')   return this._panelFamily();
+    if (this.activeTab === 'photos')   return this._panelPhotos();
+    if (this.activeTab === 'dna')      return this._panelDna();
+    if (this.activeTab === 'sources')  return this._panelSources();
     return html`<p>Unknown tab.</p>`;
   }
 
