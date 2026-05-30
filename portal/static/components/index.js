@@ -19,6 +19,7 @@ import './dna-evidence.js';
 import './timeline.js';
 import './relationship-calc.js';
 import './merge-ui.js';
+import './migration-map.js';
 
 // Inform pages the component bundle is ready.
 window.__maxgenReady = true;

@@ -953,6 +953,12 @@ def dev_tools():
     return render_template("dev_tools.html")
 
 
+@app.route("/dev/map")
+def dev_map():
+    """Live demo: 270 years of Maxwell migration Scotland -> Arizona."""
+    return render_template("dev_map.html")
+
+
 @app.route("/dev/gedcom-export")
 def dev_gedcom_export():
     """Export Garlon's Maxwell patriline as GEDCOM 5.5.1."""

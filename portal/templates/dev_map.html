@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migration Map — 270 years, Scotland to Arizona</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-family: var(--font-body); font-size: var(--text-lg); margin: 8px 0 16px; }
+  .demo-note { margin: 0 0 16px; padding: 10px 16px; background: rgba(212, 168, 67, 0.12); border-left: 3px solid var(--gold); border-radius: var(--radius); font-family: var(--font-ui); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span class="title">OpenGenealogyAI · Migration Map</span>
+  <a href="/dev/pedigree">→ Pedigree</a>
+</header>
+
+<main>
+  <h1>270 years of Maxwell migration — Scotland to Arizona</h1>
+  <div class="demo-note">
+    <strong>Live demo</strong> — each pin is a real event from your patriline at
+    <code>D:\AI\Companies\open-genealogical-ai\family_tree\</code>. Dashed gold line
+    follows the chronological migration arc: William Maxwell born Scotland 1740 →
+    died Indiana 1810 → Richard born Kentucky 1774 → Richard born Illinois 1796 →
+    William Bailey born Illinois 1821, military service Mexican-American War 1846,
+    pioneered Utah 1859-69, died Arizona 1895 → James 1843 died Panguitch Utah 1876 →
+    James 1870 born Nevada → died Cedar City Utah 1942 → Horace born Glendale Utah 1898,
+    died there 1980. Hover a pin for details.
+  </div>
+
+  <maxgen-migration-map id="map" title="Maxwell patriline migration arc"></maxgen-migration-map>
+</main>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+// Hardcoded coordinates for the Maxwell migration arc.
+// In production these would come from place_registry[] gazetteer entries.
+const EVENTS = [
+  { label: "Scotland (birth)",                              kind: "birth",            year: 1740, lat: 55.95, lng: -3.19,  subject: "William Maxwell" },
+  { label: "Indiana (death of immigrant patriarch)",        kind: "death",            year: 1810, lat: 39.77, lng: -86.16, subject: "William Maxwell (1740-1810)" },
+  { label: "Bourbon County, Kentucky (Richard born 1774)",  kind: "birth",            year: 1774, lat: 38.21, lng: -84.21, subject: "Richard Maxwell (1774-1845)" },
+  { label: "Shawneetown, Illinois (Richard born 1796)",     kind: "birth",            year: 1796, lat: 37.71, lng: -88.18, subject: "Richard Maxwell (1796-1821)" },
+  { label: "Shawneetown, Illinois (William Bailey born)",   kind: "birth",            year: 1821, lat: 37.71, lng: -88.18, subject: "William Bailey Maxwell (1821-1895)" },
+  { label: "Mormon Battalion (Mexican-American War)",        kind: "military_service", year: 1846, lat: 32.71, lng: -117.16, subject: "William Bailey Maxwell — Co. D" },
+  { label: "Lee County, Iowa (James born 1843)",            kind: "birth",            year: 1843, lat: 40.62, lng: -91.50, subject: "James Bailey Maxwell (1843-1876)" },
+  { label: "Santaquin, Utah (James m. Elizabeth DeGraw)",   kind: "marriage",         year: 1864, lat: 39.97, lng: -111.78, subject: "James Bailey Maxwell" },
+  { label: "Panguitch, Utah (James died young, age 32)",    kind: "death",            year: 1876, lat: 37.82, lng: -112.43, subject: "James Bailey Maxwell (1843-1876)" },
+  { label: "Lincoln County, Nevada (James 1870 born)",      kind: "birth",            year: 1870, lat: 37.78, lng: -114.81, subject: "James Bailey Maxwell (Jr., 1870-1942)" },
+  { label: "Mesa, Arizona (William Bailey's final years)",  kind: "death",            year: 1895, lat: 33.42, lng: -111.83, subject: "William Bailey Maxwell — Mesa AZ" },
+  { label: "Glendale, Utah (Horace born)",                  kind: "birth",            year: 1898, lat: 37.32, lng: -112.60, subject: "Horace William Maxwell (1898-1980) — your grandfather" },
+  { label: "Cedar City, Utah (James 1870 died)",            kind: "death",            year: 1942, lat: 37.68, lng: -113.06, subject: "James Bailey Maxwell (Jr.)" },
+  { label: "Glendale, Utah (Horace's final residence)",     kind: "death",            year: 1980, lat: 37.32, lng: -112.60, subject: "Horace William Maxwell" },
+];
+
+function setMap() {
+  document.getElementById('map').events = EVENTS;
+}
+if (window.__maxgenReady) setMap();
+else window.addEventListener('maxgen-ready', setMap);
+</script>
+</body>
+</html>
