@@ -95,10 +95,10 @@ def ask_gpt(prompt: str, system: str | None = None,
 
 
 def ask_gemini(prompt: str, system: str | None = None,
-               model: str = GEMINI_MODEL, max_tokens: int = 4096) -> str:
+               model: str | None = None, max_tokens: int = 4096) -> str:
+    if model is None:
+        model = GEMINI_MODEL
     contents = [{"parts": [{"text": prompt}]}]
-    # Gemini 2.5 spends some tokens on internal "thinking" — give it slack
-    # so the visible response isn't starved when caller asks for small max.
     effective_max = max(max_tokens, 512)
     body = {
         "contents": contents,
@@ -106,9 +106,20 @@ def ask_gemini(prompt: str, system: str | None = None,
     }
     if system:
         body["systemInstruction"] = {"parts": [{"text": system}]}
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_KEY}"
-    data = _post(url, body, headers={"content-type": "application/json"})
-    # Gemini 2.5 uses thinking tokens; sometimes parts is absent if budget too small
+
+    def _call(m):
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={GEMINI_KEY}"
+        return _post(url, body, headers={"content-type": "application/json"})
+
+    try:
+        data = _call(model)
+    except RuntimeError as e:
+        # Pro overloaded — auto-fall back to Flash once
+        if "503" in str(e) and "pro" in model.lower():
+            data = _call("gemini-2.5-flash")
+        else:
+            raise
+
     cand = data["candidates"][0]
     if "content" not in cand or "parts" not in cand["content"]:
         return f"[gemini returned no parts; finishReason={cand.get('finishReason')}]"

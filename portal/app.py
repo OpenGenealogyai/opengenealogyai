@@ -966,6 +966,182 @@ def dev_ai():
     return render_template("dev_ai.html")
 
 
+# ── Postgres-backed live API ───────────────────────────────────────────────────
+
+_PG_KW = dict(
+    dbname=os.environ.get("PG_DATABASE", "opengenealogyai"),
+    user=os.environ.get("PG_USER", "postgres"),
+    host=os.environ.get("PG_HOST", "localhost"),
+    port=int(os.environ.get("PG_PORT", "5432")),
+)
+
+
+def _pg_conn():
+    import psycopg
+    return psycopg.connect(**_PG_KW)
+
+
+def _person_row_to_dict(row, cols):
+    d = dict(zip(cols, row))
+    # Normalize None UUIDs to None strings
+    for k in ("person_id", "father_id", "mother_id"):
+        if d.get(k):
+            d[k] = str(d[k])
+    return d
+
+
+def _person_to_maxperson(row_dict) -> dict:
+    """Convert a persons-table row to a MaxPerson-shaped JSON for the
+    front-end components (they bind to this shape)."""
+    NOW = datetime.utcnow().isoformat() + "Z"
+    name = row_dict.get("display_name") or "Unknown"
+    parts = name.split()
+    surname = row_dict.get("surname") or (parts[-1] if parts else "")
+    given = row_dict.get("given_names") or " ".join(parts[:-1]) if len(parts) > 1 else ""
+    conf = 0.85
+    p = {
+        "person_id":     row_dict["person_id"],
+        "schema_version": "1.4",
+        "is_living":     row_dict.get("is_living_flag", False),
+        "composite_confidence": conf,
+        "name_assertions": [{
+            "name_as_written": name,
+            "given_name":      given,
+            "surname":         surname,
+            "name_type":       "birth",
+            "confidence":      conf,
+            "source_record_id": "ingest-fag",
+            "asserted_by":     "omen-pipeline",
+            "asserted_at":     NOW,
+        }],
+        "birth_assertions": [],
+        "death_assertions": [],
+        "parent_assertions": [],
+        "asserted_by": "omen-pipeline",
+        "asserted_at": NOW,
+    }
+    if row_dict.get("birth_year_min"):
+        p["birth_assertions"].append({
+            "year_min": row_dict["birth_year_min"],
+            "year_max": row_dict.get("birth_year_max") or row_dict["birth_year_min"],
+            "date_type": "exact",
+            "place_as_written": row_dict.get("birth_place"),
+            "confidence": conf,
+            "source_record_id": "ingest-fag",
+            "asserted_by": "omen-pipeline",
+            "asserted_at": NOW,
+        })
+    if row_dict.get("death_year_min"):
+        p["death_assertions"].append({
+            "year_min": row_dict["death_year_min"],
+            "year_max": row_dict.get("death_year_max") or row_dict["death_year_min"],
+            "date_type": "exact",
+            "place_as_written": row_dict.get("death_place"),
+            "confidence": conf,
+            "source_record_id": "ingest-fag",
+            "asserted_by": "omen-pipeline",
+            "asserted_at": NOW,
+        })
+    return p
+
+
+@app.route("/api/persons/<person_id>")
+def api_person(person_id):
+    """Fetch a single MaxPerson record from Postgres."""
+    try:
+        conn = _pg_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT person_id, display_name, surname, given_names,
+                   birth_year_min, birth_year_max, birth_place,
+                   death_year_min, death_year_max, death_place,
+                   is_living_flag, redistribution_license, source_uri,
+                   father_id, mother_id
+            FROM persons WHERE person_id = %s
+        """, (person_id,))
+        row = cur.fetchone()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+        cols = [d[0] for d in cur.description]
+        rd = _person_row_to_dict(row, cols)
+        if rd.get("is_living_flag"):
+            return jsonify({"error": "person is private (is_living)"}), 404
+        return jsonify(_person_to_maxperson(rd))
+    finally:
+        try: conn.close()
+        except: pass
+
+
+@app.route("/api/pedigree/<person_id>")
+def api_pedigree(person_id):
+    """Walk up the persons table N generations from the given subject and
+    return a nested pedigree object the front-end can render directly."""
+    gens = int(request.args.get("gens", 5))
+    try:
+        conn = _pg_conn()
+        cur = conn.cursor()
+
+        def fetch(pid):
+            cur.execute("""
+                SELECT person_id, display_name, surname, given_names,
+                       birth_year_min, birth_year_max, birth_place,
+                       death_year_min, death_year_max, death_place,
+                       is_living_flag, father_id, mother_id
+                FROM persons WHERE person_id = %s
+            """, (pid,))
+            row = cur.fetchone()
+            if not row:
+                return None
+            cols = [d[0] for d in cur.description]
+            return _person_row_to_dict(row, cols)
+
+        def walk(pid, depth):
+            if not pid or depth >= gens:
+                return None
+            rd = fetch(pid)
+            if not rd:
+                return None
+            if rd.get("is_living_flag"):
+                # Privacy gate
+                return None
+            node = {"person": _person_to_maxperson(rd)}
+            father = walk(rd.get("father_id"), depth + 1)
+            mother = walk(rd.get("mother_id"), depth + 1)
+            if father: node["father"] = father
+            if mother: node["mother"] = mother
+            return node
+
+        ped = walk(person_id, 0)
+        if not ped:
+            return jsonify({"error": "subject not found"}), 404
+        return jsonify(ped)
+    finally:
+        try: conn.close()
+        except: pass
+
+
+@app.route("/api/persons")
+def api_persons_list():
+    """List persons (for picker dropdowns and dashboards)."""
+    try:
+        conn = _pg_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT person_id, display_name, birth_year_min, death_year_min
+            FROM persons
+            WHERE is_living_flag = FALSE
+            ORDER BY COALESCE(birth_year_min, 9999), display_name
+            LIMIT 500
+        """)
+        return jsonify([
+            {"id": str(r[0]), "name": r[1], "birth": r[2], "death": r[3]}
+            for r in cur.fetchall()
+        ])
+    finally:
+        try: conn.close()
+        except: pass
+
+
 # ── AI research assistant ──────────────────────────────────────────────────────
 
 _BRAINS_PATH = r"C:\Users\stock\dev\opengenealogyai\scripts"
