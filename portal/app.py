@@ -7,6 +7,7 @@ Port: 8082
 """
 
 import os
+import sys
 import sqlite3
 import json
 import hashlib
@@ -957,6 +958,62 @@ def dev_tools():
 def dev_map():
     """Live demo: 270 years of Maxwell migration Scotland -> Arizona."""
     return render_template("dev_map.html")
+
+
+@app.route("/dev/ai")
+def dev_ai():
+    """Live demo: AI research assistant chatting about Garlon's tree."""
+    return render_template("dev_ai.html")
+
+
+# ── AI research assistant ──────────────────────────────────────────────────────
+
+_BRAINS_PATH = r"C:\Users\stock\dev\opengenealogyai\scripts"
+if _BRAINS_PATH not in sys.path:
+    sys.path.insert(0, _BRAINS_PATH)
+
+
+@app.route("/api/ai-assistant", methods=["POST"])
+def api_ai_assistant():
+    """Answers a question about the user's tree.
+    Body: {messages: [{role, content}], tree_context: {...}}
+    Returns: {reply: "..."}
+    """
+    try:
+        from brains import ask_claude
+    except Exception as e:
+        return jsonify({"error": "brains module unavailable", "detail": str(e)}), 503
+
+    body = request.get_json(silent=True) or {}
+    messages = body.get("messages", [])
+    tree_context = body.get("tree_context", {})
+
+    if not messages:
+        return jsonify({"error": "no messages"}), 400
+
+    # Build the prompt with tree context
+    system = (
+        "You are the OpenGenealogyAI research assistant. You answer questions about "
+        "the user's family tree using ONLY the tree context provided. You are honest "
+        "about uncertainty: every fact has a confidence; you mention the band when "
+        "relevant. You never fabricate ancestors. If the answer isn't in the tree "
+        "context, say so and suggest where to look (FamilySearch, Find A Grave, "
+        "WikiTree, etc.). Voice: calm archivist, never breathless, never blames the "
+        "user. Use ranges ('around 1843') not false precision. Keep replies under "
+        "150 words unless the user explicitly asks for more.\n\n"
+        "TREE CONTEXT (JSON):\n" + json.dumps(tree_context, indent=2)[:8000]
+    )
+
+    # Compose the conversation: just the latest user turn for simplicity
+    last_user = next((m["content"] for m in reversed(messages) if m.get("role") == "user"), None)
+    if not last_user:
+        return jsonify({"error": "no user message"}), 400
+
+    try:
+        reply = ask_claude(last_user, system=system, max_tokens=600)
+        return jsonify({"reply": reply})
+    except Exception as e:
+        return jsonify({"error": "ai call failed", "detail": str(e)[:200]}), 500
 
 
 @app.route("/dev/gedcom-export")

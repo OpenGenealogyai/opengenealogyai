@@ -20,6 +20,7 @@ import './timeline.js';
 import './relationship-calc.js';
 import './merge-ui.js';
 import './migration-map.js';
+import './ai-assistant.js';
 
 // Inform pages the component bundle is ready.
 window.__maxgenReady = true;

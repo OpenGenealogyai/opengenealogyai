@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Research Assistant — OpenGenealogyAI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 900px; margin: 0 auto; }
+  h1 { font-family: var(--font-body); font-size: var(--text-lg); margin: 8px 0 16px; }
+  .demo-note { margin: 0 0 16px; padding: 10px 16px; background: rgba(212, 168, 67, 0.12); border-left: 3px solid var(--gold); border-radius: var(--radius); font-family: var(--font-ui); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span class="title">OpenGenealogyAI · AI Assistant</span>
+  <a href="/dev/pedigree">→ Pedigree</a>
+</header>
+
+<main>
+  <h1>Ask anything about your Maxwell tree</h1>
+  <div class="demo-note">
+    <strong>Live demo</strong> — Backed by Claude Sonnet 4.5 via the brains.py council
+    infrastructure (real API call). Tree context (9 ancestors from your patriline) is
+    sent with every question. The assistant answers ONLY from the loaded tree, is
+    honest about uncertainty, and suggests where to look when an answer isn't in the
+    data. Try the suggestion chips below the chat input.
+  </div>
+
+  <maxgen-ai-assistant id="ai"></maxgen-ai-assistant>
+</main>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+// Tree context — pared down for the prompt budget
+const TREE_CONTEXT = {
+  person_count: 9,
+  patriline: [
+    { id: "william-1740", name: "William Maxwell", born: 1740, born_place: "Scotland", died: 1810, died_place: "Indiana", note: "Scottish immigrant patriarch. Top of documented line.", confidence: 0.85 },
+    { id: "richard-1774", name: "Richard Maxwell", born: 1774, born_place: "Bourbon Co. KY", died: 1845, confidence: 0.88, father: "william-1740" },
+    { id: "richard-1796", name: "Richard Maxwell", born: 1796, born_place: "Shawneetown IL", died: 1821, note: "Died age 25, same year his son William Bailey was born.", confidence: 0.90, father: "richard-1774" },
+    { id: "ruth-hodge", name: "Ruth Hodge Barnett", born: 1800, died: 1875, confidence: 0.82 },
+    { id: "william-bailey-1821", name: "William Bailey Maxwell", born: 1821, born_place: "Shawneetown IL", died: 1895, died_place: "Mesa AZ", note: "Mormon Battalion Co. D veteran (Mexican-American War 1846-47). Active in 1857 Utah War defense. Pioneered southern Utah (1859-69) and Arizona (Mesa).", confidence: 0.95, father: "richard-1796", mother: "ruth-hodge" },
+    { id: "lucretia", name: "Lucretia Charlotte Bracken", born: 1823, died: 1893, confidence: 0.85, spouse: "william-bailey-1821" },
+    { id: "james-1843", name: "James Bailey Maxwell", born: 1843, born_place: "Lee Co IA", died: 1876, died_place: "Panguitch UT", note: "Died age 32. Polygamy-era; two wives (Elizabeth Rebecca DeGraw m.1864, Clarissa DeGraw m.1869).", confidence: 0.95, father: "william-bailey-1821", mother: "lucretia" },
+    { id: "james-1870", name: "James Bailey Maxwell (Jr.)", born: 1870, born_place: "Lincoln Co NV", died: 1942, died_place: "Cedar City UT", note: "Wife Elizabeth Carpenter Anderson. Newspaper clipping on memorial: convicted of involuntary manslaughter at Kanab; one-year sentence.", confidence: 0.92, father: "james-1843" },
+    { id: "horace", name: "Horace William Maxwell", born: 1898, born_place: "Glendale UT", died: 1980, died_place: "Glendale UT", note: "Garlon's grandfather. Wife Ivy/Ive Cox. 7 children.", confidence: 0.95, father: "james-1870" },
+  ],
+  open_dead_ends: [
+    "William Maxwell 1740's parents (Scotland church records — next research step)",
+    "Wives' lines: Anderson/Carpenter, DeGraw, Bracken, Hodge, Cox",
+    "Identification of Garlon's father (one of Horace's 7 children)",
+  ],
+  source_archive: "D:\\AI\\Companies\\open-genealogical-ai\\family_tree (Find A Grave handoff 2026-05-29)",
+};
+
+function setAI() {
+  document.getElementById('ai').treeContext = TREE_CONTEXT;
+}
+if (window.__maxgenReady) setAI();
+else window.addEventListener('maxgen-ready', setAI);
+</script>
+</body>
+</html>
