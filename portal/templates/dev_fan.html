@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fan Chart + DNA — Garlon's Maxwell line</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 1400px; margin: 0 auto; }
+  .grid {
+    display: grid;
+    grid-template-columns: 700px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+  h1 { font-family: var(--font-body); font-size: var(--text-lg); margin: 8px 0 16px; }
+  .demo-note { margin: 0 0 16px; padding: 10px 16px; background: rgba(212, 168, 67, 0.12); border-left: 3px solid var(--gold); border-radius: var(--radius); font-family: var(--font-ui); font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span class="title">OpenGenealogyAI · Fan Chart + DNA Evidence</span>
+  <a href="/dev/pedigree">→ Pedigree</a>
+</header>
+
+<main>
+  <h1>Fan chart + DNA-confidence boost — William Bailey Maxwell</h1>
+  <div class="demo-note">
+    <strong>Live demo</strong> — Fan chart: 6 generations of Garlon's documented Maxwell line.
+    Color-by-confidence by default; switch to surname or birth-decade.
+    DNA panel (right): shows how 3 hypothetical DNA chains boost William Bailey's
+    confidence from documentary baseline via the noisy-OR formula in CONFIDENCE_CALIBRATION.md.
+  </div>
+
+  <div class="grid">
+    <maxgen-fan-chart id="fan" generations="6" size="680"></maxgen-fan-chart>
+    <maxgen-dna-evidence id="dna"></maxgen-dna-evidence>
+  </div>
+</main>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+const NOW = "2026-05-17T00:00:00Z";
+function mkP(opts) {
+  return {
+    person_id: opts.id, schema_version: "1.4", is_living: false,
+    composite_confidence: opts.conf || 0.85,
+    name_assertions: [{ name_as_written: opts.name, given_name: opts.given || opts.name.split(' ')[0],
+                        surname: opts.surname || "Maxwell", name_type: "birth",
+                        confidence: opts.conf || 0.85, source_record_id: "fag-"+opts.id,
+                        asserted_by: "omen-pipeline", asserted_at: NOW }],
+    birth_assertions: opts.by ? [{ year_min: opts.by, year_max: opts.by, date_type:"exact", confidence: opts.conf||0.85, source_record_id:"fag-"+opts.id, asserted_by:"omen-pipeline", asserted_at: NOW }] : [],
+    death_assertions: [], asserted_by: "omen-pipeline", asserted_at: NOW
+  };
+}
+
+// Build the same pedigree from William Bailey back through Scotland
+const ped = {
+  person: mkP({id:"william-bailey-maxwell-1821", name:"William Bailey Maxwell", surname:"Maxwell", by:1821, conf:0.95}),
+  father: {
+    person: mkP({id:"richard-maxwell-1796", name:"Richard Maxwell", surname:"Maxwell", by:1796, conf:0.90}),
+    father: {
+      person: mkP({id:"richard-maxwell-1774", name:"Richard Maxwell", surname:"Maxwell", by:1774, conf:0.88}),
+      father: {
+        person: mkP({id:"william-maxwell-1740", name:"William Maxwell", surname:"Maxwell", by:1740, conf:0.85}),
+      },
+      mother: { person: mkP({id:"jennette-purviance-1776", name:"Jennette Purviance", surname:"Purviance", by:1776, conf:0.70}) }
+    },
+    mother: { person: mkP({id:"ruth-hodge-1800", name:"Ruth Hodge Barnett", surname:"Hodge Barnett", by:1800, conf:0.82}) }
+  },
+  mother: { person: mkP({id:"lucretia-bracken-1823", name:"Lucretia Charlotte Bracken", surname:"Bracken", by:1823, conf:0.85}) }
+};
+
+// DNA evidence — pretend we found 3 distant cousin chains corroborating William Bailey
+const dnaPerson = {
+  ...ped.person,
+  dna_evidence: [
+    { dna_id_a: "kit-a-aaaaa-1", dna_id_b: "kit-b-bbbbb-1", shared_cm: 45.2, path_length_generations: 6, likelihood: 0.72, confidence_delta: 0.08, asserted_at: NOW },
+    { dna_id_a: "kit-c-ccccc-2", dna_id_b: "kit-d-ddddd-2", shared_cm: 32.8, path_length_generations: 7, likelihood: 0.58, confidence_delta: 0.06, asserted_at: NOW },
+    { dna_id_a: "kit-e-eeeee-3", dna_id_b: "kit-f-fffff-3", shared_cm: 18.4, path_length_generations: 7, likelihood: 0.42, confidence_delta: 0.04, asserted_at: NOW },
+  ]
+};
+
+function setAll() {
+  document.getElementById('fan').pedigree = ped;
+  document.getElementById('dna').person = dnaPerson;
+  document.getElementById('dna').baseConf = 0.78; // pre-DNA documentary baseline
+}
+if (window.__maxgenReady) setAll();
+else window.addEventListener('maxgen-ready', setAll);
+</script>
+</body>
+</html>

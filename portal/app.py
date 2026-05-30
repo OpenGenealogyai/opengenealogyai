@@ -941,6 +941,12 @@ def dev_pedigree():
     return render_template("dev_pedigree.html")
 
 
+@app.route("/dev/fan")
+def dev_fan():
+    """Live demo: fan chart + DNA-evidence noisy-OR boost."""
+    return render_template("dev_fan.html")
+
+
 # ── run ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     init_db()

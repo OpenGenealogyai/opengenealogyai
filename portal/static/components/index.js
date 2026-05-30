@@ -14,6 +14,8 @@ import './family-group-sheet.js';
 import './external-search.js';
 import './person-profile.js';
 import './pedigree-chart.js';
+import './fan-chart.js';
+import './dna-evidence.js';
 
 // Inform pages the component bundle is ready.
 window.__maxgenReady = true;
