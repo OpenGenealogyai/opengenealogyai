@@ -3,213 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Family Group Sheet — William Bailey Maxwell &amp; Lucretia Charlotte Bracken</title>
+<title>Family Group Sheet — Live from Postgres</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
 <style>
-  body {
-    margin: 0; padding: 0;
-    background: linear-gradient(180deg, #f3eedf 0%, var(--paper) 220px);
-    font-family: Georgia, serif;
-    color: var(--ink);
-    min-height: 100vh;
-  }
-  header.bar {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 14px 24px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
   header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
-  header.bar .title {
-    font-family: var(--font-body);
-    font-size: var(--text-md);
-    letter-spacing: 0.04em;
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 1100px; margin: 0 auto; }
+  .demo-note { margin: 0 0 16px; padding: 10px 16px; background: rgba(45, 106, 79, 0.10); border-left: 3px solid var(--success, #2d6a4f); border-radius: var(--radius); font-family: var(--font-ui); font-size: var(--text-sm); }
+  .picker { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; font-family: var(--font-ui); font-size: var(--text-sm); }
+  .picker label { color: var(--muted); }
+  .picker select {
+    padding: 6px 10px; border-radius: var(--radius); border: 1px solid var(--border);
+    background: white; font-family: var(--font-ui); font-size: var(--text-sm);
+    min-width: 360px;
   }
-  main {
-    padding: 32px 24px 64px;
-  }
-  .demo-note {
-    max-width: 920px; margin: 0 auto 16px;
-    padding: 10px 16px;
-    background: rgba(212, 168, 67, 0.12);
-    border-left: 3px solid var(--gold);
-    border-radius: var(--radius);
-    font-family: var(--font-ui);
-    font-size: var(--text-sm);
-    color: var(--ink);
-  }
-  .demo-note code { background: #efeae0; padding: 0 4px; border-radius: 3px; }
+  .picker .status { font-size: var(--text-xs); color: var(--muted); margin-left: auto; }
 </style>
 </head>
 <body>
 
 <header class="bar">
   <span class="title">OpenGenealogyAI · Family Group Sheet</span>
-  <a href="/">← Portal home</a>
+  <a href="/dev/pedigree">→ Pedigree</a>
 </header>
 
 <main>
+  <div class="demo-note">
+    <strong>Live from Postgres ✓</strong> — pick any ancestor; if they're a father
+    or mother in the DB, the family group sheet builds from real database rows.
+  </div>
 
-<div class="demo-note">
-  <strong>Live demo</strong> — Real data from your Maxwell patriline archive
-  (<code>D:\AI\Companies\open-genealogical-ai\family_tree\</code>). Sources:
-  Find A Grave memorials 35124852 (William) and 47043357 (James, son).
-  Confidence chips reflect each fact's <code>snippet-derived</code> status until
-  Deon re-verifies against primary sources.
-</div>
+  <div class="picker">
+    <label for="who">Father or mother:</label>
+    <select id="who"></select>
+    <span class="status" id="status">Loading…</span>
+  </div>
 
-<maxgen-family-group-sheet id="sheet"></maxgen-family-group-sheet>
-
+  <maxgen-family-group-sheet id="sheet"></maxgen-family-group-sheet>
 </main>
 
 <script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
 <script>
-// Real Maxwell family data, MaxPerson-shaped.
-// Confidences are 'snippet-derived' = 0.70-0.80 band per CONFIDENCE_CALIBRATION.md.
+const $ = (id) => document.getElementById(id);
 
-const NOW = "2026-05-17T00:00:00Z";
-const SNIPPET_CONF = 0.75;   // FAG snippet — Good band
-const PRIMARY_CONF = 0.92;   // Direct FAG memorial — Strong/Near-certain
-
-function person({person_id, name, given_name, surname, birth, death, photo_url, alt_text}) {
-  const obj = {
-    person_id,
-    schema_version: "1.4",
-    is_living: false,
-    composite_confidence: PRIMARY_CONF,
-    name_assertions: [{
-      name_as_written: name,
-      given_name, surname,
-      name_type: "birth",
-      confidence: PRIMARY_CONF,
-      source_record_id: "fag-" + person_id,
-      asserted_by: "omen-pipeline-fag-handoff-2026-05-29",
-      asserted_at: NOW
-    }],
-    birth_assertions: birth ? [{
-      ...birth,
-      confidence: SNIPPET_CONF,
-      source_record_id: "fag-" + person_id,
-      asserted_by: "omen-pipeline-fag-handoff-2026-05-29",
-      asserted_at: NOW
-    }] : [],
-    death_assertions: death ? [{
-      ...death,
-      confidence: SNIPPET_CONF,
-      source_record_id: "fag-" + person_id,
-      asserted_by: "omen-pipeline-fag-handoff-2026-05-29",
-      asserted_at: NOW
-    }] : [],
-    asserted_by: "omen-pipeline-fag-handoff-2026-05-29",
-    asserted_at: NOW
-  };
-  if (photo_url) {
-    obj.photo_assertions = [{
-      photo_id: "photo-" + person_id,
-      url: photo_url,
-      storage_tier: "local_private",
-      caption: alt_text || name,
-      alt_text: alt_text || `Portrait of ${name}`,
-      is_primary: true,
-      confidence: 0.85,
-      subject_role: "solo",
-      license: "tier2-private",
-      asserted_by: "omen-pipeline-fag-handoff-2026-05-29",
-      asserted_at: NOW
-    }];
+async function init() {
+  $('status').textContent = 'Fetching persons…';
+  const people = await fetch('/api/persons').then(r => r.json());
+  $('status').textContent = `${people.length} people loaded`;
+  const sel = $('who');
+  for (const p of people) {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = `${p.name}${p.birth ? ' (' + p.birth + ')' : ''}`;
+    sel.appendChild(opt);
   }
-  return obj;
+  // Default: William Bailey Maxwell (he's a father in the DB)
+  const def = people.find(p => p.name && p.name.includes('William Bailey Maxwell') && p.birth === 1821) || people[0];
+  sel.value = def.id;
+
+  async function refresh() {
+    $('status').textContent = 'Loading family…';
+    try {
+      const fam = await fetch(`/api/family-group-sheet/${sel.value}`).then(r => r.json());
+      // Attach the photo for William Bailey from the local FAG archive
+      // (the persons mirror doesn't track photos yet)
+      if (fam.husband && fam.husband.name_assertions[0].name_as_written.includes('William Bailey Maxwell')) {
+        fam.husband.photo_assertions = [{
+          photo_id: 'p1', url: '/family-photos/maxwell-william-bailey-1821/portrait_bauer_2009.jpg',
+          storage_tier: 'local_private', is_primary: true, confidence: 0.85,
+          subject_role: 'solo', license: 'tier2-private',
+          alt_text: 'Portrait of William Bailey Maxwell',
+          asserted_by: 'omen', asserted_at: '2026-05-17T00:00:00Z'
+        }];
+      }
+      $('sheet').family = fam;
+      $('status').textContent = 'Live from Postgres ✓';
+    } catch (e) {
+      $('status').textContent = 'Error: ' + e.message;
+    }
+  }
+  sel.addEventListener('change', refresh);
+  if (window.__maxgenReady) refresh();
+  else window.addEventListener('maxgen-ready', refresh);
 }
 
-const william = person({
-  person_id: "william-bailey-maxwell-1821",
-  name: "William Bailey Maxwell",
-  given_name: "William Bailey",
-  surname: "Maxwell",
-  birth: { year_min: 1821, year_max: 1821, month: 3, day: 14,
-           date_type: "exact",
-           place_as_written: "Shawneetown, Gallatin County, Illinois, USA" },
-  death: { year_min: 1895, year_max: 1895, month: 8, day: 26,
-           date_type: "exact",
-           place_as_written: "Mesa, Maricopa County, Arizona, USA" },
-  photo_url: "/family-photos/maxwell-william-bailey-1821/portrait_bauer_2009.jpg",
-  alt_text: "Black-and-white portrait of William Bailey Maxwell, a Mormon Battalion veteran"
-});
-// Add Richard + Ruth as parent_assertions to William so the sheet shows them
-william.parent_assertions = [
-  { parent_person_id: "richard-maxwell-1796", parent_name: "Richard Maxwell",
-    relationship_type: "biological", parent_role: "father",
-    confidence: 0.88, source_record_id: "fag-richard-1796",
-    asserted_by: "omen-pipeline-fag-handoff-2026-05-29", asserted_at: NOW },
-  { parent_person_id: "ruth-hodge-1800", parent_name: "Ruth Hodge Barnett",
-    relationship_type: "biological", parent_role: "mother",
-    confidence: 0.88, source_record_id: "fag-ruth-hodge-1800",
-    asserted_by: "omen-pipeline-fag-handoff-2026-05-29", asserted_at: NOW },
-];
-
-const lucretia = person({
-  person_id: "lucretia-charlotte-bracken-1823",
-  name: "Lucretia Charlotte Bracken",
-  given_name: "Lucretia Charlotte",
-  surname: "Bracken",
-  birth: { year_min: 1823, year_max: 1823, date_type: "exact",
-           place_as_written: "Illinois, USA" },
-  death: { year_min: 1893, year_max: 1893, date_type: "exact" }
-});
-
-const marriage = {
-  year_min: 1840, year_max: 1840, month: 11, day: 26,
-  date_type: "exact",
-  place_as_written: "Shawneetown, Gallatin County, Illinois",
-  confidence: PRIMARY_CONF
-};
-
-// Children — sourced from FAG memorial 47043357 sibling list (James 1843's siblings)
-const childData = [
-  { id: "james-bailey-maxwell-1843", name: "James Bailey Maxwell",
-    birth: { year_min: 1843, year_max: 1843, month: 8, day: 30, date_type: "exact" },
-    death: { year_min: 1876, year_max: 1876, month: 7, day: 16, date_type: "exact" },
-    note: "Garlon's line" },
-  { id: "ruth-maxwell-1845", name: "Ruth Maxwell",
-    birth: { year_min: 1845, year_max: 1845, date_type: "exact" },
-    death: { year_min: 1845, year_max: 1845, date_type: "exact" } },
-  { id: "john-maxwell-1851", name: "John Maxwell",
-    birth: { year_min: 1851, year_max: 1851, date_type: "exact" },
-    death: { year_min: 1899, year_max: 1899, date_type: "exact" } },
-  { id: "imogene-maxwell-1861", name: "Imogene Maxwell",
-    birth: { year_min: 1861, year_max: 1861, date_type: "exact" },
-    death: { year_min: 1868, year_max: 1868, date_type: "exact" } },
-  { id: "charlotte-martha-maxwell-1862", name: "Charlotte Martha Maxwell Webb",
-    birth: { year_min: 1862, year_max: 1862, date_type: "exact" },
-    death: { year_min: 1943, year_max: 1943, date_type: "exact" } },
-  { id: "franklin-bailey-maxwell-1876", name: "Franklin Bailey Maxwell",
-    birth: { year_min: 1876, year_max: 1876, date_type: "exact" },
-    death: { year_min: 1932, year_max: 1932, date_type: "exact" } },
-];
-
-const children = childData.map(c => person({
-  person_id: c.id,
-  name: c.name,
-  given_name: c.name.split(' ').slice(0, -1).join(' '),
-  surname: "Maxwell",
-  birth: c.birth,
-  death: c.death
-}));
-
-const family = {
-  husband: william,
-  wife: lucretia,
-  marriage,
-  children
-};
-
-window.addEventListener('maxgen-ready', () => {
-  document.getElementById('sheet').family = family;
-});
-// In case the script loaded before this inline ran:
-if (window.__maxgenReady) {
-  document.getElementById('sheet').family = family;
-}
+init().catch(e => { $('status').textContent = 'Init failed: ' + e.message; });
 </script>
 </body>
 </html>

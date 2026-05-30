@@ -1120,6 +1120,112 @@ def api_pedigree(person_id):
         except: pass
 
 
+@app.route("/api/family-group-sheet/<person_id>")
+def api_family_group_sheet(person_id):
+    """Returns {husband, wife, children, marriage} for the family this
+    person is in. If person_id is the husband or wife, the OTHER spouse is
+    resolved by finding children where person_id == father_id or mother_id
+    and the other parent is consistent.
+    """
+    try:
+        conn = _pg_conn()
+        cur = conn.cursor()
+
+        def fetch_one(pid):
+            cur.execute("""
+                SELECT person_id, display_name, surname, given_names,
+                       birth_year_min, birth_year_max, birth_place,
+                       death_year_min, death_year_max, death_place,
+                       is_living_flag, father_id, mother_id
+                FROM persons WHERE person_id = %s
+            """, (pid,))
+            row = cur.fetchone()
+            if not row: return None
+            cols = [d[0] for d in cur.description]
+            return _person_row_to_dict(row, cols)
+
+        subject = fetch_one(person_id)
+        if not subject:
+            return jsonify({"error": "subject not found"}), 404
+
+        # Find a co-parent: look at children where this person is one parent
+        cur.execute("""
+            SELECT DISTINCT
+              CASE WHEN father_id = %s THEN mother_id ELSE father_id END AS other_parent
+            FROM persons
+            WHERE (father_id = %s OR mother_id = %s)
+              AND CASE WHEN father_id = %s THEN mother_id ELSE father_id END IS NOT NULL
+        """, (person_id, person_id, person_id, person_id))
+        other = cur.fetchone()
+        other_id = str(other[0]) if other else None
+        co_parent = fetch_one(other_id) if other_id else None
+
+        # Identify husband / wife — husband is the one whose surname is
+        # most likely the unchanged family name; fall back to person_id's
+        # father_role check.
+        # Heuristic: if subject is a father in any row, subject = husband.
+        cur.execute("SELECT 1 FROM persons WHERE father_id = %s LIMIT 1", (person_id,))
+        subject_is_father = cur.fetchone() is not None
+        husband, wife = (subject, co_parent) if subject_is_father else (co_parent, subject)
+
+        # Children: anyone whose father_id matches OR (when both spouses known)
+        # both parents match. Keep the query simple to avoid type inference issues.
+        hid = (husband or {}).get("person_id")
+        wid = (wife or {}).get("person_id")
+        if hid and wid:
+            cur.execute("""
+                SELECT person_id, display_name, surname, given_names,
+                       birth_year_min, birth_year_max, birth_place,
+                       death_year_min, death_year_max, death_place,
+                       is_living_flag, father_id, mother_id
+                FROM persons
+                WHERE (father_id = %s AND mother_id = %s)
+                   OR (father_id = %s AND mother_id IS NULL)
+                   OR (mother_id = %s AND father_id IS NULL)
+                ORDER BY COALESCE(birth_year_min, 9999)
+            """, (hid, wid, hid, wid))
+        elif hid:
+            cur.execute("""
+                SELECT person_id, display_name, surname, given_names,
+                       birth_year_min, birth_year_max, birth_place,
+                       death_year_min, death_year_max, death_place,
+                       is_living_flag, father_id, mother_id
+                FROM persons
+                WHERE father_id = %s
+                ORDER BY COALESCE(birth_year_min, 9999)
+            """, (hid,))
+        elif wid:
+            cur.execute("""
+                SELECT person_id, display_name, surname, given_names,
+                       birth_year_min, birth_year_max, birth_place,
+                       death_year_min, death_year_max, death_place,
+                       is_living_flag, father_id, mother_id
+                FROM persons
+                WHERE mother_id = %s
+                ORDER BY COALESCE(birth_year_min, 9999)
+            """, (wid,))
+        else:
+            children = []
+            return jsonify({
+                "husband": _person_to_maxperson(husband) if husband else None,
+                "wife":    _person_to_maxperson(wife) if wife else None,
+                "marriage": None,
+                "children": children,
+            })
+        cols = [d[0] for d in cur.description]
+        children = [_person_to_maxperson(_person_row_to_dict(r, cols)) for r in cur.fetchall()]
+
+        return jsonify({
+            "husband": _person_to_maxperson(husband) if husband else None,
+            "wife":    _person_to_maxperson(wife) if wife else None,
+            "marriage": None,   # placeholder — marriage_events not in mirror yet
+            "children": children,
+        })
+    finally:
+        try: conn.close()
+        except: pass
+
+
 @app.route("/api/persons")
 def api_persons_list():
     """List persons (for picker dropdowns and dashboards)."""
