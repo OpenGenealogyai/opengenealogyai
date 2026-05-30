@@ -7,7 +7,7 @@
 // confidence is high, thin where it tapers off — the standard's promise
 // made visible.
 
-import { html, css, svg } from 'https://esm.sh/lit@3';
+import { html, css } from 'https://esm.sh/lit@3';
 import { MaxgenElement, defineOnce } from './_base.js';
 
 class MaxgenLogo extends MaxgenElement {
@@ -57,32 +57,15 @@ class MaxgenLogo extends MaxgenElement {
   `];
 
   _renderMark(sz = 36) {
-    // The logo mark: a gold arc + a stylized O (the standard's "first ancestor" suggestion)
-    const c = sz / 2;
-    return svg`
-      <svg class="mark" width="${sz}" height="${sz}" viewBox="0 0 36 36" aria-hidden="true">
-        <defs>
-          <linearGradient id="maxgenArc" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#d4a843"/>
-            <stop offset="55%" stop-color="#c19233"/>
-            <stop offset="100%" stop-color="#a17822"/>
-          </linearGradient>
-        </defs>
-        <!-- inner serif "O" suggestion -->
-        <circle cx="18" cy="20" r="10"
-                fill="none"
-                stroke="${this.invert ? '#f7f4ee' : '#1a1209'}"
-                stroke-width="2.2"/>
-        <!-- the confidence-arc, thickness tapers along its length -->
-        <path d="M 4 14 Q 18 -2 32 14"
-              fill="none"
-              stroke="url(#maxgenArc)"
-              stroke-width="3.4"
-              stroke-linecap="round"/>
-        <!-- a small gold node at the arc's peak — confidence anchor -->
-        <circle cx="18" cy="5" r="2.2" fill="#d4a843"/>
-      </svg>
-    `;
+    // The official OpenGenealogyAI star-tree logo: a radiant central star
+    // (the root of a family line) with gold branches reaching upward through
+    // tiers of smaller stars (the ancestors). Sourced from docs/images/logo.svg.
+    // For dark headers, use the transparent variant (no black background).
+    const src = this.invert ? '/static/logo-transparent.svg' : '/static/logo.svg';
+    return html`<img class="mark" src="${src}"
+                     width="${Math.round(sz * 1.6)}" height="${sz}"
+                     alt="OpenGenealogyAI star-tree logo"
+                     style="object-fit: contain;">`;
   }
 
   render() {
