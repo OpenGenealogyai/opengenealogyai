@@ -5,7 +5,8 @@
 <title>Components — OpenGenealogyAI</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
 <style>
-  body { background: var(--paper); color: var(--ink); font-family: Georgia, serif; padding: 32px; margin: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: Georgia, serif; margin: 0; }
+  main { padding: 32px; }
   h1 { font-size: var(--text-xl); margin-bottom: 4px; }
   h2 { font-family: var(--font-body); font-size: var(--text-lg); margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
   .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
@@ -16,7 +17,10 @@
 </head>
 <body>
 
-<h1>OpenGenealogyAI — Components</h1>
+<maxgen-header page-title="Component storybook"></maxgen-header>
+
+<main>
+<h1>Components</h1>
 <div class="sub">Storybook-lite. Every <code>&lt;maxgen-*&gt;</code> rendered with example data.</div>
 
 <h2>maxgen-confidence-chip</h2>
@@ -126,6 +130,7 @@
   </p>
 </div>
 
+</main>
 <script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
 <script>
 function _setDemoData() {

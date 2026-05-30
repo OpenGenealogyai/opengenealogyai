@@ -29,7 +29,10 @@
 </head>
 <body>
 
-<h1>OpenGenealogyAI — Design Tokens</h1>
+<maxgen-header page-title="Design tokens"></maxgen-header>
+
+<main style="padding:32px;">
+<h1>Design Tokens</h1>
 <div class="sub">Source of truth: <code>portal/static/css/tokens.css</code>. Every component imports from here.</div>
 
 <h2>Base palette</h2>
@@ -81,5 +84,7 @@
   <div class="b" style="width:var(--space-8);height:32px"></div>
 </div>
 
+</main>
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
 </body>
 </html>
