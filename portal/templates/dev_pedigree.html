@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedigree — Garlon Maxwell's Patriline</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+<style>
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+  header.bar { background: var(--ink); color: var(--paper); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header.bar a { color: var(--gold); text-decoration: none; font-family: var(--font-ui); font-size: var(--text-sm); }
+  header.bar .title { font-family: var(--font-body); font-size: var(--text-md); letter-spacing: 0.04em; }
+  main { padding: 32px 24px 64px; max-width: 1400px; margin: 0 auto; }
+  .demo-note {
+    margin: 0 0 16px;
+    padding: 10px 16px;
+    background: rgba(212, 168, 67, 0.12);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+  }
+  h1 { font-family: var(--font-body); font-size: var(--text-lg); margin: 8px 0 16px; }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span class="title">OpenGenealogyAI · Pedigree</span>
+  <a href="/dev/person">→ Person profile</a>
+</header>
+
+<main>
+  <h1>William Bailey Maxwell — 4 generations back to Scotland</h1>
+  <div class="demo-note">
+    <strong>Live demo</strong> — Real patriline from <code>D:\AI\Companies\open-genealogical-ai\family_tree\</code>.
+    Subject at left (William Bailey Maxwell, 1821, Garlon's gg-grandfather). Three
+    generations of ancestors branch right, ending at William Maxwell (1740, the
+    Scottish immigrant). His father is unknown — see the
+    <strong>"4 possibilities" expander</strong> at the top-right. Drag to pan. Buttons to zoom.
+  </div>
+
+  <maxgen-pedigree-chart id="ped" generations="5"></maxgen-pedigree-chart>
+</main>
+
+<script type="module" src="{{ url_for('static', filename='components/index.js') }}"></script>
+<script>
+const NOW = "2026-05-17T00:00:00Z";
+function mkP(opts) {
+  const p = {
+    person_id: opts.id, schema_version: "1.4", is_living: false,
+    composite_confidence: opts.conf || 0.85,
+    name_assertions: [{ name_as_written: opts.name, given_name: opts.given || opts.name.split(' ')[0],
+                        surname: opts.surname || "Maxwell", name_type: "birth",
+                        confidence: opts.conf || 0.85, source_record_id: "fag-" + opts.id,
+                        asserted_by: "omen-pipeline", asserted_at: NOW }],
+    birth_assertions: opts.by ? [{
+      year_min: opts.by[0], year_max: opts.by[1] || opts.by[0],
+      month: opts.bm, day: opts.bd,
+      date_type: opts.bestimate ? "estimated" : "exact",
+      place_as_written: opts.bp,
+      confidence: opts.conf || 0.85, source_record_id: "fag-" + opts.id,
+      asserted_by: "omen-pipeline", asserted_at: NOW
+    }] : [],
+    death_assertions: opts.dy ? [{
+      year_min: opts.dy[0], year_max: opts.dy[1] || opts.dy[0],
+      date_type: "exact",
+      confidence: opts.conf || 0.85, source_record_id: "fag-" + opts.id,
+      asserted_by: "omen-pipeline", asserted_at: NOW
+    }] : [],
+    asserted_by: "omen-pipeline", asserted_at: NOW
+  };
+  if (opts.photo) {
+    p.photo_assertions = [{ photo_id:"ph-"+opts.id, url:opts.photo, storage_tier:"local_private",
+                            is_primary:true, confidence:0.85, subject_role:"solo",
+                            license:"tier2-private", alt_text:`Portrait of ${opts.name}`,
+                            asserted_by:"omen-pipeline", asserted_at:NOW }];
+  }
+  return p;
+}
+
+// Garlon's documented patriline + their known wives
+const horace = mkP({id:"horace-w-maxwell-1898", name:"Horace William Maxwell", given:"Horace William", by:[1898], bm:8, bd:27, bp:"Glendale, Utah", dy:[1980], conf:0.95});
+const ivyCox = mkP({id:"ivy-cox-1903", name:"Ivy/Ive Cox", given:"Ivy", surname:"Cox", by:[1903], bestimate:true, conf:0.80});
+const james1870 = mkP({id:"james-bailey-maxwell-1870", name:"James Bailey Maxwell (Jr.)", given:"James Bailey", by:[1870], bm:6, bd:23, bp:"Lincoln County, Nevada", dy:[1942], conf:0.92});
+const elizabethAnderson = mkP({id:"elizabeth-anderson-1871", name:"Elizabeth Carpenter Anderson", given:"Elizabeth Carpenter", surname:"Anderson", by:[1871], dy:[1964], conf:0.85});
+const james1843 = mkP({id:"james-bailey-maxwell-1843", name:"James Bailey Maxwell", given:"James Bailey", by:[1843], bm:8, bd:30, bp:"Lee County, Iowa", dy:[1876], conf:0.95});
+const elizDeGraw = mkP({id:"elizabeth-degraw-1847", name:"Elizabeth Rebecca DeGraw", given:"Elizabeth Rebecca", surname:"DeGraw", by:[1847], dy:[1881], conf:0.82});
+const williamBailey = mkP({id:"william-bailey-maxwell-1821", name:"William Bailey Maxwell", given:"William Bailey", by:[1821], bm:3, bd:14, bp:"Shawneetown, IL", dy:[1895], conf:0.95, photo:"/family-photos/maxwell-william-bailey-1821/portrait_bauer_2009.jpg"});
+const lucretia = mkP({id:"lucretia-bracken-1823", name:"Lucretia Charlotte Bracken", given:"Lucretia Charlotte", surname:"Bracken", by:[1823], dy:[1893], conf:0.85});
+const richard1796 = mkP({id:"richard-maxwell-1796", name:"Richard Maxwell", given:"Richard", by:[1796], dy:[1821], bp:"Shawneetown, IL", conf:0.90});
+const ruthHodge = mkP({id:"ruth-hodge-1800", name:"Ruth Hodge Barnett", given:"Ruth", surname:"Hodge Barnett", by:[1800], dy:[1875], conf:0.82});
+const richard1774 = mkP({id:"richard-maxwell-1774", name:"Richard Maxwell", given:"Richard", by:[1774], dy:[1845], bp:"Bourbon Co. KY", conf:0.88});
+const jenetPurviance = mkP({id:"jennette-purviance-1776", name:"Jennette Purviance", given:"Jennette", surname:"Purviance", by:[1776], dy:[1798], conf:0.70});
+const william1740 = mkP({id:"william-maxwell-1740", name:"William Maxwell (the immigrant)", given:"William", by:[1740], bm:12, bd:8, bp:"Scotland", dy:[1810], conf:0.85});
+const elizMcCutcheon = mkP({id:"elizabeth-mccutcheon-d1839", name:"Elizabeth McCutcheon", given:"Elizabeth", surname:"McCutcheon", dy:[1839], conf:0.75});
+
+// Candidate fathers for William 1740 — the real dead-end at the top of the line
+const williamFatherCandidates = [
+  { name: "Joseph Maxwell of Augusta Co.", birth:{year_min:1710,year_max:1715,date_type:"estimated"}, confidence:0.42, reasoning:"Scottish immigrant to Augusta County VA, right generation.", source:{label:"FamilySearch Scotland", url:"#", kind:"other"} },
+  { name: "William Maxwell, Sr.", birth:{year_min:1705,year_max:1710,date_type:"estimated"}, confidence:0.38, reasoning:"Naming convention match. Indiana frontier.", source:{label:"USGenWeb Indiana", url:"#", kind:"other"} },
+  { name: "John Maxwell of Bourbon Co.", birth:{year_min:1715,year_max:1720,date_type:"estimated"}, confidence:0.28, reasoning:"Bourbon County KY Maxwells by 1770s; geographic match.", source:{label:"Bourbon Co. records", url:"#", kind:"other"} },
+  { name: "Andrew Maxwell of Ulster", birth:{year_min:1700,year_max:1715,date_type:"estimated"}, confidence:0.18, reasoning:"Possible Ulster emigrant; Scots-Irish migration.", source:{label:"Ulster emigration index", url:"#", kind:"other"} },
+];
+
+// Pedigree structure — William Bailey as subject (4 gens shows the Scotland
+// dead-end with the 10-possibilities expander at the top of the line).
+const pedigree = {
+  person: williamBailey,
+  father: {
+    person: richard1796,
+    father: {
+      person: richard1774,
+      father: { person: william1740, fatherPossibilities: williamFatherCandidates },
+      mother: { person: jenetPurviance }
+    },
+    mother: { person: ruthHodge }
+  },
+  mother: { person: lucretia }
+};
+
+function setPed() {
+  document.getElementById('ped').pedigree = pedigree;
+}
+if (window.__maxgenReady) setPed();
+else window.addEventListener('maxgen-ready', setPed);
+</script>
+</body>
+</html>

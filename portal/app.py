@@ -935,6 +935,12 @@ def dev_person():
     return render_template("dev_person_profile.html")
 
 
+@app.route("/dev/pedigree")
+def dev_pedigree():
+    """Live demo: Garlon's full Maxwell patriline back to Scotland (5 generations)."""
+    return render_template("dev_pedigree.html")
+
+
 # ── run ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     init_db()
