@@ -27,6 +27,55 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.4 addendum — 2026-06-02 (NO schema version bump)
+
+**Theme:** Migration / life-event storage clarified, and a biography convention.
+This is a **documentation + infrastructure** release. The JSON Schema files did
+**not** change — everything here uses fields that already exist. No `schema_version`
+bump; no Human Gate. Approved by three-brain council (operator: PROCEED WITH
+CAUTION — gate the public commit by diff-inspection).
+
+### Migration & life events live in `event_assertions[]` — do NOT add a `vital_events` table
+A contributor session proposed a new flat `vital_events` table for
+migration/residence data. **Rejected — it would fork the standard.** The canonical
+home already exists: `MaxPerson.event_assertions[]` (since v1.3), whose `event_type`
+enum already covers `immigration`, `emigration`, `naturalization`, `residence`,
+`census_enumeration`, `land_grant`, `military_service`, `will`, `probate`, `burial`,
+etc. A person's migration story = an ordered set of these assertions, each with its
+own `year_min/max`, `place_as_written`, `description` (the narrative), `confidence`,
+and `source_record_id`.
+
+Places whose name/jurisdiction changed over time (e.g. "Kentucky County, Virginia"
+→ "Bourbon County, KY" after 1786) are represented in `place_registry[]` via
+`historical_polity` + `valid_from_year`/`valid_to_year` + lat/long — something a
+flat events table cannot express. The enum maps 1:1 to GEDCOM tags
+(RESI/EMIG/IMMI/CENS/NATU/PROB/WILL/MILI), preserving round-trip.
+
+**Mapping for anyone migrating a `vital_events`-style table:**
+`event_type`→`event_type` · `event_date`/`event_year`/`±tol`→`year_min`+`year_max`+`month`+`day`+`date_type` · `event_place`→`place_as_written` · `source_*`→`source_record_id` · `confidence`→`confidence` · `notes`→`description`.
+
+### `bio_summary` — a per-person hover biography (via `extensions`, not a core field)
+A short prose biography shown on profile/hover. Stored as **`extensions.bio_summary`**
+(string) plus **`extensions.bio_summary_ai_generated`** (boolean — a biography is
+narrative, not a sourced assertion, so we mark machine-written ones). Uses the
+`extensions{}` open namespace (added v1.3) by design: no schema bump, no Human Gate.
+Promote to a first-class `biography_assertions[]` in a future version if it proves out.
+
+### Postgres / portal mirror — migration `002_events_places.sql`
+Added additive mirror tables backing the two JSON fields above:
+- `person_events` — mirror of `event_assertions[]` (FK → `persons`, `ON DELETE CASCADE`).
+- `place_registry` — mirror of `place_registry[]` (historical polity + valid years + lat/long).
+- Portal SQLite `persons` gains `bio_summary` + `bio_summary_ai_generated` columns.
+JSON MaxPerson remains the source of truth; mirrors exist for JOINs, sorting, and the
+portal Life-Story / Migration views.
+
+### Privacy / repo invariant (reaffirmed)
+Family-tree **data rows are never committed to the public GitHub repo** — only schemas,
+docs, and migration scripts. Living people (`is_living = TRUE` ⇔ `tier2-private`) never
+appear in public commits, indexes, or embeddings.
+
+---
+
 ## v1.4 — 2026-05-17
 
 **Theme:** Photos as a first-class field. A face transforms genealogy from data
