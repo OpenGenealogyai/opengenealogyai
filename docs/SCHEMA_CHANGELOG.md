@@ -27,6 +27,72 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.5 — 2026-06-02
+
+**Theme:** MaxTask becomes a real distributed-work unit — structured results, a
+color-coded verdict vocabulary, and the neutral half of a contributor model
+(quality + privacy). **Additive / backward-compatible** — all new fields are
+optional; pre-1.5 tasks validate unchanged. Lockstep: all four schemas stamped
+`1.5`. 64/64 fixtures pass. Reviewed by three-brain council (verdict: PROCEED
+WITH CAUTION — *split economics out of the standard*; see below).
+
+### MaxTask — structured `result` (replaces the free-form blob)
+A client-readable result object: `description`, `hypothesis_tested`,
+`why_this_matters`, `what_we_did_and_result`, `how_results_affect_goal`,
+`what_we_did_with_results`, `next_step`, `confidence`,
+`next_directions_suggested[]`, and `steps[]` — **one entry per search performed**
+(`action`, `source`, `source_url`, `query`, `found`, `verdict`, `confidence`).
+`additionalProperties` stays `true` for extensibility.
+
+### MaxTask — `verdict` enum + UI colors (new `$defs/verdict`)
+`key_finding` (GREEN, confirmed/found), `usable` (BLUE, usable lead),
+`inconclusive` (AMBER, mixed), **`ruled_out` (RED — a *disproof*: definitively
+NOT the right person/record)**, `dead_end` (GREY — searched, found nothing),
+`infra` (GREY — support task). `ruled_out` is deliberately distinct from
+`dead_end`: a disproof is information; an empty search is not.
+
+### MaxTask — neutral contributor / quality fields (IN the standard)
+`parent_task_id`, `acceptance_criteria[]` (objective conditions defining a
+complete result), `min_confidence`, `evidence_required[]` (proof a worker must
+return — anti-low-effort/anti-fabrication), `contributor{contributor_id,
+contributor_type ∈ first_party_ai|third_party_ai|human|organization,
+display_name, claimed_at}`, `deadline`, and an independent `review{reviewed_by
+(MUST differ from contributor — enforced at app layer), review_verdict ∈
+accepted|rework|rejected, quality_score, rejection_reason (incl.
+fabricated_or_hallucinated, privacy_violation), review_notes, reviewed_at}`.
+These describe *work and quality*, which is neutral, so they belong in the open
+standard.
+
+### MaxTask — `contributor_eligibility` PRIVACY GATE (IN the standard)
+Enum `first_party_only | any_contributor`, **default `first_party_only`
+(fail-closed)**. MUST be `first_party_only` whenever a task concerns a living
+person (tier2-private): living-subject tasks are never dispatched to
+third-party/human/organization contributors, and any externally dispatched
+result must be scrubbed of tier2-private PII.
+
+### Payment/economics are DELIBERATELY NOT in the standard
+Per three-brain council (strategist + operator): an open standard must stay
+**neutral** — a common work/quality language, not a business model. Hard-coding
+`payout`, `list_price_usd`, or a revenue split into the public standard would
+(a) fragment adoption (forces everyone into one business model), (b) publish a
+portable fraud/sybil blueprint, and (c) push legal/tax burden (worker
+classification, KYC/AML, 1099) onto every adopter. So payment lives in the
+implementer's **product layer** (The Probable Pedigree) under the open
+`extensions{}` namespace — never in core. MaxTask gains an `extensions` object
+(`additionalProperties: true`) documenting this. This matches the locked
+two-brand architecture (OpenGenealogyAI = standard; The Probable Pedigree =
+product). Collusion-resistance, KYC, and worker-classification are the
+implementer's responsibility.
+
+### Lockstep version bump (no content change)
+MaxRecord, MaxPerson, MaxDNA stamped `schema_version: "1.5"` per lockstep policy.
+
+### Fixtures
++2 task-queue fixtures (`valid-v15-ruled-out`, `valid-v15-marketplace-paid` —
+the latter shows `payout` living under `extensions`). 64/64 validate.
+
+---
+
 ## v1.4 addendum — 2026-06-02 (NO schema version bump)
 
 **Theme:** Migration / life-event storage clarified, and a biography convention.

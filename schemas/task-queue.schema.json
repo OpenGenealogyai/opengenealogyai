@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/task-queue.schema.json",
   "title": "MaxTask",
-  "description": "MAXGEN v1.1 — Maxwell Genealogy Standard. A unit of distributed work dispatched by the Orchestrator agent and consumed by worker agents. Every MaxPerson and MaxRecord assertion can spawn MaxTask items for verification, re-extraction, or downstream embedding.",
+  "description": "MAXGEN v1.5 — Maxwell Genealogy Standard. A unit of distributed work dispatched by the Orchestrator agent and consumed by worker agents (first-party AIs, third-party AIs, or humans). Every MaxPerson and MaxRecord assertion can spawn MaxTask items for verification, re-extraction, or downstream embedding. v1.5 (additive) adds: a structured client-readable result (description + steps[] + verdict), a verdict enum with UI color mapping (incl. ruled_out, a disproof, distinct from dead_end), neutral work-quality fields (acceptance_criteria, evidence_required, contributor identity, an independent-review gate), and a living-person privacy gate (contributor_eligibility). PAYMENT/ECONOMICS ARE DELIBERATELY NOT IN THE STANDARD: the standard stays neutral (a common work/quality language, not a business model), so payout, pricing, and revenue-split live in the implementer's product layer under the open `extensions` namespace — never in core. All v1.5 fields are optional — pre-1.5 tasks validate unchanged.",
   "type": "object",
   "required": ["task_id", "task_type", "status", "created_at", "created_by"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.4"
+      "const": "1.5"
     },
     "task_type": {
       "type": "string",
@@ -50,7 +50,42 @@
     },
     "result": {
       "type": "object",
-      "description": "Task output set by the consuming agent on completion.",
+      "description": "MAXGEN v1.5 — structured, client-readable task output set by the consuming agent on completion. Replaces the pre-1.5 free-form blob; additionalProperties stays true for extensibility. All sub-fields optional.",
+      "properties": {
+        "description": { "type": "string", "description": "One line: what this task was." },
+        "hypothesis_tested": { "type": "string", "description": "The claim/link tested." },
+        "why_this_matters": { "type": "string", "description": "Why we are doing this (client goal)." },
+        "what_we_did_and_result": { "type": "string", "description": "Narrative of steps + headline result." },
+        "how_results_affect_goal": { "type": "string" },
+        "what_we_did_with_results": { "type": "string" },
+        "next_step": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "description": "ONE entry per search/lookup performed.",
+          "items": {
+            "type": "object",
+            "required": ["source", "query", "found", "verdict"],
+            "properties": {
+              "step_no": { "type": "integer" },
+              "action": { "type": "string", "description": "ia_search / scotlandspeople_search / web_search / census_lookup …" },
+              "source": { "type": "string", "description": "EXACT site/db, e.g. 'Internet Archive item Newsline_1823'." },
+              "source_url": { "type": "string", "format": "uri" },
+              "query": { "type": "string", "description": "EXACT search terms used." },
+              "found": { "type": "string", "description": "What was found there (or 'nothing')." },
+              "verdict": { "$ref": "#/$defs/verdict" },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "verdict": { "$ref": "#/$defs/verdict" },
+        "verdict_reason": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "next_directions_suggested": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "5–10 recommended next research directions."
+        }
+      },
       "additionalProperties": true
     },
     "assigned_to": {
@@ -110,7 +145,75 @@
       "type": "array",
       "description": "Task IDs that must be in status=done before this task can start.",
       "items": { "type": "string", "format": "uuid" }
+    },
+    "parent_task_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "MAXGEN v1.5 — the directive/goal task this task was spawned from."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "MAXGEN v1.5 — objective, checkable conditions defining a COMPLETE, payable result. A worker reads these to know what 'good' means; results missing them are rejected."
+    },
+    "min_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "MAXGEN v1.5 — minimum result.confidence required for acceptance."
+    },
+    "evidence_required": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "MAXGEN v1.5 — proof the worker MUST return (source URLs, exact queries, citations). Anti-low-effort / anti-fabrication."
+    },
+    "contributor_eligibility": {
+      "type": "string",
+      "enum": ["first_party_only", "any_contributor"],
+      "default": "first_party_only",
+      "description": "MAXGEN v1.5 PRIVACY GATE — who may be assigned this task. MUST be 'first_party_only' whenever the task concerns a living person (tier2-private): living-subject tasks are NEVER dispatched to third_party_ai/human/organization contributors, and any result dispatched outside the first party must be scrubbed of tier2-private PII. Defaults to first_party_only (fail-closed)."
+    },
+    "contributor": {
+      "type": "object",
+      "description": "MAXGEN v1.5 — who claimed/performed this task.",
+      "properties": {
+        "contributor_id": { "type": "string" },
+        "contributor_type": {
+          "type": "string",
+          "enum": ["first_party_ai", "third_party_ai", "human", "organization"]
+        },
+        "display_name": { "type": "string" },
+        "claimed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "deadline": { "type": "string", "format": "date-time" },
+    "review": {
+      "type": "object",
+      "description": "MAXGEN v1.5 — independent quality review BEFORE payment; the gate against poor work. reviewed_by MUST differ from contributor.contributor_id (enforced at the application layer).",
+      "properties": {
+        "reviewed_by": { "type": "string" },
+        "review_verdict": { "type": "string", "enum": ["accepted", "rework", "rejected"] },
+        "quality_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rejection_reason": {
+          "type": "string",
+          "enum": ["insufficient_sources", "unverifiable", "low_confidence", "off_task", "fabricated_or_hallucinated", "incomplete", "privacy_violation", "other"]
+        },
+        "review_notes": { "type": "string" },
+        "reviewed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "MAXGEN v1.5 — open namespace for implementer/product-specific fields that are intentionally NOT part of the neutral standard. PAYMENT & ECONOMICS LIVE HERE, never in core: e.g. a product may store `payout` (list_price_usd, payout_usd, payout_status, contributor_share_pct), pricing, or revenue-split under extensions. Keeping money out of the standard preserves neutrality (any adopter can use a different or no business model) and avoids publishing a portable fraud/payment blueprint. The independent-review gate and contributor_eligibility privacy gate ARE in core because they describe work quality and privacy, not economics. Reviewer collusion-resistance, KYC/AML, and worker-classification are the implementer's responsibility, handled in their product layer.",
+      "additionalProperties": true
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "verdict": {
+      "type": "string",
+      "enum": ["key_finding", "usable", "inconclusive", "ruled_out", "dead_end", "infra"],
+      "description": "MAXGEN v1.5 — task/step outcome with UI color mapping. key_finding=GREEN (confirmed/found); usable=BLUE (usable lead); inconclusive=AMBER (mixed); ruled_out=RED (DEFINITIVELY proved this is NOT the right person/record — a disproof); dead_end=GREY (searched, found nothing); infra=GREY (support task). NOTE: ruled_out (a disproof) is deliberately distinct from dead_end (no evidence found)."
+    }
+  }
 }

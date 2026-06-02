@@ -1,6 +1,6 @@
 {
   "person_id": "b1000000-0002-4000-8000-000000000002",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "is_living": false,
   "composite_confidence": 0.71,
   "name_assertions": [

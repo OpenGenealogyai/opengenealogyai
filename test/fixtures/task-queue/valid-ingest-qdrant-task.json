@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0008-4000-8000-000000000008",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "task_type": "ingest_to_qdrant",
   "status": "done",
   "priority": 4,

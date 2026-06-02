@@ -1,0 +1,77 @@
+{
+  "task_id": "d1500000-0002-4000-8000-000000000002",
+  "schema_version": "1.5",
+  "task_type": "other",
+  "status": "done",
+  "priority": 7,
+  "parent_task_id": "d1500000-0000-4000-8000-000000000000",
+  "payload": {
+    "subject": "Elizabeth McCutcheon b. ~1748 Scotland",
+    "directive": "Find a primary source confirming Elizabeth McCutcheon's marriage to William Maxwell b.1740."
+  },
+  "acceptance_criteria": [
+    "At least one primary or secondary source naming both spouses",
+    "Exact source citation with a resolvable URL",
+    "result.confidence >= 0.6"
+  ],
+  "min_confidence": 0.6,
+  "evidence_required": ["source_url", "exact_query_used", "transcribed_record_text"],
+  "contributor_eligibility": "any_contributor",
+  "contributor": {
+    "contributor_id": "ext-ai-claude-genie-7741",
+    "contributor_type": "third_party_ai",
+    "display_name": "GenieResearch (third-party AI)",
+    "claimed_at": "2026-06-02T15:00:00Z"
+  },
+  "deadline": "2026-06-09T00:00:00Z",
+  "result": {
+    "description": "Locate a marriage record for William Maxwell (b.1740) and Elizabeth McCutcheon.",
+    "hypothesis_tested": "William Maxwell b.1740 married Elizabeth McCutcheon.",
+    "why_this_matters": "Confirms the maternal surname entering the Maxwell line for the client's pedigree.",
+    "what_we_did_and_result": "Searched ScotlandsPeople OPR marriages for Kirkcudbrightshire 1760-1772 and found a 1765 banns entry naming both parties.",
+    "how_results_affect_goal": "Confirms the McCutcheon connection at good confidence; the maternal line can be extended.",
+    "what_we_did_with_results": "Recorded a marriage event_assertion and a spouse_assertion with the OPR citation.",
+    "next_step": "Trace Elizabeth McCutcheon's parents in the same parish registers.",
+    "steps": [
+      {
+        "step_no": 1,
+        "action": "scotlandspeople_search",
+        "source": "ScotlandsPeople OPR Marriages 859 (Buittle)",
+        "source_url": "https://www.scotlandspeople.gov.uk/record-results?surname=Maxwell&event=M",
+        "query": "Maxwell McCutcheon marriage Buittle 1760..1772",
+        "found": "OPR banns 1765: William Maxwell & Elizabeth McCutcheon, parish of Buittle.",
+        "verdict": "key_finding",
+        "confidence": 0.74
+      }
+    ],
+    "verdict": "key_finding",
+    "verdict_reason": "Parish banns entry names both parties in the expected place and window.",
+    "confidence": 0.74,
+    "next_directions_suggested": [
+      "Search Buittle OPR births for Elizabeth McCutcheon's baptism",
+      "Look for a McCutcheon father in the 1750s parish records"
+    ]
+  },
+  "review": {
+    "reviewed_by": "qc-reviewer-opus-002",
+    "review_verdict": "accepted",
+    "quality_score": 0.88,
+    "review_notes": "Source resolves, query reproducible, both spouses named. Meets acceptance criteria.",
+    "reviewed_at": "2026-06-03T09:30:00Z"
+  },
+  "extensions": {
+    "payout": {
+      "list_price_usd": 1.00,
+      "payout_usd": 0.70,
+      "payout_status": "paid",
+      "contributor_share_pct": 70,
+      "_note": "Product-layer economics (The Probable Pedigree). NOT part of the neutral MAXGEN standard."
+    }
+  },
+  "cost_usd": 0.12,
+  "cost_cap_usd": 1.50,
+  "created_at": "2026-06-02T14:50:00Z",
+  "created_by": "orchestrator-agent-sonnet-001",
+  "started_at": "2026-06-02T15:00:00Z",
+  "completed_at": "2026-06-02T15:40:00Z"
+}

@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0005-4000-8000-000000000005",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "task_type": "build_tree",
   "status": "pending",
   "priority": 7,

@@ -1,6 +1,6 @@
 {
   "record_id": "a1b2c3d4-0013-4000-8000-000000000013",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "record_type": "tax_record",
   "redistribution_license": "public-domain",
   "is_living_flag": false,

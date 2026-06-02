@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0011-4000-8000-000000000011",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "task_type": "judge_review",
   "status": "pending",
   "priority": 10,

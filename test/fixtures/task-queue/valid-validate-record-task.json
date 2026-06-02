@@ -1,10 +1,10 @@
 {
   "task_id": "c1000000-0006-4000-8000-000000000006",
-  "schema_version": "1.4",
+  "schema_version": "1.5",
   "task_type": "validate_record",
   "status": "done",
   "priority": 6,
-  "payload": {"raw_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "schema_version": "1.4"},
+  "payload": {"raw_record_id": "a1b2c3d4-0001-4000-8000-000000000001", "schema_version": "1.5"},
   "result": {"valid": true, "errors": []},
   "assigned_to": "validator-agent-haiku-001",
   "cost_usd": 0.02,
