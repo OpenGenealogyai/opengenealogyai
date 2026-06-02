@@ -15,3 +15,24 @@ qdrant_data/
 # Generated assets
 logos/
 
+# ── Secrets & private data — NEVER publish to the public repo (added 2026-06-02) ──
+# Flask session secret
+*.secret_key
+data/.secret_key
+# Client database (user accounts + LIVING people — tier2-private) and any local DBs
+data/*.db
+data/portal.db
+# User-uploaded documents/photos
+user_uploads/
+data/user_uploads/
+# Bulk fetched person data (kept out of the standard repo; data lives in Postgres/E:)
+data/famous_people/*.json
+
+# ── Local runtime / session state (machine-specific, not for publishing) ──
+_logs/
+_session_locks/
+_session_notes/
+_throttle/
+_orchestrator/
+.claude/
+
