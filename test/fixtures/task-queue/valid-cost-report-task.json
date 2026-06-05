@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0010-4000-8000-000000000010",
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "task_type": "cost_report",
   "status": "done",
   "priority": 3,

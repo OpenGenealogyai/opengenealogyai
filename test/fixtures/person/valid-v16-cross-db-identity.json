@@ -1,0 +1,83 @@
+{
+  "person_id": "e1600000-0001-4000-8000-000000000001",
+  "schema_version": "1.6",
+  "is_living": false,
+  "composite_confidence": 0.83,
+  "name_assertions": [
+    {
+      "name_as_written": "William Maxwell",
+      "given_name": "William",
+      "surname": "Maxwell",
+      "name_type": "birth",
+      "confidence": 0.9,
+      "source_record_id": "a1600000-0001-4000-8000-000000000aaa",
+      "asserted_by": "ingest-agent-sonnet-001",
+      "asserted_at": "2026-06-02T18:00:00Z"
+    }
+  ],
+  "external_ids": {
+    "wikidata_qid": "Q0000000",
+    "familysearch_pid": "LZ12-345",
+    "wikitree_id": "Maxwell-1740",
+    "findagrave_id": "161271377"
+  },
+  "external_id_assertions": [
+    {
+      "system": "wikidata",
+      "external_id": "Q0000000",
+      "url": "https://www.wikidata.org/wiki/Q0000000",
+      "confidence": 0.9,
+      "match_method": "exact_id_from_source",
+      "match_signals": { "name_similarity": 1.0, "birth_year_overlap": true },
+      "status": "active",
+      "asserted_by": "ingest-agent-sonnet-001",
+      "asserted_at": "2026-06-02T18:00:00Z"
+    },
+    {
+      "system": "familysearch",
+      "external_id": "LZ12-345",
+      "url": "https://www.familysearch.org/tree/person/details/LZ12-345",
+      "confidence": 0.86,
+      "match_method": "hub_crosswalk",
+      "match_signals": { "wikidata_property": "P6577", "place_match": true },
+      "status": "active",
+      "asserted_by": "match-scorer-agent-001",
+      "asserted_at": "2026-06-02T18:05:00Z"
+    },
+    {
+      "system": "familysearch",
+      "external_id": "GZ99-XYZ",
+      "url": "https://www.familysearch.org/tree/person/details/GZ99-XYZ",
+      "confidence": 0.55,
+      "match_method": "probabilistic_match",
+      "match_signals": { "name_similarity": 0.93, "birth_year_overlap": true, "note": "likely a FamilySearch duplicate profile of the same William" },
+      "status": "active",
+      "asserted_by": "match-scorer-agent-001",
+      "asserted_at": "2026-06-02T18:06:00Z"
+    },
+    {
+      "system": "wikitree",
+      "external_id": "Maxwell-1740",
+      "url": "https://www.wikitree.com/wiki/Maxwell-1740",
+      "confidence": 0.8,
+      "match_method": "hub_crosswalk",
+      "match_signals": { "wikidata_property": "P2949", "shared_parents": true },
+      "status": "active",
+      "asserted_by": "match-scorer-agent-001",
+      "asserted_at": "2026-06-02T18:07:00Z"
+    },
+    {
+      "system": "ancestry",
+      "external_id": "tree-12345678:person-987654321",
+      "confidence": 0.4,
+      "match_method": "probabilistic_match",
+      "match_signals": { "name_similarity": 0.9, "birth_year_overlap": false, "note": "tree-scoped Ancestry id; birth year off by 6 — possible wrong-person conflation" },
+      "status": "disputed",
+      "asserted_by": "match-scorer-agent-001",
+      "asserted_at": "2026-06-02T18:08:00Z"
+    }
+  ],
+  "redistribution_license": "CC0",
+  "asserted_by": "ingest-agent-sonnet-001",
+  "asserted_at": "2026-06-02T18:00:00Z"
+}

@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0009-4000-8000-000000000009",
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "task_type": "extract_record",
   "status": "failed",
   "priority": 5,

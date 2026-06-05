@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://opengenealogyai.org/schemas/maxgen/v1/person.schema.json",
   "title": "MaxPerson",
-  "description": "MAXGEN v1.4 — Maxwell Genealogy Standard. A probabilistic individual identity synthesized from one or more MaxRecord source documents. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations. v1.4 adds photo_assertions[] (first-class portraits of the person — because a face transforms genealogy from data to story). v1.3 added: merge/dedup provenance (merge_history, duplicate_of, merge_status), event_assertions[], place_registry[], extensions object.",
+  "description": "MAXGEN v1.6 — Maxwell Genealogy Standard. A probabilistic individual identity (a CONCLUSION person) synthesized from one or more MaxRecord source documents and external-database personas. No assertion is ever overwritten; new evidence creates new assertions with confidence scores. Symmetric relationships (parent↔child, spouse↔spouse) require atomic bidirectional writes — see SYNC WARNING annotations. v1.6 adds external_id_assertions[] — scored, sourced, reversible cross-database identity links (persona→conclusion) so AI can merge the same person across FamilySearch, WikiTree, Ancestry, Wikidata, Find a Grave, etc. without forcing a single 'truth'. v1.4 added photo_assertions[]. v1.3 added: merge/dedup provenance (merge_history, duplicate_of, merge_status), event_assertions[], place_registry[], extensions object.",
   "type": "object",
   "required": ["person_id", "name_assertions", "asserted_by", "asserted_at"],
   "properties": {
@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.5",
+      "const": "1.6",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -222,8 +222,52 @@
     },
     "external_ids": {
       "type": "object",
-      "description": "Known identifiers for this person in external systems. Used for cross-source deduplication. Keys are system names (e.g. wikidata_qid, familysearch_pid, findagrave_id, ia_id, ssdi_id); values are the identifier strings. Open-ended to accommodate future sources.",
+      "description": "Denormalized quick-lookup map of {system -> top-confidence id} for this person — a convenience MIRROR of external_id_assertions[] (the authoritative, scored, multi-valued source as of v1.6). Keys are system names (e.g. wikidata_qid, familysearch_pid, findagrave_id, ia_id, ssdi_id); values are the identifier strings. Use external_id_assertions[] for confidence, provenance, multiple-ids-per-system, and retraction.",
       "additionalProperties": { "type": "string" }
+    },
+    "external_id_assertions": {
+      "type": "array",
+      "description": "MAXGEN v1.6 — scored, sourced, REVERSIBLE links from this conclusion-person to the same individual as represented in an external database (a 'persona'). Each entry is a probabilistic claim, never a destructive merge. MULTIPLE entries per system are allowed and normal — external DBs (esp. FamilySearch) contain duplicate profiles for one person. A wrong link is retracted via status='retracted' (+ retracted_at), never deleted. This is the AI-merge substrate: a scorer reads match_signals across records and writes/raises confidence here. The flat external_ids map is derived from the top-confidence active entry per system. System is an open string so ANY database works. PRIVACY (NORMATIVE — MUST): for any record where is_living=TRUE (tier2-private), external_id_assertions MUST NOT appear in any public share, export, embedding, API response, or commit. A cross-system identity crosswalk is a powerful de-anonymization vector; strip these for living subjects, exactly like every other tier2-private field.",
+      "items": {
+        "type": "object",
+        "required": ["system", "external_id", "confidence", "asserted_by", "asserted_at"],
+        "properties": {
+          "system": {
+            "type": "string",
+            "description": "Database/authority identifier, lowercase. Common: familysearch, wikitree, ancestry, wikidata, findagrave, geni, myheritage, ssdi. Open-ended."
+          },
+          "external_id": {
+            "type": "string",
+            "description": "The identifier within that system. NOTE: Ancestry person IDs are tree-scoped (no stable cross-tree ID) — store as 'tree_id:person_id'. FamilySearch PIDs may become redirects when FS merges; keep the last-known PID."
+          },
+          "url": { "type": "string", "format": "uri", "description": "Resolvable link to the external record." },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "How sure this conclusion-person IS that external record. Same scale as other assertions; see CONFIDENCE_CALIBRATION.md."
+          },
+          "match_method": {
+            "type": "string",
+            "enum": ["exact_id_from_source", "probabilistic_match", "dna_confirmed", "hub_crosswalk", "manual"],
+            "description": "How the link was established. exact_id_from_source = the source record literally carried this id; hub_crosswalk = fanned out from a Wikidata QID's external-id properties (P6577 FamilySearch, P2949 WikiTree, P535 Find a Grave, …)."
+          },
+          "match_signals": {
+            "type": "object",
+            "description": "What drove the match — e.g. name_similarity, birth_year_overlap, place_match, shared_parents, shared_dna_cm, wikidata_property. Open-ended for scorer flexibility.",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "disputed", "retracted"],
+            "default": "active",
+            "description": "Lifecycle. 'disputed' = flagged for review (the external record may conflate two people, or this link is contested). 'retracted' = withdrawn but retained for audit (set retracted_at). Never delete."
+          },
+          "asserted_by": { "type": "string", "description": "Agent ID or contributor that made this link (AI vs human matters)." },
+          "asserted_at": { "type": "string", "format": "date-time" },
+          "retracted_at": { "type": "string", "format": "date-time", "description": "Set when status becomes 'retracted'." }
+        }
+      }
     },
     "dna_evidence": {
       "type": "array",

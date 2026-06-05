@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0015-4000-8000-000000000015",
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "task_type": "validate_record",
   "status": "done",
   "priority": 5,

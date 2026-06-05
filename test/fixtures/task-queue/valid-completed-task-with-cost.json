@@ -1,6 +1,6 @@
 {
   "task_id": "c1000000-0003-4000-8000-000000000003",
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "task_type": "fetch_internet_archive",
   "status": "done",
   "priority": 6,

@@ -27,6 +27,55 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.6 — 2026-06-02
+
+**Theme:** Cross-database identity — merge the same person across FamilySearch,
+WikiTree, Ancestry, Wikidata, Find a Grave, etc. **Additive / backward-compatible**
+(all four schemas stamped `1.6`; 65/65 fixtures pass). Reviewed by three-brain
+council (engineer + strategist + Opus operator + jury): unanimous **PROCEED WITH
+CAUTION** — design endorsed, with one required privacy guardrail (below).
+
+### MaxPerson — `external_id_assertions[]` (new)
+Scored, sourced, **reversible** links from this *conclusion-person* to the same
+individual as represented in an external database (a *persona*). Implements the
+GEDCOM X persona/conclusion model and mirrors Wikidata `sameAs` practice, but with
+genealogy-grade confidence + provenance. Each entry: `system` (open string — ANY
+database works), `external_id`, `url`, `confidence` (0–1), `match_method`
+(`exact_id_from_source` | `probabilistic_match` | `dna_confirmed` | `hub_crosswalk`
+| `manual`), `match_signals{}`, `status` (`active` | `disputed` | `retracted`),
+`asserted_by`/`asserted_at`, `retracted_at`.
+
+Key properties:
+- **Multiple entries per system are allowed** — external DBs (esp. FamilySearch)
+  hold duplicate profiles for one person.
+- **Wrong links are retracted (status), never deleted** — auditable, reversible.
+- **Never forces one "truth"** — a link is a scored claim, not a fiat merge; this is
+  the substrate an AI scorer reads/writes when reconciling across databases.
+- Real-world notes baked into the field docs: Ancestry IDs are tree-scoped
+  (`tree_id:person_id`); FamilySearch PIDs can become redirects; Wikidata QID is the
+  best join hub (P6577 FamilySearch, P2949 WikiTree, P535 Find a Grave → `hub_crosswalk`).
+
+### `external_ids` (existing) → now a denormalized mirror
+The flat `{system → id}` map is retained as a top-confidence-per-system convenience
+mirror of `external_id_assertions[]`. The merge model (`merge_history` with
+`merge_method: exact_external_id`, reversible) is unchanged.
+
+### PRIVACY GUARDRAIL (normative — required by council before publish)
+For any record where `is_living = TRUE` (tier2-private), `external_id_assertions`
+**MUST NOT** appear in any public share, export, embedding, API response, or commit.
+A cross-system identity crosswalk is a powerful de-anonymization vector — strip these
+for living subjects like every other tier2-private field. This contract is written
+into the field's own schema description so it travels with the standard. (Living
+fixture `valid-living-person-tier2.json` carries no external_id_assertions,
+demonstrating the gate.)
+
+### Lockstep + fixtures
+MaxRecord, MaxTask, MaxDNA stamped `schema_version: "1.6"`. +1 fixture
+(`valid-v16-cross-db-identity` — multiple FamilySearch IDs incl. a duplicate, a
+WikiTree + Wikidata hub crosswalk, and one `disputed` Ancestry link). 65/65 validate.
+
+---
+
 ## v1.5 — 2026-06-02
 
 **Theme:** MaxTask becomes a real distributed-work unit — structured results, a

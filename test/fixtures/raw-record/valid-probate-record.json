@@ -1,6 +1,6 @@
 {
   "record_id": "a1b2c3d4-0006-4000-8000-000000000006",
-  "schema_version": "1.5",
+  "schema_version": "1.6",
   "record_type": "probate_record",
   "redistribution_license": "public-domain",
   "is_living_flag": false,
