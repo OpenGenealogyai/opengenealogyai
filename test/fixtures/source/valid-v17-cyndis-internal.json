@@ -1,0 +1,37 @@
+{
+  "source_id": "f1700000-0001-4000-8000-000000000001",
+  "schema_version": "1.7",
+  "name": "Cyndi's List — Germany / Church Records",
+  "source_url": "https://www.cyndislist.com/germany/church/",
+  "source_type": "directory_index",
+  "redistribution_license": "tier2-private",
+  "description": "Curated link directory to German church/parish record resources. Used as a private routing seed only; not republished.",
+  "embedding_text": "German church and parish records directory: Lutheran and Catholic Kirchenbücher, baptisms marriages burials, Germany, links to record repositories.",
+  "coverage": {
+    "places": [
+      { "place_as_written": "Germany", "country_code": "DE" }
+    ],
+    "record_types": ["parish_register", "church_record"],
+    "time_period": { "year_min": 1550, "year_max": 1900 },
+    "languages": ["de", "la"],
+    "ethnic_or_religious_groups": ["Lutheran", "Catholic"]
+  },
+  "access": {
+    "access_method": "free_web",
+    "requires_auth": false,
+    "robots_allowed": true,
+    "crawl_notes": "Polite HTML crawl of category pages only; 5s/host; do not republish curation."
+  },
+  "provenance": {
+    "discovered_via": "cyndis_list",
+    "external_ref": "Germany > Church Records",
+    "status": "active",
+    "asserted_by": "source-crawler-agent-001",
+    "asserted_at": "2026-06-25T17:00:00Z",
+    "last_verified_at": "2026-06-25T17:00:00Z"
+  },
+  "extensions": {
+    "harvester_adapter": null,
+    "query_pattern": "browse_only"
+  }
+}

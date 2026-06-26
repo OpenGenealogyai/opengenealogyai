@@ -5,7 +5,7 @@ import jsonschema
 base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 print("=== Schema consts ===")
-for s in ["raw-record", "person", "task-queue", "dna"]:
+for s in ["raw-record", "person", "task-queue", "dna", "source"]:
     with open(os.path.join(base, "schemas", s + ".schema.json")) as f:
         sc = json.load(f)
     const = sc["properties"]["schema_version"].get("const", "?")
@@ -13,7 +13,7 @@ for s in ["raw-record", "person", "task-queue", "dna"]:
     print("  %-11s schema_version const = %s" % (title, const))
 
 print("\n=== Metaschema validity ===")
-for s in ["raw-record", "person", "task-queue", "dna"]:
+for s in ["raw-record", "person", "task-queue", "dna", "source"]:
     with open(os.path.join(base, "schemas", s + ".schema.json")) as f:
         sc = json.load(f)
     try:
@@ -27,6 +27,7 @@ pairs = [
     ("person", "schemas/person.schema.json"),
     ("raw-record", "schemas/raw-record.schema.json"),
     ("task-queue", "schemas/task-queue.schema.json"),
+    ("source", "schemas/source.schema.json"),
 ]
 g_ok = g_fail = 0
 for fixdir, sp in pairs:

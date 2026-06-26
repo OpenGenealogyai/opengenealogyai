@@ -1,0 +1,38 @@
+{
+  "source_id": "f1700000-0002-4000-8000-000000000002",
+  "schema_version": "1.7",
+  "name": "FamilySearch Research Wiki — Pomerania, Germany Genealogy",
+  "source_url": "https://www.familysearch.org/en/wiki/Pomerania,_Germany_Genealogy",
+  "source_type": "research_wiki",
+  "redistribution_license": "CC-BY",
+  "description": "FamilySearch Research Wiki locality article describing what records exist for Pomerania and where to find them. Openly licensed content, machine-readable via the MediaWiki API.",
+  "embedding_text": "Pomerania Germany genealogy research: civil registration, Lutheran church books, census, emigration records; where Pomeranian records are held and how to access them.",
+  "coverage": {
+    "places": [
+      { "place_as_written": "Pomerania, Germany", "country_code": "DE", "state_province": "Pomerania" }
+    ],
+    "record_types": ["parish_register", "census_row", "immigration_record", "land_deed"],
+    "time_period": { "year_min": 1650, "year_max": 1945 },
+    "languages": ["de", "la"],
+    "ethnic_or_religious_groups": ["Lutheran"]
+  },
+  "access": {
+    "access_method": "api",
+    "requires_auth": false,
+    "api_base_url": "https://www.familysearch.org/en/wiki/api.php",
+    "robots_allowed": true,
+    "crawl_notes": "Use MediaWiki api.php, batched up to 50 pages/call; pull locality + record-type articles only, not all 100k pages."
+  },
+  "provenance": {
+    "discovered_via": "fs_research_wiki",
+    "external_ref": "Pomerania, Germany Genealogy",
+    "status": "active",
+    "asserted_by": "source-crawler-agent-001",
+    "asserted_at": "2026-06-25T17:05:00Z",
+    "last_verified_at": "2026-06-25T17:05:00Z"
+  },
+  "extensions": {
+    "harvester_adapter": "fs-wiki-adapter",
+    "query_pattern": "by_place"
+  }
+}

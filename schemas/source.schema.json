@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opengenealogyai.org/schemas/maxgen/v1/source.schema.json",
+  "title": "MaxSource",
+  "description": "MAXGEN v1.7 — Maxwell Genealogy Standard. A SOURCE-DISCOVERY entry: a neutral, catalogued pointer to WHERE genealogy data lives (place + record-type + period + language), not the data itself. Any tool may use MaxSource to exchange source-location intelligence; a corpus of MaxSource records can be embedded into a vector DB to answer 'where do I find records for X?'. Describes any source — archives, research wikis, record catalogs, openly-licensed indexes. IP/REDISTRIBUTION GUARDRAIL: uses the standard MAXGEN `redistribution_license` enum; entries marked `tier2-private` MUST NOT appear in any open dataset, public share, export, API response, public embedding, or commit (this is how a privately-held routing entry derived from a third party's curated directory is kept internal). Product/implementation specifics (harvester adapters, query routing, ranking) live in `extensions{}`, never in the core, to keep the standard neutral. MaxSource never stores genealogical facts about persons.",
+  "type": "object",
+  "required": [
+    "source_id", "name", "source_url", "source_type", "redistribution_license"
+  ],
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this source entry."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.7",
+      "description": "MAXGEN version this record conforms to."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the source, e.g. 'FamilySearch Research Wiki — Pomerania' or 'Cyndi's List — Germany / Church Records'."
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URL of the source or the specific category/page within it."
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "directory_index", "research_wiki", "record_catalog",
+        "record_database", "archive", "dna_database", "library",
+        "newspaper_archive", "forum", "blog", "society", "other"
+      ],
+      "description": "What KIND of source this is. directory_index = a curated link list (Cyndi's List). research_wiki = MediaWiki locality/record articles (FS Research Wiki). record_catalog = catalogue queried by place (FS Catalog)."
+    },
+    "redistribution_license": {
+      "type": "string",
+      "enum": ["CC0", "CC-BY", "CC-BY-SA", "public-domain", "tier2-private"],
+      "description": "Whether this source entry may be redistributed — same enum as MaxRecord. tier2-private = a privately-held routing entry that MUST NEVER appear in any open dataset, public share, export, public embedding, API response, or commit (e.g. an entry derived from a third party's curated, copyrighted directory and used only as an internal routing seed). Openly-licensed or OGAI-original entries (CC0/CC-BY/CC-BY-SA/public-domain) MAY appear in the public OGAI source directory.",
+      "default": "tier2-private"
+    },
+    "description": {
+      "type": "string",
+      "description": "Free-text summary of what this source holds and who it serves. Primary human-readable context."
+    },
+    "embedding_text": {
+      "type": "string",
+      "description": "Denormalized natural-language text built from name + description + coverage, embedded into the vector DB so a query like 'German Lutheran parish records, Pomerania, early 1800s' retrieves this source. This is what makes MaxSource the semantic routing brain."
+    },
+    "coverage": {
+      "type": "object",
+      "description": "What this source covers — drives 'where do I find X' matching.",
+      "properties": {
+        "places": {
+          "type": "array",
+          "description": "Localities this source covers. Mirrors the MaxRecord location shape.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "place_as_written": { "type": "string" },
+              "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+              "state_province": { "type": "string" },
+              "county_district": { "type": "string" },
+              "city_town": { "type": "string" }
+            }
+          }
+        },
+        "record_types": {
+          "type": "array",
+          "description": "Record types available at this source (open vocabulary; aligns with MaxRecord.record_type where applicable).",
+          "items": { "type": "string" }
+        },
+        "time_period": {
+          "type": "object",
+          "properties": {
+            "year_min": { "type": "integer", "minimum": 1000, "maximum": 2025 },
+            "year_max": { "type": "integer", "minimum": 1000, "maximum": 2025 }
+          }
+        },
+        "languages": {
+          "type": "array",
+          "description": "BCP-47 language codes of the records held (e.g. de, la, en).",
+          "items": { "type": "string" }
+        },
+        "ethnic_or_religious_groups": {
+          "type": "array",
+          "description": "Optional group focus, e.g. 'Lutheran', 'Jewish', 'Huguenot'.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "access": {
+      "type": "object",
+      "description": "How a harvester reaches the data — the politeness and method contract.",
+      "properties": {
+        "access_method": {
+          "type": "string",
+          "enum": [
+            "free_web", "paid_subscription", "api", "bulk_download",
+            "scrape_only", "onsite_only"
+          ],
+          "description": "Primary access path. Prefer api/bulk_download over scrape_only when offered."
+        },
+        "requires_auth": { "type": "boolean", "default": false },
+        "api_base_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Base URL of the machine-friendly API, when one exists (e.g. MediaWiki api.php, FamilySearch API)."
+        },
+        "robots_allowed": {
+          "type": "boolean",
+          "description": "Whether robots.txt permits automated access to the relevant paths."
+        },
+        "tos_url": { "type": "string", "format": "uri" },
+        "crawl_notes": {
+          "type": "string",
+          "description": "Politeness/rate-limit/method notes for the harvester (e.g. 'use api.php batched 50/call; 5s/host; no bulk page crawl')."
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Where this entry came from and whether it is still good.",
+      "properties": {
+        "discovered_via": {
+          "type": "string",
+          "enum": [
+            "cyndis_list", "fs_research_wiki", "fs_catalog", "wikidata",
+            "manual", "community_submission"
+          ],
+          "description": "Seed origin of this entry. cyndis_list entries default to visibility=internal_only."
+        },
+        "external_ref": {
+          "type": "string",
+          "description": "The originating link, category path, or article title on the seed source."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "dead_link", "superseded", "unverified"],
+          "default": "unverified",
+          "description": "Liveness of the pointer. Dead links are marked, not deleted (auditable, like assertion retraction elsewhere in MAXGEN)."
+        },
+        "asserted_by": {
+          "type": "string",
+          "description": "Agent ID or contributor ID that created/verified this entry."
+        },
+        "asserted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_verified_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the pointer was last confirmed live."
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Product/implementation-specific fields live here, never in the core — e.g. harvester_adapter, query_pattern (by_place|by_surname|by_record_id|by_full_text|browse_only), ranking weights, click metrics. Keeps the open standard neutral.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

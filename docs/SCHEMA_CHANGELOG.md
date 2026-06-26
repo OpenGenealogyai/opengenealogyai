@@ -27,6 +27,43 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.7 — 2026-06-25
+
+**Theme:** Source discovery — a neutral way to describe WHERE genealogy data lives,
+so an AI/harvester can answer "where do I find records for X?" and route to the right
+site. **Additive / backward-compatible** (all five schemas now stamped `1.7`; 67/67
+fixtures pass). Reviewed by three-brain council (engineer + strategist + Opus operator):
+GPT + Opus **PROCEED WITH CAUTION**; Gemini raised two objections — both addressed below.
+
+### MaxSource — new schema (the 5th MAXGEN schema)
+A SOURCE-DISCOVERY entry: a catalogued pointer to a data source, never genealogical
+facts about persons. Fields: `source_type` (directory_index | research_wiki |
+record_catalog | record_database | archive | dna_database | library | newspaper_archive
+| forum | blog | society | other); `coverage{places[] (mirrors MaxRecord location),
+record_types[], time_period, languages[], ethnic_or_religious_groups[]}`;
+`access{access_method (free_web | paid_subscription | api | bulk_download | scrape_only
+| onsite_only), requires_auth, api_base_url, robots_allowed, tos_url, crawl_notes}`;
+`embedding_text` (denormalized text embedded into the vector DB — the semantic routing
+brain); `provenance{discovered_via, external_ref, status (active | dead_link | superseded
+| unverified), asserted_by/at, last_verified_at}`; `extensions{}`.
+
+### Council fixes applied (Gemini's design objection)
+- **Neutrality:** dropped a bespoke `visibility` enum in favor of the standard MAXGEN
+  `redistribution_license` enum (CC0 | CC-BY | CC-BY-SA | public-domain | tier2-private),
+  consistent with MaxRecord. `tier2-private` = a privately-held routing entry that MUST
+  NEVER appear in any open dataset, public share, export, public embedding, API response,
+  or commit.
+- **Product infra out of core:** harvester routing (`harvester_adapter`, `query_pattern`)
+  moved to `extensions{}` so the standard stays implementation-neutral.
+
+### Note on Cyndi's List (recorded, not resolved by the standard)
+Gemini flagged that bulk-ingesting a third party's curated directory (e.g. Cyndi's List)
+is a copyright/ToS exposure even for private use; this is an operator/owner decision, NOT
+something the schema sanctions. The standard only provides `redistribution_license:
+tier2-private` so any such entry, if held, is never republished.
+
+---
+
 ## v1.6 — 2026-06-02
 
 **Theme:** Cross-database identity — merge the same person across FamilySearch,
