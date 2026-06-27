@@ -27,6 +27,49 @@ lockstep and bringing every schema to the same number.
 
 ---
 
+## v1.8 — 2026-06-25
+
+**Theme:** Attribution — structured human-contributor credit for CC-BY/CC-BY-SA compliance.
+**Additive / backward-compatible.** All five schemas stamped `1.8`; 68/68 fixtures pass.
+Council: Opus operator **PROCEED** (unanimous — no caution required; zero blast radius,
+all fields optional, legally-motivated).
+
+### `attribution{}` object — added in three places
+
+One reusable object shape, placed wherever a human created or manages the original material:
+
+```json
+"attribution": {
+  "contributor_name": "Robert Chen",
+  "contributor_url": "https://www.findagrave.com/user/profile/12345",
+  "contributor_role": "photographer",
+  "source_organization": "Find a Grave",
+  "source_organization_url": "https://www.findagrave.com"
+}
+```
+
+`contributor_role` enum: `photographer` | `transcriber` | `compiler` | `manager` |
+`donor` | `submitter` | `indexer` | `translator` | `other`.
+
+**Where it appears:**
+- **MaxRecord** (top-level) — credit the human who photographed, transcribed, or donated
+  the original document. Distinct from `extracted_by` (the AI agent that processed it).
+- **MaxPerson `photo_assertions[]`** — replaces the bare `photographer: string` field with
+  the structured object. Existing bare-string data remains valid in `extensions{}` until
+  migrated.
+- **MaxPerson `external_id_assertions[]`** — credit the WikiTree volunteer who manages a
+  linked profile, or the Find a Grave contributor who created a memorial.
+
+**Why now:** CC-BY and CC-BY-SA licenses legally require a credit link. Without a structured
+`contributor_url` field there is nowhere to store the legally-required hyperlink when
+ingesting Find a Grave photos (CC-BY) or WikiTree / FS Research Wiki content (CC-BY-SA)
+at scale. The previous bare `photographer: string` was legally insufficient for redistribution.
+
+**New fixture:** `test/fixtures/raw-record/valid-v18-gravestone-with-attribution.json` —
+Find a Grave gravestone photo (CC-BY) credited to volunteer Robert Chen.
+
+---
+
 ## v1.7 — 2026-06-25
 
 **Theme:** Source discovery — a neutral way to describe WHERE genealogy data lives,

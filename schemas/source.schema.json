@@ -15,7 +15,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.7",
+      "const": "1.8",
       "description": "MAXGEN version this record conforms to."
     },
     "name": {

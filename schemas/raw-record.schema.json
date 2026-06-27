@@ -16,7 +16,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.7",
+      "const": "1.8",
       "description": "MAXGEN version this record conforms to."
     },
     "record_type": {
@@ -148,6 +148,21 @@
     "redaction_notes": {
       "type": "string",
       "description": "Description of what was redacted and why."
+    },
+    "attribution": {
+      "type": "object",
+      "description": "v1.8 — Credit for the human who originally created, photographed, transcribed, or donated this record. Distinct from extracted_by (the AI agent that processed it into MAXGEN). Display when redistribution_license is CC-BY or CC-BY-SA — the license legally requires this credit.",
+      "properties": {
+        "contributor_name": { "type": "string", "description": "Display name of the human contributor, e.g. 'Robert Chen' (Find a Grave volunteer) or 'Jane Smith' (WikiTree curator)." },
+        "contributor_url": { "type": "string", "format": "uri", "description": "Profile URL for the contributor, e.g. Find a Grave volunteer profile, WikiTree user page, or archive staff page." },
+        "contributor_role": {
+          "type": "string",
+          "enum": ["photographer", "transcriber", "compiler", "manager", "donor", "submitter", "indexer", "translator", "other"],
+          "description": "photographer = took the gravestone/document photo; transcriber = handwriting→text; compiler = assembled from multiple sources; manager = maintains external profile; donor = donated physical original to an archive; submitter = submitted to a database; indexer; translator; other."
+        },
+        "source_organization": { "type": "string", "description": "Organization the contributor acted under, e.g. 'Find a Grave', 'WikiTree', 'FamilySearch Indexing'." },
+        "source_organization_url": { "type": "string", "format": "uri" }
+      }
     }
   },
   "additionalProperties": false

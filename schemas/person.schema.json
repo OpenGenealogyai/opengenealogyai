@@ -13,7 +13,7 @@
     },
     "schema_version": {
       "type": "string",
-      "const": "1.7",
+      "const": "1.8",
       "description": "MAXGEN version this record conforms to."
     },
     "is_living": {
@@ -265,7 +265,21 @@
           },
           "asserted_by": { "type": "string", "description": "Agent ID or contributor that made this link (AI vs human matters)." },
           "asserted_at": { "type": "string", "format": "date-time" },
-          "retracted_at": { "type": "string", "format": "date-time", "description": "Set when status becomes 'retracted'." }
+          "retracted_at": { "type": "string", "format": "date-time", "description": "Set when status becomes 'retracted'." },
+          "attribution": {
+            "type": "object",
+            "description": "v1.8 — Credit for the human who created or manages the external profile being linked to (e.g. the WikiTree volunteer who manages Maxwell-1740, or the Find a Grave contributor who created the memorial). Distinct from asserted_by (which is the agent that made the link assertion). Display when redistribution_license is CC-BY or CC-BY-SA.",
+            "properties": {
+              "contributor_name": { "type": "string" },
+              "contributor_url": { "type": "string", "format": "uri", "description": "e.g. https://www.wikitree.com/wiki/User:jdoe-1" },
+              "contributor_role": {
+                "type": "string",
+                "enum": ["photographer", "transcriber", "compiler", "manager", "donor", "submitter", "indexer", "translator", "other"]
+              },
+              "source_organization": { "type": "string" },
+              "source_organization_url": { "type": "string", "format": "uri" }
+            }
+          }
         }
       }
     },
@@ -472,7 +486,21 @@
             "maximum": 2100
           },
           "place_as_written": { "type": "string" },
-          "photographer": { "type": "string" },
+          "attribution": {
+            "type": "object",
+            "description": "v1.8 — Credit for the human who created, photographed, or donated the original material. Distinct from asserted_by (which records the AI/agent that processed it). REQUIRED display when redistribution_license is CC-BY or CC-BY-SA.",
+            "properties": {
+              "contributor_name": { "type": "string", "description": "Display name of the human contributor, e.g. 'Robert Chen'." },
+              "contributor_url": { "type": "string", "format": "uri", "description": "Profile URL for the contributor, e.g. Find a Grave volunteer profile or WikiTree user page." },
+              "contributor_role": {
+                "type": "string",
+                "enum": ["photographer", "transcriber", "compiler", "manager", "donor", "submitter", "indexer", "translator", "other"],
+                "description": "photographer = took the photo; transcriber = converted handwriting to text; compiler = assembled the record; manager = maintains an external profile (e.g. WikiTree); donor = donated physical original to an archive; submitter = submitted to a database; indexer; translator; other."
+              },
+              "source_organization": { "type": "string", "description": "Organization the contributor acted under, e.g. 'Find a Grave', 'WikiTree', 'FamilySearch'." },
+              "source_organization_url": { "type": "string", "format": "uri" }
+            }
+          },
           "license": {
             "type": "string",
             "enum": ["CC0", "CC-BY", "CC-BY-SA", "public-domain", "tier2-private", "fair-use", "unknown"],

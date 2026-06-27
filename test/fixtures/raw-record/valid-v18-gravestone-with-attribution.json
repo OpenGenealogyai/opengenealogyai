@@ -1,0 +1,24 @@
+{
+  "record_id": "b1800000-0001-4000-8000-000000000001",
+  "schema_version": "1.8",
+  "record_type": "gravestone",
+  "redistribution_license": "CC-BY",
+  "source_url": "https://www.findagrave.com/memorial/161271377",
+  "extraction_confidence": 0.95,
+  "is_living_flag": false,
+  "persons_mentioned": [
+    { "name_as_written": "William Maxwell", "role": "subject" }
+  ],
+  "image_url": "https://www.findagrave.com/photo/12345678/gravestone.jpg",
+  "repository": "Find a Grave",
+  "collection": "Memorial #161271377",
+  "extracted_by": "ocr-agent-sonnet-001",
+  "extracted_at": "2026-06-25T18:00:00Z",
+  "attribution": {
+    "contributor_name": "Robert Chen",
+    "contributor_url": "https://www.findagrave.com/user/profile/12345",
+    "contributor_role": "photographer",
+    "source_organization": "Find a Grave",
+    "source_organization_url": "https://www.findagrave.com"
+  }
+}
